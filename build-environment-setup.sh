@@ -18,6 +18,7 @@ sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://r
 sudo chmod 644   /etc/udev/rules.d/51-android.rules
 sudo chown root /etc/udev/rules.d/51-android.rules
 sudo service udev restart
+adb kill-server
 sudo killall adb
 echo "Type your name, hit enter, then email, and hit enter"
 read name
