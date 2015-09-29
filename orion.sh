@@ -14,7 +14,7 @@
  #
 
 #!/bin/bash
-cd /android/common/TeamOrion
+cd /android/common/OrionLP
 export KBUILD_BUILD_HOST="blazingphoenix.in"
 export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
 export WITH_LZMA_OTA=true
@@ -28,7 +28,7 @@ DEVICE=$5
 else
 DEVICE=$4
 
-export UPLOAD_DIR="/android/to-upload/TeamOrion/$DEVICE"
+export UPLOAD_DIR="/android/to-upload/TeamLP/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -70,10 +70,10 @@ fi
 ### Checking if official build or not
 if [ "$OFFICIAL_OR_NOT" == "1" ];
 then
-echo -e "Building TeamOrion OFFICIAL for $DEVICE"
+echo -e "Building OrionLP OFFICIAL for $DEVICE"
 export ORION_RELEASE=true
 else
-echo -e "Building TeamOrion UNOFFICIAL for $DEVICE"
+echo -e "Building OrionLP UNOFFICIAL for $DEVICE"
 unset ORION_RELEASE
 fi
 
@@ -82,7 +82,7 @@ echo -e "Lunching $DEVICE"
 lunch orion_$DEVICE-userdebug
 
 ### Build and log output to a log file
-echo -e "Starting TeamOrion build in 5 seconds"
+echo -e "Starting OrionLP build in 5 seconds"
 sleep 5
 make -j8 bacon  2>&1 | tee orion_$DEVICE-$(date "+%Y%m%d").log
 
