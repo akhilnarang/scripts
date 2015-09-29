@@ -28,7 +28,7 @@ DEVICE=$5
 else
 DEVICE=$4
 
-export UPLOAD_DIR="/android/to-upload/TeamLP/$DEVICE"
+export UPLOAD_DIR="/android/to-upload/OrionLP/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
