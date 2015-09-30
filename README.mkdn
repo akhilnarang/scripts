@@ -7,6 +7,5 @@ cd scripts
 . server-build-environment-setup.sh
 &
 . radium.sh
-
 ```
 Enjoy!

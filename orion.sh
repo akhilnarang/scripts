@@ -47,12 +47,12 @@ echo -e "Setting up build environment";
 if [ "$CLEAN_OR_NOT" == "1" ];
 then
 echo -e "Cleaning out directory"
-make -j8 clean > /dev/null 2>&1 &
+make -j8 clean > /dev/null
 echo -e "Out directory cleaned"
 elif [ "$CLEAN_OR_NOT" == "2" ];
 then
 echo -e "Making out directory dirty"
-make -j8 dirty > /dev/null 2>&1 &
+make -j8 dirty > /dev/null
 echo -e "Deleted old zips, changelogs, build.props"
 else
 echo -e "Out directory untouched!"
