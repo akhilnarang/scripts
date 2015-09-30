@@ -1,8 +1,12 @@
+# Build script and Build environment setup script for BlazingPhoenix-Server
 Run these commands
 ```
 sudo apt-get install git-core
 git clone git://github.com/akhilnarang/scripts -b blazingphoenix
 cd scripts
 . server-build-environment-setup.sh
+&
+. radium.sh
+
 ```
 Enjoy!

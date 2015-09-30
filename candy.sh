@@ -14,7 +14,7 @@
  #
 
 #!/bin/bash
-home=/android/common/Tesla-Redux
+home=/android/common/Candy5
 cd $home
 export KBUILD_BUILD_HOST="blazingphoenix.in"
 export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
@@ -29,7 +29,7 @@ DEVICE=$5
 else
 DEVICE=$4
 
-export UPLOAD_DIR="/android/to-upload/OrionLP/$DEVICE"
+export UPLOAD_DIR="/android/to-upload/Candy5/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -81,21 +81,21 @@ fi
 ### Checking if official build or not
 if [ "$OFFICIAL_OR_NOT" == "1" ];
 then
-echo -e "Building OrionLP OFFICIAL for $DEVICE"
-export ORION_RELEASE=true
+echo -e "Building CandyRoms OFFICIAL for $DEVICE"
+export Candy5_RELEASE=true
 else
-echo -e "Building OrionLP UNOFFICIAL for $DEVICE"
-unset ORION_RELEASE
+echo -e "Building CandyRoms UNOFFICIAL for $DEVICE"
+unset Candy5_RELEASE
 fi
 
 ### Lunching device
 echo -e "Lunching $DEVICE"
-lunch orion_$DEVICE-userdebug
+lunch candy5_$DEVICE-userdebug
 
 ### Build and log output to a log file
-echo -e "Starting OrionLP build in 5 seconds"
+echo -e "Starting CandyRoms build in 5 seconds"
 sleep 5
-make -j8 bacon  2>&1 | tee orion_$DEVICE-$(date "+%Y%m%d").log
+make -j8 bacon  2>&1 | tee candy5_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
@@ -105,8 +105,8 @@ echo -e "Dir to copy zip not found, creating";
 mkdir -p $UPLOAD_DIR
 fi
 echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/orion-$DEVICE-*.zip $UPLOAD_DIR/
-cp orion_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/orion-$DEVICE-*.zip.md5sum $UPLOAD_DIR/
-echo -e "All required outputs copied to $UPLOAD_DIR please use upload_orion script to upload :)"
+cp out/target/product/$DEVICE/*-candy5-*.zip $UPLOAD_DIR/
+cp candy5_$DEVICE-*.log $UPLOAD_DIR/
+cp out/target/product/$DEVICE/*-candy5-*.zip.md5sum $UPLOAD_DIR/
+echo -e "All required outputs copied to $UPLOAD_DIR please use upload_Candy5 script to upload :)"
 echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";

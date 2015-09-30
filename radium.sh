@@ -14,7 +14,8 @@
  #
 
 #!/bin/bash
-cd /android/common/Team-Radium
+home=/android/common/Team-Radium
+cd $home
 export KBUILD_BUILD_HOST="blazingphoenix.in"
 export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
 export WITH_LZMA_OTA=true
@@ -55,6 +56,16 @@ make -j8 dirty > /dev/null 2>&1 &
 echo -e "Deleted old zips, changelogs, build.props"
 else
 echo -e "Out directory untouched!"
+fi
+
+# Remove roomservice.xml if exist
+file=roomservice.xml
+cd $home/.repo/local_manifests/
+if [ -f $file ]; then
+echo -e "$ROUGE Deleting roomservice.xml inside local_manifests $NORMAL"
+rm -rf $file
+else
+echo -e "No files found ...."
 fi
 
 ### Check conditions for repo sync
