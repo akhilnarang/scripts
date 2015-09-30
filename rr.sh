@@ -14,22 +14,21 @@
  #
 
 #!/bin/bash
-home=/android/common/Tesla-Redux
+home=/android/common/ResurrectionRemix
 cd $home
 export KBUILD_BUILD_HOST="blazingphoenix.in"
 export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
 export WITH_LZMA_OTA=true
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
-OFFICIAL_OR_NOT=$3
-if [ ! "$4" == "" ];
+if [ ! "$3" == "" ];
 then
-export KBUILD_BUILD_USER=$4
-DEVICE=$5
-else
+export KBUILD_BUILD_USER=$3
 DEVICE=$4
+else
+DEVICE=$3
 
-export UPLOAD_DIR="/android/to-upload/OrionLP/$DEVICE"
+export UPLOAD_DIR="/android/to-upload/ResurrectionRemix/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -68,24 +67,14 @@ else
 echo -e "Not syncing!"
 fi
 
-### Checking if official build or not
-if [ "$OFFICIAL_OR_NOT" == "1" ];
-then
-echo -e "Building OrionLP OFFICIAL for $DEVICE"
-export ORION_RELEASE=true
-else
-echo -e "Building OrionLP UNOFFICIAL for $DEVICE"
-unset ORION_RELEASE
-fi
-
 ### Lunching device
 echo -e "Lunching $DEVICE"
-lunch orion_$DEVICE-userdebug
+lunch cm_$DEVICE-userdebug
 
 ### Build and log output to a log file
-echo -e "Starting OrionLP build in 5 seconds"
+echo -e "Starting ResurrectionRemix build in 5 seconds"
 sleep 5
-make -j8 bacon  2>&1 | tee orion_$DEVICE-$(date "+%Y%m%d").log
+make -j8 bacon  2>&1 | tee RR_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
@@ -95,8 +84,8 @@ echo -e "Dir to copy zip not found, creating";
 mkdir -p $UPLOAD_DIR
 fi
 echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/orion-$DEVICE-*.zip $UPLOAD_DIR/
-cp orion_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/orion-$DEVICE-*.zip.md5sum $UPLOAD_DIR/
-echo -e "All required outputs copied to $UPLOAD_DIR please use upload_orion script to upload :)"
+cp out/target/product/$DEVICE/ResurrectionRemix*.zip $UPLOAD_DIR/
+cp RR_$DEVICE-*.log $UPLOAD_DIR/
+cp out/target/product/$DEVICE/ResurrectionRemix*.zip.md5sum $UPLOAD_DIR/
+echo -e "All required outputs copied to $UPLOAD_DIR please use upload_rr script to upload :)"
 echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";

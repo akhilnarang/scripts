@@ -21,13 +21,12 @@ export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
 export WITH_LZMA_OTA=true
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
-OFFICIAL_OR_NOT=$3
-if [ ! "$4" == "" ];
+if [ ! "$3" == "" ];
 then
-export KBUILD_BUILD_USER=$4
-DEVICE=$5
-else
+export KBUILD_BUILD_USER=$3
 DEVICE=$4
+else
+DEVICE=$3
 
 export UPLOAD_DIR="/android/to-upload/Tesla-Redux/$DEVICE"
 
@@ -58,16 +57,6 @@ else
 echo -e "Out directory untouched!"
 fi
 
-# Remove roomservice.xml if exist
-file=tesla_manifest.xml
-cd $home/.repo/local_manifests/
-if [ -f $file ]; then
-echo -e "$ROUGE Deleting roomservice.xml inside local_manifests $NORMAL"
-rm -rf $file
-else
-echo -e "No files found ...."
-fi
-
 ### Check conditions for repo sync
 if [ "$SYNC_OR_NOT" == "1" ];
 then
@@ -78,16 +67,6 @@ else
 echo -e "Not syncing!"
 fi
 
-### Checking if official build or not
-if [ "$OFFICIAL_OR_NOT" == "1" ];
-then
-echo -e "Building Tesla-Redux OFFICIAL for $DEVICE"
-export Tesla_RELEASE=true
-else
-echo -e "Building Tesla-Redux UNOFFICIAL for $DEVICE"
-unset Tesla_RELEASE
-fi
-
 ### Lunching device
 echo -e "Lunching $DEVICE"
 lunch tesla_$DEVICE-userdebug
@@ -95,7 +74,7 @@ lunch tesla_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting Tesla-Redux build in 5 seconds"
 sleep 5
-make -j8 bacon  2>&1 | tee tesla_$DEVICE-$(date "+%Y%m%d").log
+make -j8 tesla  2>&1 | tee tesla_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
@@ -105,8 +84,8 @@ echo -e "Dir to copy zip not found, creating";
 mkdir -p $UPLOAD_DIR
 fi
 echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/*-Tesla-*.zip $UPLOAD_DIR/
+cp out/target/product/$DEVICE/Tesla*.zip $UPLOAD_DIR/
 cp tesla_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/*-Tesla-*.zip.md5sum $UPLOAD_DIR/
+cp out/target/product/$DEVICE/Tesla*.zip.md5sum $UPLOAD_DIR/
 echo -e "All required outputs copied to $UPLOAD_DIR please use upload_tesla script to upload :)"
 echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";

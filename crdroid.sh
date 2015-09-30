@@ -58,16 +58,6 @@ else
 echo -e "Out directory untouched!"
 fi
 
-# Remove roomservice.xml if exist
-file=roomservice.xml
-cd $home/.repo/local_manifests/
-if [ -f $file ]; then
-echo -e "$ROUGE Deleting roomservice.xml inside local_manifests $NORMAL"
-rm -rf $file
-else
-echo -e "No files found ...."
-fi
-
 ### Check conditions for repo sync
 if [ "$SYNC_OR_NOT" == "1" ];
 then
@@ -82,10 +72,10 @@ fi
 if [ "$OFFICIAL_OR_NOT" == "1" ];
 then
 echo -e "Building crDroid OFFICIAL for $DEVICE"
-export CrDroid_RELEASE=true
+export CRDROID_BUILDTYPE=OFFICIAL
 else
 echo -e "Building crDroid UNOFFICIAL for $DEVICE"
-unset CrDroid_RELEASE
+unset CRDROID_BUILDTYPE
 fi
 
 ### Lunching device
@@ -95,7 +85,7 @@ lunch crdroid_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting crDroid build in 5 seconds"
 sleep 5
-make -j8 bacon  2>&1 | tee crdroid_$DEVICE-$(date "+%Y%m%d").log
+make -j8 crdroid  2>&1 | tee crdroid_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
@@ -105,8 +95,8 @@ echo -e "Dir to copy zip not found, creating";
 mkdir -p $UPLOAD_DIR
 fi
 echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/*-crDroid-*.zip $UPLOAD_DIR/
+cp out/target/product/$DEVICE/crdroid*.zip $UPLOAD_DIR/
 cp crdroid_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/*-crDroid-*.zip.md5sum $UPLOAD_DIR/
-echo -e "All required outputs copied to $UPLOAD_DIR please use upload_crDroid script to upload :)"
+cp out/target/product/$DEVICE/crdroid*.zip.md5sum $UPLOAD_DIR/
+echo -e "All required outputs copied to $UPLOAD_DIR please use upload_crdroid script to upload :)"
 echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";

@@ -58,16 +58,6 @@ else
 echo -e "Out directory untouched!"
 fi
 
-# Remove roomservice.xml if exist
-file=roomservice.xml
-cd $home/.repo/local_manifests/
-if [ -f $file ]; then
-echo -e "$ROUGE Deleting roomservice.xml inside local_manifests $NORMAL"
-rm -rf $file
-else
-echo -e "No files found ...."
-fi
-
 ### Check conditions for repo sync
 if [ "$SYNC_OR_NOT" == "1" ];
 then

@@ -58,16 +58,6 @@ else
 echo -e "Out directory untouched!"
 fi
 
-# Remove roomservice.xml if exist
-file=roomservice.xml
-cd $home/.repo/local_manifests/
-if [ -f $file ]; then
-echo -e "$ROUGE Deleting roomservice.xml inside local_manifests $NORMAL"
-rm -rf $file
-else
-echo -e "No files found ...."
-fi
-
 ### Check conditions for repo sync
 if [ "$SYNC_OR_NOT" == "1" ];
 then
@@ -82,10 +72,10 @@ fi
 if [ "$OFFICIAL_OR_NOT" == "1" ];
 then
 echo -e "Building CandyRoms OFFICIAL for $DEVICE"
-export Candy5_RELEASE=true
+export candy5_BUILDTYPE=true
 else
 echo -e "Building CandyRoms UNOFFICIAL for $DEVICE"
-unset Candy5_RELEASE
+unset candy5_BUILDTYPE
 fi
 
 ### Lunching device
@@ -105,8 +95,8 @@ echo -e "Dir to copy zip not found, creating";
 mkdir -p $UPLOAD_DIR
 fi
 echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/*-candy5-*.zip $UPLOAD_DIR/
+cp out/target/product/$DEVICE/candy5*-$DEVICE.zip $UPLOAD_DIR/
 cp candy5_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/*-candy5-*.zip.md5sum $UPLOAD_DIR/
+cp out/target/product/$DEVICE/candy5*-$DEVICE.zip.md5sum $UPLOAD_DIR/
 echo -e "All required outputs copied to $UPLOAD_DIR please use upload_Candy5 script to upload :)"
 echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";
