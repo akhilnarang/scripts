@@ -16,17 +16,16 @@
 #!/bin/bash
 home=/android/common/Team-Radium
 cd $home
-export KBUILD_BUILD_HOST="blazingphoenix.in"
-export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
+host=$(cat /etc/hostname)
+export KBUILD_BUILD_HOST=$host
+export LINUX_COMPILE_BY=$host
 export WITH_LZMA_OTA=true
+export USE_CCACHE=1
+export CCACHE_DIR=/android/.ccache
+ccache -M 500G
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 OFFICIAL_OR_NOT=$3
-if [ ! "$4" == "" ];
-then
-export KBUILD_BUILD_USER=$4
-DEVICE=$5
-else
 DEVICE=$4
 
 export UPLOAD_DIR="/android/to-upload/Team-Radium/$DEVICE"
@@ -85,7 +84,7 @@ lunch radium_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting Team-Radium build in 5 seconds"
 sleep 5
-make -j8 radium  2>&1 | tee radium_$DEVICE-$(date "+%Y%m%d").log
+make -j8 radium  2>&1 | tee radium_$DEVICE-$(date +%Y%m%d).log
 
 ### Copying of zip and build log
 
