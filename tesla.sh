@@ -25,8 +25,7 @@ export CCACHE_DIR=/android/.ccache
 ccache -M 500G
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
-OFFICIAL_OR_NOT=$3
-DEVICE=$4
+DEVICE=$3
 
 export UPLOAD_DIR="/android/to-upload/Tesla-Redux/$DEVICE"
 
