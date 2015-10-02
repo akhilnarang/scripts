@@ -16,17 +16,17 @@
 #!/bin/bash
 home=/android/common/Tesla-Redux
 cd $home
-export KBUILD_BUILD_HOST="blazingphoenix.in"
-export LINUX_COMPILE_BY=$KBUILD_BUILD_HOST
+host=$(cat /etc/hostname)
+export KBUILD_BUILD_HOST=$host
+export LINUX_COMPILE_BY=$host
 export WITH_LZMA_OTA=true
+export USE_CCACHE=1
+export CCACHE_DIR=/android/.ccache
+ccache -M 500G
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
-if [ ! "$3" == "" ];
-then
-export KBUILD_BUILD_USER=$3
+OFFICIAL_OR_NOT=$3
 DEVICE=$4
-else
-DEVICE=$3
 
 export UPLOAD_DIR="/android/to-upload/Tesla-Redux/$DEVICE"
 
