@@ -88,14 +88,14 @@ make -j8 bacon  2>&1 | tee orion_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
-if [ ! -e "$UPLOAD_DIR" ];
-then
-echo -e "Dir to copy zip not found, creating";
-mkdir -p $UPLOAD_DIR
-fi
-echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/orion-$DEVICE-*.zip $UPLOAD_DIR/
-cp orion_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/orion-$DEVICE-*.zip.md5sum $UPLOAD_DIR/
-echo -e "All required outputs copied to $UPLOAD_DIR please use upload_orion script to upload :)"
-echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";
+#if [ ! -e "$UPLOAD_DIR" ];
+#then
+#echo -e "Dir to copy zip not found, creating";
+#mkdir -p $UPLOAD_DIR
+#fi
+#echo -e "Copying zip, build log, zip md5sum";
+#cp out/target/product/$DEVICE/orion-$DEVICE-*.zip $UPLOAD_DIR/
+#cp orion_$DEVICE-*.log $UPLOAD_DIR/
+#cp out/target/product/$DEVICE/orion-$DEVICE-*.zip.md5sum $UPLOAD_DIR/
+#echo -e "All required outputs copied to $UPLOAD_DIR please use upload_orion script to upload :)"
+#echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";
