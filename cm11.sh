@@ -63,14 +63,10 @@ echo -e "Not syncing!"
 fi
 
 
-### Lunching device
-echo -e "Lunching $DEVICE"
-lunch cm_$DEVICE-userdebug
-
 ### Build and log output to a log file
 echo -e "Starting cm11 build in 5 seconds"
 sleep 5
-mka bacon -j8  2>&1 | tee cm_$DEVICE-$(date "+%Y%m%d").log
+brunch $DEVICE  2>&1 | tee cm_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
