@@ -1,5 +1,5 @@
  #
- # Copyright � 2015, Sri Harsha "srisurya95" <srisurya95@gmail.com>
+ # Copyright � 2015, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
  #
  # This software is licensed under the terms of the GNU General Public
  # License version 2, as published by the Free Software Foundation, and
@@ -25,8 +25,8 @@ export CCACHE_DIR=/android/.ccache
 ccache -M 500G
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
-OFFICIAL_OR_NOT=$3
-DEVICE=$4
+DEVICE=$3
+export TARGET_UNOFFICIAL_BUILD_ID="blazingphoenix"
 
 export UPLOAD_DIR="/android/to-upload/cm11/$DEVICE"
 
@@ -48,11 +48,6 @@ then
 echo -e "Cleaning out directory"
 make -j8 clean > /dev/null
 echo -e "Out directory cleaned"
-elif [ "$CLEAN_OR_NOT" == "2" ];
-then
-echo -e "Making out directory dirty"
-make -j8 dirty > /dev/null
-echo -e "Deleted old zips, changelogs, build.props"
 else
 echo -e "Out directory untouched!"
 fi
@@ -75,7 +70,7 @@ lunch cm_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting cm11 build in 5 seconds"
 sleep 5
-mka bacon -j8  2>&1 | tee falcon_$DEVICE-$(date "+%Y%m%d").log
+mka bacon -j8  2>&1 | tee cm_$DEVICE-$(date "+%Y%m%d").log
 
 ### Copying of zip and build log
 
@@ -86,7 +81,7 @@ mkdir -p $UPLOAD_DIR
 fi
 echo -e "Copying zip, build log, zip md5sum";
 cp out/target/product/$DEVICE/cm-11*.zip $UPLOAD_DIR/
-cp crdroid_$DEVICE-*.log $UPLOAD_DIR/
+mv cm*.log $UPLOAD_DIR/
 cp out/target/product/$DEVICE/cm-11*.zip.md5sum $UPLOAD_DIR/
 echo -e "All required outputs copied to $UPLOAD_DIR please use upload_cm11 script to upload :)"
 echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";
