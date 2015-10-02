@@ -38,7 +38,7 @@ echo "██████╔╝███████╗██║  ██║██
 echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝";
 echo "                                                                                                            ";
 
-
+figlet OrionLP
 echo -e "Setting up build environment";
 . build/envsetup.sh
 

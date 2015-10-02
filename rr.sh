@@ -37,7 +37,7 @@ echo "██████╔╝███████╗██║  ██║██
 echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝";
 echo "                                                                                                            ";
 
-
+figlet ResurrectionRemix
 echo -e "Setting up build environment";
 . build/envsetup.sh
 

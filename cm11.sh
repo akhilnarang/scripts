@@ -38,7 +38,7 @@ echo "██████╔╝███████╗██║  ██║██
 echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝";
 echo "                                                                                                            ";
 
-
+figlet CyanogenMod
 echo -e "Setting up build environment";
 . build/envsetup.sh
 

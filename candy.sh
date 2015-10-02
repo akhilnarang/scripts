@@ -38,7 +38,7 @@ echo "██████╔╝███████╗██║  ██║██
 echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝";
 echo "                                                                                                            ";
 
-
+figlet Candy5
 echo -e "Setting up build environment";
 . build/envsetup.sh
 
