@@ -26,11 +26,6 @@ export TARGET_UNFFICIAL_BUILD_ID="temasek"
 export WITH_LZMA_OTA=true
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
-if [ ! "$3" == "" ];
-then
-export KBUILD_BUILD_USER=$3
-DEVICE=$4
-else
 DEVICE=$3
 
 export UPLOAD_DIR="/android/to-upload/temasek/$DEVICE"
