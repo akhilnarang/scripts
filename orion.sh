@@ -14,7 +14,7 @@
  #
 
 #!/bin/bash
-home=/android/common/Tesla-Redux
+home=/android/common/OrionLP
 cd $home
 host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
