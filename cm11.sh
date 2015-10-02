@@ -20,9 +20,6 @@ host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
 export LINUX_COMPILE_BY=$host
 export WITH_LZMA_OTA=true
-export USE_CCACHE=1
-export CCACHE_DIR=/android/.ccache
-ccache -M 500G
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 DEVICE=$3
