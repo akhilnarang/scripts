@@ -53,12 +53,12 @@ fi
 if [ "$SYNC_OR_NOT" == "1" ];
 then
 echo -e "Running repo sync"
+repo forall -vc "git reset --hard HEAD"
 repo sync -cfj8 --force-sync --no-clone-bundle
 echo -e "Repo sync complete"
 else
 echo -e "Not syncing!"
 fi
-
 
 ### Build and log output to a log file
 echo -e "Starting cm11 build in 5 seconds"
