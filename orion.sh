@@ -61,7 +61,7 @@ fi
 if [ "$SYNC_OR_NOT" == "1" ];
 then
 echo -e "Running repo sync"
-repo forall -c "git reset --hard"
+repo forall -vc "git reset --hard HEAD"
 repo sync -cfj8 --force-sync --no-clone-bundle
 echo -e "Repo sync complete"
 else
