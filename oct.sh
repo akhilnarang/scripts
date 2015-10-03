@@ -63,6 +63,8 @@ else
 echo -e "Not syncing!"
 fi
 ### Build and log output to a log file
+. build/envsetup.sh
 echo -e "Starting Team OctOS build in 5 seconds"
 sleep 5
-brunch $device
+breakfast $device
+make -j10 bacon
