@@ -63,18 +63,4 @@ fi
 ### Build and log output to a log file
 echo -e "Starting cm11 build in 5 seconds"
 sleep 5
-brunch $DEVICE  2>&1 | tee cm_$DEVICE-$(date "+%Y%m%d").log
-
-### Copying of zip and build log
-
-if [ ! -e "$UPLOAD_DIR" ];
-then
-echo -e "Dir to copy zip not found, creating";
-mkdir -p $UPLOAD_DIR
-fi
-echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/cm-11*.zip $UPLOAD_DIR/
-mv cm*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/cm-11*.zip.md5sum $UPLOAD_DIR/
-echo -e "All required outputs copied to $UPLOAD_DIR please use upload_cm11 script to upload :)"
-echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";
+brunch $DEVICE

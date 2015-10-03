@@ -85,18 +85,4 @@ lunch radium_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting Team-Radium build in 5 seconds"
 sleep 5
-make -j8 radium  2>&1 | tee radium_$DEVICE-$(date +%Y%m%d).log
-
-### Copying of zip and build log
-
-if [ ! -e "$UPLOAD_DIR" ];
-then
-echo -e "Dir to copy zip not found, creating";
-mkdir -p $UPLOAD_DIR
-fi
-echo -e "Copying zip, build log, zip md5sum";
-cp out/target/product/$DEVICE/*-Radium-*.zip $UPLOAD_DIR/
-cp radium_$DEVICE-*.log $UPLOAD_DIR/
-cp out/target/product/$DEVICE/*-Radium-*.zip.md5sum $UPLOAD_DIR/
-echo -e "All required outputs copied to $UPLOAD_DIR please use upload_radium script to upload :)"
-echo -e "Have a nice day :), enjoy the power of BlazingPhoenix Server :D ";
+make -j8 radium
