@@ -14,7 +14,7 @@
  #
 
 #!/bin/bash
-home=/android/common/crDroid
+home=/android/common/CrDroid
 cd $home
 host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
@@ -39,6 +39,7 @@ echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚═�
 echo "                                                                                                            ";
 
 figlet CrDroid
+
 echo -e "Setting up build environment";
 . build/envsetup.sh
 
