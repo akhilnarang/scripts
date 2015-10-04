@@ -1,16 +1,10 @@
 #!/bin/bash
-bash vendor/cmremix/tools/colors
-bash vendor/cmremix/tools/res/cmremix-start
-export CMREMIX_VERSION_MAJOR="LP"
-export CMREMIX_VERSION_MINOR="MR18"
-export CMREMIX_VERSION_MAINTENANCE="Official"
 home=/android/common/CMRemiX
 cd $home
-bash vendor/cmremix/tools/colors
-bash vendor/cmremix/tools/res/cmremix-start
 export CMREMIX_VERSION_MAJOR="LP"
 export CMREMIX_VERSION_MINOR="MR18"
 export CMREMIX_VERSION_MAINTENANCE="Official"
+export CMREMIX_VERSION="$CMREMIX_VERSION_MAJOR $CMREMIX_VERSION_MINOR $CMREMIX_MAINTENANCE"
 host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
 export LINUX_COMPILE_BY=$host
@@ -22,7 +16,6 @@ CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 DEVICE=$3
 export KBUILD_BUILD_USER="CMRemiX"
-export BUILD_CMREMIX_CHANGELOG=true
 
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
@@ -37,6 +30,13 @@ figlet CMRemiX
 
 echo -e "Setting up build environment";
 . build/envsetup.sh
+
+
+# This will create a new build.prop with updated build time and date
+rm -f "$OUTDIR"/target/product/"$device"/system/build.prop
+
+# This will create a new .version for kernel version is maintained on one
+rm -f "$OUTDIR"/target/product/"$device"/obj/KERNEL_OBJ/.version
 
 ### Check conditions for cleaning output directory
 if [ "$CLEAN_OR_NOT" == "1" ];
@@ -69,7 +69,8 @@ fi
 echo -e "Lunching $DEVICE"
 lunch cmremix_$DEVICE-userdebug
 
-### Build and log output to a log file
+### Build
 echo -e "Starting CMRemiX build in 5 seconds"
 sleep 5
+unset CMREMIX_MAKE
 make -j8 bacon
