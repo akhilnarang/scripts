@@ -67,7 +67,7 @@ fi
 
 ### Lunching device
 echo -e "Lunching $DEVICE"
-lunch cmremix_$DEVICE-userdebug
+lunch cmremix_$DEVICE-eng
 
 ### Build
 echo -e "Starting CMRemiX build in 5 seconds"
