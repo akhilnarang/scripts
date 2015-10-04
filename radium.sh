@@ -61,7 +61,8 @@ fi
 if [ "$SYNC_OR_NOT" == "1" ];
 then
 echo -e "Running repo sync"
-repo forall -vc "git reset --hard HEAD"
+rm -rf .repo/local_manifests/*.xml 
+curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/radium.xml
 repo sync -cfj8 --force-sync --no-clone-bundle
 echo -e "Repo sync complete"
 else
