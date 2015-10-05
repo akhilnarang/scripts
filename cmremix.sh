@@ -5,6 +5,7 @@ export CMREMIX_VERSION_MAJOR="LP"
 export CMREMIX_VERSION_MINOR="MR18"
 export CMREMIX_VERSION_MAINTENANCE="Official"
 export CMREMIX_VERSION="$CMREMIX_VERSION_MAJOR $CMREMIX_VERSION_MINOR $CMREMIX_MAINTENANCE"
+export CMREMIX_CHANGELOG=true
 host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
 export LINUX_COMPILE_BY=$host
@@ -33,10 +34,10 @@ echo -e "Setting up build environment";
 
 
 # This will create a new build.prop with updated build time and date
-rm -f "$OUTDIR"/target/product/"$device"/system/build.prop
+rm -f "$OUTDIR"/target/product/"$DEVICE"/system/build.prop
 
 # This will create a new .version for kernel version is maintained on one
-rm -f "$OUTDIR"/target/product/"$device"/obj/KERNEL_OBJ/.version
+rm -f "$OUTDIR"/target/product/"$DEVICE"/obj/KERNEL_OBJ/.version
 
 ### Check conditions for cleaning output directory
 if [ "$CLEAN_OR_NOT" == "1" ];
@@ -57,7 +58,7 @@ fi
 if [ "$SYNC_OR_NOT" == "1" ];
 then
 echo -e "Running repo sync"
-rm -rf .repo/local_manifests/*.xml 
+rm -rf .repo/local_manifests/*.xml
 curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/cmremix.xml
 repo sync -cfj8 --force-sync --no-clone-bundle
 echo -e "Repo sync complete"
