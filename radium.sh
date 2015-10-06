@@ -27,8 +27,7 @@ CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 OFFICIAL_OR_NOT=$3
 DEVICE=$4
-
-export UPLOAD_DIR="/android/to-upload/Team-Radium/$DEVICE"
+export KBUILD_BUILD_USER="Team-Radium"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -86,4 +85,5 @@ lunch radium_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting Team-Radium build in 5 seconds"
 sleep 5
+export WITH_LZMA_OTA=true
 make -j8 radium
