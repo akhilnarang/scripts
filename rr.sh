@@ -60,12 +60,20 @@ fi
 if [ "$SYNC_OR_NOT" == "1" ];
 then
 echo -e "Running repo sync"
-rm -rf .repo/local_manifests/*.xml 
+rm -rf .repo/local_manifests/*.xml
 curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/rr.xml
 repo sync -cfj8 --force-sync --no-clone-bundle
 echo -e "Repo sync complete"
 else
 echo -e "Not syncing!"
+fi
+
+if [ "$DEVICE" == "sprout" ] || [ "$DEVICE" == "sprout_b" ];
+then
+cd bionic
+git fetch https://github.com/ResurrectionRemix/android_bionic sprout
+git checkout FETCH_HEAD
+cd ..
 fi
 
 ### Lunching device
