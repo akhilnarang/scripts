@@ -38,7 +38,7 @@ echo "██████╔╝███████╗██║  ██║██
 echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝";
 echo "                                                                                                            ";
 
-figlet Temasek's Unofficial cm-12.1
+figlet Temasek\'s Unofficial cm-12.1
 echo -e "Setting up build environment";
 . build/envsetup.sh
 
