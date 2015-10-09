@@ -73,6 +73,6 @@ echo -e "Lunching $DEVICE"
 lunch cm_$DEVICE-userdebug
 
 ### Build and log output to a log file
-echo -e "Starting Temasek's unofficial cm-12.1 build in 5 seconds"
+echo -e "Starting Temasek\'s unofficial cm-12.1 build in 5 seconds"
 sleep 5
 make -j8 bacon
