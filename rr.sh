@@ -68,7 +68,7 @@ fi
 if [ "$DEVICE" == "sprout" ] || [ "$DEVICE" == "sprout_b" ];
 then
 rm -rf bionic
-git clone git://github.com/ResurrectionRemix/android_bionic -b sprout
+git clone git://github.com/ResurrectionRemix/android_bionic -b sprout bionic
 fi
 
 ### Lunching device
