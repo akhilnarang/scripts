@@ -16,10 +16,6 @@
 #!/bin/bash
 home=/android/common/ResurrectionRemix
 cd $home
-host=$(cat /etc/hostname)
-export KBUILD_BUILD_HOST=$host
-export LINUX_COMPILE_BY=$host
-export WITH_LZMA_OTA=true
 export USE_CCACHE=1
 export CCACHE_DIR=/android/.ccache
 ccache -M 500G
@@ -82,4 +78,7 @@ lunch cm_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting ResurrectionRemix build in 5 seconds"
 sleep 5
+export WITH_LZMA_OTA=true
+export KBUILD_BUILD_USER="ResurrectionRemix"
+export KBUILD_BUILD_HOST="blazingphoenix.in"
 make -j8 bacon
