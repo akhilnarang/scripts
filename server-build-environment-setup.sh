@@ -9,7 +9,7 @@ squashfs-tools build-essential zip curl libncurses5-dev zlib1g-dev openjdk-7-jre
 schedtool libxml2 libxml2-utils xsltproc lzop libc6-dev schedtool g++-multilib lib32z1-dev lib32ncurses5-dev \
 lib32readline-gplv2-dev gcc-multilib liblz4-* pngquant jenkins ncurses-dev texinfo gcc gperf patch libtool \
 automake g++ gawk subversion expat libexpat1-dev python-all-dev binutils-static libgcc1:i386 bc libcloog-isl-dev \
-libcap-dev autoconf libgmp-dev build-essential gcc-multilib g++-multilib pkg-config libmpc-dev libmpfr-dev lzma* liblzma*
+libcap-dev autoconf libgmp-dev build-essential gcc-multilib g++-multilib pkg-config libmpc-dev libmpfr-dev lzma* liblzma* phablet-tools
 clear
 echo Dependencies have been installed
 echo Installing LZMA
@@ -18,13 +18,6 @@ cd backports.lzma
 python2 setup.py install
 python2 test/test_lzma.py
 echo LZMA Setup, enjoy smaller builds!
-echo Downloading repo in 5 seconds
-sleep 5
-mkdir -p /android/bin
-curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > /android/bin/repo
-chmod a+x /android/bin/repo
-clear
-echo repo has been Downloaded!
 echo Configuring git
 git config --global user.name "Blazing Phoenix"
 git config --global user.email "blazingphoenixdevs@gmail.com"
