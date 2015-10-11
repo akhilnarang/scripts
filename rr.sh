@@ -82,3 +82,4 @@ export WITH_LZMA_OTA=true
 export KBUILD_BUILD_USER="ResurrectionRemix"
 export KBUILD_BUILD_HOST="blazingphoenix.in"
 make -j8 bacon
+cp $OUT/Resurrection*.zip $UPLOAD_DIR/
