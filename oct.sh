@@ -14,18 +14,28 @@
  #
 
 #!/bin/bash
+CLEAN_OR_NOT=$1
+SYNC_OR_NOT=$2
+DEVICE=$3
+if [ "$DEVICE" == "falcon" ];
+then
+user=TechVeera
+else
 user=ujwalp15
+fi
 host=$(cat /etc/hostname)
-home=/home/$user/OctOS
+home=/home/ujwalp15/OctOS
+export UPLOAD_DIR=/android/common/OctOS/$DEVICE
+if [ ! -d "$UPLOAD_DIR" ];
+then
+mkdir -p $UPLOAD_DIR
+fi
 cd $home
 export KBUILD_BUILD_USER=$user
 export KBUILD_BUILD_HOST=$host
 export LINUX_COMPILE_BY=$user
 export LINUX_COMPILE_HOST=$host
 export WITH_LZMA_OTA=true
-CLEAN_OR_NOT=$1
-SYNC_OR_NOT=$2
-DEVICE=$3
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -68,3 +78,4 @@ echo -e "Starting Team OctOS build in 5 seconds"
 sleep 5
 breakfast $device
 make -j10 bacon
+cp -v $OUT/OCT*.zip $UPLOAD_DIR/
