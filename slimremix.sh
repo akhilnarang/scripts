@@ -7,13 +7,17 @@ export SLIMREMIX_VERSION="$SLIMREMIX_VERSION_MAJOR $SLIMREMIX_VERSION_MINOR $SLI
 export SLIMREMIX_CHANGELOG=true
 host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
-export LINUX_COMPILE_BY=$host
+export LINUX_COMPILE_HOST=$host
 export WITH_LZMA_OTA=true
 CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 DEVICE=$3
-export KBUILD_BUILD_USER="SlimRemix"
-
+export KBUILD_BUILD_USER="SlimRemiX"
+export UPLOAD_DIR=/android/to-upload/SlimRemix/$DEVICE
+if [ ! -d "$UPLOAD_DIR" ];
+then
+mkdir -p $UPLOAD_DIR
+fi
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -23,7 +27,7 @@ echo "██████╔╝███████╗██║  ██║██
 echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝";
 echo "                                                                                                            ";
 
-
+figlet SlimRemix ;
 echo -e "Setting up build environment";
 . build/envsetup.sh
 
@@ -70,3 +74,4 @@ echo -e "Starting SlimRemix build in 5 seconds"
 sleep 5
 unset SLIMREMIX_MAKE
 make -j8 bacon
+cp -v $OUT/SlimRemix*.zip $UPLOAD_DIR/
