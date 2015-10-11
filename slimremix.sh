@@ -1,5 +1,5 @@
 #!/bin/bash
-home=/android/common/SlimRemix
+home=/android/common/SlimRemiX
 cd $home
 export SLIMREMIX_VERSION_MINOR="MR18"
 export SLIMREMIX_VERSION_MAINTENANCE="Official"
