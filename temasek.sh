@@ -29,6 +29,10 @@ SYNC_OR_NOT=$2
 DEVICE=$3
 
 export UPLOAD_DIR="/android/to-upload/temasek/$DEVICE"
+if [ ! -d "$UPLOAD_DIR" ];
+then
+mkdir -p $UPLOAD_DIR;
+fi
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -61,7 +65,7 @@ fi
 if [ "$SYNC_OR_NOT" == "1" ];
 then
 echo -e "Running repo sync"
-repo forall -vc "git reset --hard HEAD"
+curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/rr.xml
 repo sync -cfj8 --force-sync --no-clone-bundle
 echo -e "Repo sync complete"
 else
@@ -75,4 +79,7 @@ lunch cm_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting Temasek\'s unofficial cm-12.1 build in 5 seconds"
 sleep 5
+export TARGET_UNFFICIAL_BUILD_ID="temasek"
+export WITH_LZMA_OTA=true
 make -j8 bacon
+cp -v $OUT/cm-* $UPLOAD_DIR/
