@@ -15,7 +15,7 @@
 
 #!/bin/bash
 home=/android/common/ResurrectionRemix
-cd $home
+scripts=/android/scripts
 export USE_CCACHE=1
 export CCACHE_DIR=/android/.ccache
 ccache -M 500G
@@ -28,6 +28,7 @@ if [ ! -d "$UPLOAD_DIR" ];
 then
 mkdir -p $UPLOAD_DIR
 fi
+cd $scripts && git pull origin blazingphoenix && cd $home
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
