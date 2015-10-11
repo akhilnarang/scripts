@@ -24,6 +24,10 @@ SYNC_OR_NOT=$2
 DEVICE=$3
 
 export UPLOAD_DIR="/android/to-upload/ResurrectionRemix/$DEVICE"
+if [ ! -d "$UPLOAD_DIR" ];
+then
+mkdir -p $UPLOAD_DIR
+fi
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -82,4 +86,4 @@ export WITH_LZMA_OTA=true
 export KBUILD_BUILD_USER="ResurrectionRemix"
 export KBUILD_BUILD_HOST="blazingphoenix.in"
 make -j8 bacon
-cp $OUT/Resurrection*.zip $UPLOAD_DIR/
+cp -v $OUT/Resurrection*.zip $UPLOAD_DIR/
