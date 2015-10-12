@@ -1,5 +1,10 @@
 #!/bin/bash
 cd /android/common/LiquidSmooth-Layers
+export UPLOAD_DIR=/android/to-upload/LS/$device
+if [ ! -d "$UPLOAD_DIR" ];
+then
+mkdir -p $UPLOAD_DIR
+fi
 rm -rf .repo/local_manifests/*
 curl --create-dirs -L -o .repo/local_manifests/liquid.xml -O -L https://raw.githubusercontent.com/Anik1199/BlazingPhoenix/master/liquid.xml
 repo sync -cfj8 --force-sync --no-clone-bundle
@@ -19,3 +24,4 @@ figlet No Clean
 fi
 lunch liquid_$device-userdebug
 make -j10 liquid
+cp -v $OUT/LS*.zip $UPLOAD_DIR
