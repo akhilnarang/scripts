@@ -1,6 +1,6 @@
 #!/bin/bash
 cd /android/common/LiquidSmooth-Layers
-export UPLOAD_DIR=/android/to-upload/LS/$device
+export UPLOAD_DIR=/var/www/html/downloads/LiquidSmooth-Layers/$device
 if [ ! -d "$UPLOAD_DIR" ];
 then
 mkdir -p $UPLOAD_DIR
