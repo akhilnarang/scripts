@@ -25,7 +25,7 @@ SYNC_OR_NOT=$2
 DEVICE=$3
 export TARGET_UNOFFICIAL_BUILD_ID="blazingphoenix"
 
-export UPLOAD_DIR="/android/to-upload/cm11/$DEVICE"
+export UPLOAD_DIR="/var/www/html/downloads/cm11/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";

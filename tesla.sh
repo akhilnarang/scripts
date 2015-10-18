@@ -27,7 +27,7 @@ CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 DEVICE=$3
 
-export UPLOAD_DIR="/android/to-upload/Tesla-Redux/$DEVICE"
+export UPLOAD_DIR="/var/www/html/downloads/Tesla-Redux/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";

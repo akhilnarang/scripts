@@ -25,7 +25,7 @@ user=ujwalp15
 fi
 host=$(cat /etc/hostname)
 home=/home/ujwalp15/OctOS
-export UPLOAD_DIR=/android/common/OctOS/$DEVICE
+export UPLOAD_DIR=/var/www/html/downloads/OctOS/$DEVICE
 if [ ! -d "$UPLOAD_DIR" ];
 then
 mkdir -p $UPLOAD_DIR

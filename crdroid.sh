@@ -28,7 +28,7 @@ SYNC_OR_NOT=$2
 OFFICIAL_OR_NOT=$3
 DEVICE=$4
 
-export UPLOAD_DIR="/android/to-upload/crDroid/$DEVICE"
+export UPLOAD_DIR="/var/www/html/downloads/crDroid/$DEVICE"
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";

@@ -28,7 +28,7 @@ CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 DEVICE=$3
 
-export UPLOAD_DIR="/android/to-upload/temasek/$DEVICE"
+export UPLOAD_DIR="/var/www/html/downloads/temasek/$DEVICE"
 if [ ! -d "$UPLOAD_DIR" ];
 then
 mkdir -p $UPLOAD_DIR;

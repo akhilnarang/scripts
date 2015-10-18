@@ -13,7 +13,7 @@ CLEAN_OR_NOT=$1
 SYNC_OR_NOT=$2
 DEVICE=$3
 export KBUILD_BUILD_USER="SlimRemiX"
-export UPLOAD_DIR=/android/to-upload/SlimRemix/$DEVICE
+export UPLOAD_DIR=/var/www/html/downloads/SlimRemix/$DEVICE
 if [ ! -d "$UPLOAD_DIR" ];
 then
 mkdir -p $UPLOAD_DIR
