@@ -84,7 +84,20 @@ lunch cm_$DEVICE-userdebug
 echo -e "Starting ResurrectionRemix build in 5 seconds"
 sleep 5
 export WITH_LZMA_OTA=true
-export KBUILD_BUILD_USER="ResurrectionRemix"
-export KBUILD_BUILD_HOST="blazingphoenix.in"
-make -j8 bacon
+export KBUILD_BUILD_HOST=blazingphoenix.in
+case $DEVICE in
+	jfltetmo|jfltexx)
+	export KBUILD_BUILD_USER=TJSteveMX;
+	make -j10 bacon
+	bash /var/lib/jenkins/upload-scripts/esteban.sh $OUT/Resurrection*.zip
+	;;
+	sprout|sprout_b|sprout4|sprout8|huashan|bacon|baconcaf)
+	export KBUILD_BUILD_USER=akhilnarang;
+	make -j10 bacon
+	bash /var/lib/jenkins/upload-scripts/akhil.sh $OUT/Resurrection*.zip
+	;;
+	*)
+	export KBUILD_BUILD_USER="ResurrectionRemix"
+	make -j10 bacon
+esac
 cp -v $OUT/Resurrection*.zip $UPLOAD_DIR/
