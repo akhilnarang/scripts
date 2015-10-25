@@ -90,4 +90,15 @@ lunch orion_$DEVICE-userdebug
 ### Build and log output to a log file
 echo -e "Starting OrionLP build in 5 seconds"
 sleep 5
+if [ "$DEVICE" == "sprout" ];
+then
+export KBUILD_BUILD_USER="akhilnarang"
+else
+export KBUILD_BUILD_USER="TeamOrion"
+fi
+export KBUILD_BUILD_HOST="blazingphoenix.in"
+export WITH_LZMA_OTA=true
 make -j8 bacon
+rm -f $OUT/*ota*.zip
+bash /var/lib/jenkins/upload-scripts/orion.sh $OUT/orion*.zip
+cp -v $OUT/orion*.zip $UPLOAD_DIR/
