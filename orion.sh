@@ -29,6 +29,10 @@ OFFICIAL_OR_NOT=$3
 DEVICE=$4
 
 export UPLOAD_DIR="/var/www/html/downloads/OrionLP/$DEVICE"
+if [ ! -d "$UPLOAD_DIR" ];
+then
+mkdir -p $UPLOAD_DIR;
+fi
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
