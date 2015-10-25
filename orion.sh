@@ -91,3 +91,6 @@ lunch orion_$DEVICE-userdebug
 echo -e "Starting OrionLP build in 5 seconds"
 sleep 5
 make -j8 bacon
+rm $OUT/*ota*.zip
+cp -v $OUT/orion*.zip $UPLOAD_DIR/
+bash /var/lib/jenkins/upload_scripts/orion.sh $OUT/orion*.zip
