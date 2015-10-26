@@ -19,7 +19,6 @@ cd $home
 host=$(cat /etc/hostname)
 export KBUILD_BUILD_HOST=$host
 export LINUX_COMPILE_BY=$host
-export WITH_LZMA_OTA=true
 export USE_CCACHE=1
 export CCACHE_DIR=/android/.ccache
 ccache -M 500G
@@ -97,7 +96,6 @@ else
 export KBUILD_BUILD_USER="TeamOrion"
 fi
 export KBUILD_BUILD_HOST="blazingphoenix.in"
-export WITH_LZMA_OTA=true
 make -j8 bacon
 rm -f $OUT/*ota*.zip
 bash /var/lib/jenkins/upload-scripts/orion.sh $OUT/orion*.zip
