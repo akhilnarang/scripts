@@ -24,6 +24,13 @@ export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
 export CROSS_COMPILE="$THUGDIR/thuglife-sprout-toolchain/bin/arm-cortex_a7-linux-gnueabihf-"
 
+cd $THUGDIR/$DEVICE
+
+if [ ! -d "$OP_DIR" ];
+then
+mkdir -p $OP_DIR;
+fi
+
 if [ ! "$2" == "" ];
 then
 export CLEANOPTION=$2
@@ -32,6 +39,7 @@ then
 export PUSHOPTION=$3
 fi
 fi
+
 if [ "$CLEANOPTION" == "clean" ] || [ "$CLEANOPTION" == "cleanbuild" ];
 then
 make clean
@@ -42,14 +50,17 @@ mkdir -p $OP_DIR
 else
 export PUSHOPTION=$CLEANOPTION
 fi
+
 if [ -f ".config" ];
 then
 rm .config;
 fi
+
 if [ -f "$ZIMAGE" ];
 then
 rm -f $ZIMAGE;
 fi
+
 make $DEFCONFIG O=$OP_DIR
 figlet ThugLife
 START=$(date +"%s")
@@ -57,6 +68,7 @@ make $1 O=$OP_DIR
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
+
 if [ ! -f "$ZIMAGE" ];
 then
 echo -e "Kernel Compilation Failed!";
@@ -64,6 +76,7 @@ echo -e "Fix The Errors!";
 echo -e "Log is at $LOGFILE";
 exit 1;
 fi
+
 cp -v $ZIMAGE $ANYKERNEL/tools/
 cd $ANYKERNEL
 zip -r9 $FINAL_ZIP *;
