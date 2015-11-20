@@ -14,21 +14,11 @@
  #
 
 #!/bin/bash
-home=/android/common/ResurrectionRemix
-scripts=/android/scripts
+home=/android/common/rr
 export USE_CCACHE=1
 export CCACHE_DIR=/android/.ccache
 ccache -M 500G
-CLEAN_OR_NOT=$1
-SYNC_OR_NOT=$2
-DEVICE=$3
 
-export UPLOAD_DIR="/var/www/html/downloads/ResurrectionRemix/$DEVICE"
-if [ ! -d "$UPLOAD_DIR" ];
-then
-mkdir -p $UPLOAD_DIR
-fi
-cd $scripts && git pull origin blazingphoenix && cd $home
 
 echo "██████╗ ██╗      █████╗ ███████╗██╗███╗   ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗";
 echo "██╔══██╗██║     ██╔══██╗╚══███╔╝██║████╗  ██║██╔════╝ ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝";
@@ -39,42 +29,24 @@ echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚═�
 echo "                                                                                                            ";
 
 figlet ResurrectionRemix
+
+echo -e "Init and sync of RR-LP beginning!";
+mkdir -p $home
+cd $home
+repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b optimized-lollipop5.1
+curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/rr.xml
+
+repo sync -f --force-sync -j125 > /dev/null;
+repo sync -f --force-sync > /dev/null
+
 echo -e "Setting up build environment";
 . build/envsetup.sh
-
-### Check conditions for cleaning output directory
-if [ "$CLEAN_OR_NOT" == "1" ];
-then
-echo -e "Cleaning out directory"
-make -j8 clean > /dev/null
-echo -e "Out directory cleaned"
-elif [ "$CLEAN_OR_NOT" == "2" ];
-then
-echo -e "Making out directory dirty"
-make -j8 dirty > /dev/null
-echo -e "Deleted old zips, changelogs, build.props"
-else
-echo -e "Out directory untouched!"
-fi
-
-### Check conditions for repo sync
-if [ "$SYNC_OR_NOT" == "1" ];
-then
-echo -e "Running repo sync"
-rm -rf .repo/local_manifests/*.xml
-curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/rr.xml
-rm -rf bionic
-repo sync -cfj8 --force-sync --no-clone-bundle
-echo -e "Repo sync complete"
-else
-echo -e "Not syncing!"
-fi
-
-if [ "$DEVICE" == "sprout" ] || [ "$DEVICE" == "sprout_b" ];
-then
 rm -rf bionic
 git clone git://github.com/ResurrectionRemix/android_bionic -b sprout bionic
-fi
+
+make -j10 clobber
+for DEVICE in sprout sprout_b jfltexx jfltetmo huashan
+do
 
 ### Lunching device
 echo -e "Lunching $DEVICE"
@@ -84,7 +56,8 @@ lunch cm_$DEVICE-userdebug
 echo -e "Starting ResurrectionRemix build in 5 seconds"
 sleep 5
 export WITH_LZMA_OTA=true
-export KBUILD_BUILD_HOST=blazingphoenix.in
+export KBUILD_BUILD_HOST=resurrectionremix-lp
+export LOCALVERSION="~BlazingPhoenix"
 case $DEVICE in
 	jfltetmo|jfltexx)
 	export KBUILD_BUILD_USER=TJSteveMX;
@@ -101,3 +74,4 @@ case $DEVICE in
 	make -j10 bacon
 esac
 cp -v $OUT/Resurrection*.zip $UPLOAD_DIR/
+done
