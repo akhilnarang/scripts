@@ -43,12 +43,12 @@ rm -rf bionic
 git clone git://github.com/ResurrectionRemix/android_bionic -b sprout bionic
 
 make -j10 clobber
-for DEVICE in sprout sprout_b jfltexx jfltetmo
+for DEVICE in jfltexx jfltetmo
 do
 export UPLOAD_DIR=/var/www/html/downloads/ResurrectionRemix/$DEVICE
-mkdir -p $UPLOAD_DIR > /dev/null
 ### Lunching device
 echo -e "Lunching $DEVICE"
+rm -rf device/samsung/$DEVICE/cm.dependencies
 lunch cm_$DEVICE-userdebug
 
 ### Build and log output to a log file
@@ -58,21 +58,9 @@ export WITH_LZMA_OTA=true
 export KBUILD_BUILD_HOST=resurrectionremix-lp
 export LOCALVERSION="~BlazingPhoenix"
 touch $DEVICE-log
-case $DEVICE in
-	jfltetmo|jfltexx)
 	export KBUILD_BUILD_USER=TJSteveMX;
 	make -j10 bacon >> $DEVICE-log 2>&1
 	bash /var/lib/jenkins/upload-scripts/esteban.sh $OUT/Resurrection*.zip
-	;;
-	sprout|sprout_b|sprout4|sprout8|huashan|bacon|baconcaf)
-	export KBUILD_BUILD_USER=akhilnarang;
-	make -j10 bacon >> $DEVICE-log 2>&1
-	bash /var/lib/jenkins/upload-scripts/akhil.sh $OUT/Resurrection*.zip
-	;;
-	*)
-	export KBUILD_BUILD_USER="ResurrectionRemix"
-	make -j10 bacon >> $DEVICE-log 2>&1
-esac
 echo -e $DEVICE build done :D
 cp -v out/target/product/$DEVICE/Resurrection*.zip $UPLOAD_DIR/
 done
