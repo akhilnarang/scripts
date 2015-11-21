@@ -30,7 +30,7 @@ echo "╚═════╝ ╚══════╝╚═╝  ╚═╝╚═�
 echo "                                                                                                            ";
 
 figlet ResurrectionRemix
-
+cd $home
 curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/rr.xml
 touch synclog;
 echo -e "Fetched Local manifest\nSyncing now!";
@@ -43,7 +43,7 @@ rm -rf bionic
 git clone git://github.com/ResurrectionRemix/android_bionic -b sprout bionic
 
 make -j10 clobber
-for DEVICE in sprout sprout_b jfltexx jfltetmo huashan
+for DEVICE in sprout sprout_b jfltexx jfltetmo
 do
 export UPLOAD_DIR=/var/www/html/downloads/ResurrectionRemix/$DEVICE
 mkdir -p $UPLOAD_DIR > /dev/null
