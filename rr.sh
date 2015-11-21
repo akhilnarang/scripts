@@ -31,12 +31,6 @@ echo "                                                                          
 
 figlet ResurrectionRemix
 
-echo -e "Init and sync of RR-LP beginning!";
-rm -rf $home
-mkdir -p $home
-cd $home
-repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b optimized-lollipop5.1
-echo -e "Repo Init Done";
 curl --create-dirs -L -o .repo/local_manifests/roomservice.xml -O -L https://raw.githubusercontent.com/anik1199/blazingphoenix/master/rr.xml
 touch synclog;
 echo -e "Fetched Local manifest\nSyncing now!";
@@ -67,17 +61,17 @@ touch $DEVICE-log
 case $DEVICE in
 	jfltetmo|jfltexx)
 	export KBUILD_BUILD_USER=TJSteveMX;
-	make -j10 bacon 2&>1 >> $DEVICE-log 2>&1
+	make -j10 bacon >> $DEVICE-log 2>&1
 	bash /var/lib/jenkins/upload-scripts/esteban.sh $OUT/Resurrection*.zip
 	;;
 	sprout|sprout_b|sprout4|sprout8|huashan|bacon|baconcaf)
 	export KBUILD_BUILD_USER=akhilnarang;
-	make -j10 bacon 2&>1 >> $DEVICE-log 2>&1
+	make -j10 bacon >> $DEVICE-log 2>&1
 	bash /var/lib/jenkins/upload-scripts/akhil.sh $OUT/Resurrection*.zip
 	;;
 	*)
 	export KBUILD_BUILD_USER="ResurrectionRemix"
-	make -j10 bacon 2&>1 >> $DEVICE-log 2>&1
+	make -j10 bacon >> $DEVICE-log 2>&1
 esac
 echo -e $DEVICE build done :D
 cp -v out/target/product/$DEVICE/Resurrection*.zip $UPLOAD_DIR/
