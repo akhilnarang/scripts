@@ -1,35 +1,37 @@
- #!/bin/bash
- #
- # Copyright � 2015, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
- # Build Script For ThugLife Kernel
- #
- # This software is licensed under the terms of the GNU General Public
- # License version 2, as published by the Free Software Foundation, and
- # may be copied, distributed, and modified under those terms.
- #
- # This program is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # Please maintain this if you use this script or any part of it
- #
+#!/bin/bash
+#
+# Copyright � 2015, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
+# Build Script For ThugLife Kernel
+#
+# This software is licensed under the terms of the GNU General Public
+# License version 2, as published by the Free Software Foundation, and
+# may be copied, distributed, and modified under those terms.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Please maintain this if you use this script or any part of it
+#
 
-export DEVICE="sprout";
+export DEVICE="bacon";
 export OP_DIR=/tmp/$DEVICE~kernel
 export ZIMAGE="$OP_DIR/arch/arm/boot/zImage"
-export THUGVERSION="ThugLife~1.3";
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
+export THUGVERSION="ThugLife~1.0~CAF-Bacon";
 export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/thuglife-sprout-toolchain/bin/arm-cortex_a7-linux-gnueabihf-"
-
-cd $THUGDIR/$DEVICE
+export CROSS_COMPILE="$THUGDIR/../arm-eabi-5.2-cortex-a15/bin/arm-eabi-"
 
 if [ ! -d "$OP_DIR" ];
 then
 mkdir -p $OP_DIR;
 fi
+
+cd $THUGDIR/$DEVICE
+
+make mrproper
 
 if [ ! "$2" == "" ];
 then
@@ -42,11 +44,9 @@ fi
 
 if [ "$CLEANOPTION" == "clean" ] || [ "$CLEANOPTION" == "cleanbuild" ];
 then
-make clean
-make mrproper
+make clean mrproper
+make clean mrproper O=$OP_DIR
 rm -f include/linux/autoconf.h
-rm -rf $OP_DIR
-mkdir -p $OP_DIR
 else
 export PUSHOPTION=$CLEANOPTION
 fi
@@ -73,6 +73,8 @@ if [ ! -f "$ZIMAGE" ];
 then
 echo -e "Kernel Compilation Failed!";
 echo -e "Fix The Errors!";
+$THUGDIR/$DEVICE/anykernel/tools/dtbToolCM -2 -o $OP_DIR/arch/arm/boot/dt.img -s 2048 -p $OP_DIR/scripts/dtc/ $OP_DIR/arch/arm/boot/
+
 exit 1;
 fi
 
