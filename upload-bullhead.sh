@@ -16,8 +16,7 @@
 #
 
 export LOCAL_FILES="$THUGDIR/files/bullhead/";
-export LOGFILE=$(date +%Y%d%m).log;
-echo -e "Starting at $(date)"; | tee $LOGFILE
+echo -e "Starting at $(date)"
 echo -e "Sync bullhead files with SourceForge.net?";
 echo -e "Local files are :"
 ls $LOCAL_FILES;
@@ -25,7 +24,7 @@ echo -e "Enter 1 to upload, anything else not to";
 read ch;
 if [ "$ch" == "1" ];
 then
-rsync -av -e ssh $LOCAL_FILES/ akhilnarang@frs.sourceforge.net:/home/frs/project/thuglife/bullhead/ 2>&1 | tee $LOGFILE
+rsync -av -e ssh $LOCAL_FILES/ akhilnarang@frs.sourceforge.net:/home/frs/project/thuglife/bullhead/
 fi
 
 echo -e "Sync bullhead files from SourceForge.net here?";
@@ -33,7 +32,7 @@ echo -e "Enter 1 to download, anything else to not";
 read ch;
 if [ "$ch" == "1" ];
 then
-rsync -av -e ssh akhilnarang@frs.sourceforge.net:/home/frs/project/thuglife/bullhead/ $LOCAL_FILES/ 2>&1 | tee $LOGFILE
+rsync -av -e ssh akhilnarang@frs.sourceforge.net:/home/frs/project/thuglife/bullhead/ $LOCAL_FILES/
 fi
 
-echo -e "End of script" | tee $LOGFILE
+echo -e "End of script"
