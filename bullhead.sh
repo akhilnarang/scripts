@@ -15,11 +15,11 @@
 # Please maintain this if you use this script or any part of it
 #
 
-export DEVICE="bacon";
+export DEVICE="bullhead";
 export OP_DIR=/tmp/$DEVICE~kernel
 export ZIMAGE="$OP_DIR/arch/arm/boot/zImage"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
-export THUGVERSION="ThugLife~1.0~CAF-Bacon";
+export THUGVERSION="ThugLife~1.0~CAF-bullhead";
 export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
 export CROSS_COMPILE="$THUGDIR/../arm-eabi-5.2-cortex-a15/bin/arm-eabi-"
