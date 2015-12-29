@@ -42,7 +42,7 @@ else
 echo -e "Build Succesfull Enjoy Living the ThugLife!"
 fi
 
-cp -v $IMAGE $ANYKERNEL/zImage
+cp -v $IMAGE $ANYKERNEL/kernel/zImage
 cd $ANYKERNEL
 zip -r9 $FINAL_ZIP *;
 cd ..

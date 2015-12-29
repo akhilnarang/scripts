@@ -22,7 +22,7 @@ export THUGVERSION="ThugLife~1.3";
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/thuglife-sprout-toolchain/bin/arm-cortex_a7-linux-gnueabihf-"
+export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
 
 cd $THUGDIR/$DEVICE
 
