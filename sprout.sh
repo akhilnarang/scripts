@@ -24,7 +24,10 @@ export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
 
-cd $THUGDIR/$DEVICE
+alias cout='cd $THUGDIR/files/$DEVICE'
+alias croot='cd $THUGDIR/$DEVICE'
+
+croot
 
 if [ ! -d "$OP_DIR" ];
 then
