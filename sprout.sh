@@ -24,10 +24,7 @@ export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-eabi-"
 
-alias cout='cd $THUGDIR/files/$DEVICE'
-alias croot='cd $THUGDIR/$DEVICE'
-
-croot
+cd $THUGDIR/$DEVICE
 
 if [ ! -d "$OP_DIR" ];
 then
