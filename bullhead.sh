@@ -24,10 +24,7 @@ export DEFCONFIG="thug_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-"
 
-alias cout='cd $THUGDIR/files/$DEVICE'
-alias croot='cd $THUGDIR/$DEVICE'
-
-croot
+cd $THUGDIR/$DEVICE
 
 make $DEFCONFIG
 figlet ThugLife
