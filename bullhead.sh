@@ -38,10 +38,8 @@ if [ ! -f "$IMAGE" ];
 then
 echo -e "Kernel Compilation Failed!";
 echo -e "Fix The Errors!";
-exit 1;
 else
 echo -e "Build Succesfull Enjoy Living the ThugLife!"
-fi
 
 cp -v $IMAGE $ANYKERNEL/kernel/zImage
 cd $ANYKERNEL
@@ -58,7 +56,8 @@ adb kill-server
 adb start-server
 adb wait-for-device
 adb push $FINAL_ZIP /sdcard/
-fi
+fi # Checking $PUSHOPTION
 else
 echo -e "Zip Creation Failed =(";
-fi
+fi # $FINAL_ZIP found
+fi # no $IMAGE found
