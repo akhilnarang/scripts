@@ -20,11 +20,11 @@ sudo chown root /etc/udev/rules.d/51-android.rules
 sudo service udev restart
 adb kill-server
 sudo killall adb
-echo Cloning LZMA repo
-git clone https://github.com/peterjc/backports.lzma /tmp/backports.lzma
-cd /tmp/backports.lzma
-sudo python2 setup.py install
-python2 test/test_lzma.py
-sudo rm -rf /tmp/backports.lzma
-echo LZMA compression for ROMs enabled
-echo "WITH_LZMA_OTA=true" >> ~/.bashrc
+#echo Cloning LZMA repo
+#git clone https://github.com/peterjc/backports.lzma /tmp/backports.lzma
+#cd /tmp/backports.lzma
+#sudo python2 setup.py install
+#python2 test/test_lzma.py
+#rm -rf /tmp/backports.lzma
+#echo LZMA compression for ROMs enabled
+#echo "WITH_LZMA_OTA=true" >> ~/.bashrc
