@@ -18,11 +18,11 @@
 export DEVICE="sprout";
 export OP_DIR=/tmp/$DEVICE~kernel
 export ZIMAGE="$OP_DIR/arch/arm/boot/zImage"
-export THUGVERSION="ThugLife~1.3";
+export THUGVERSION="ThugLife~1.4~$(date +%Y%m%d)";
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
+export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-eabi-"
 
 alias cout='cd $THUGDIR/files/$DEVICE'
 alias croot='cd $THUGDIR/$DEVICE'
@@ -86,6 +86,7 @@ cd ..
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
+cp -v $FINAL_ZIP /var/www/html/ThugLife/sprout
 if [ ! "$PUSHOPTION" == "" ];
 then
 echo -e "Pushing $FINAL_ZIP to /sdcard";
