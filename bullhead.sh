@@ -22,7 +22,7 @@ export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export THUGVERSION="ThugLife~1.0~bullhead~$(date +%Y%m%d)";
 export DEFCONFIG="thug_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-"
+export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-linux-android-"
 
 cd $THUGDIR/$DEVICE
 
