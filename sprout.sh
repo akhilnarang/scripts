@@ -1,6 +1,6 @@
  #!/bin/bash
  #
- # Copyright � 2015, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
+ # Copyright � 2015, Akhil Narang "akhilnarang" <akhil.narang@protonmail.com>
  # Build Script For ThugLife Kernel
  #
  # This software is licensed under the terms of the GNU General Public
@@ -22,7 +22,7 @@ export THUGVERSION="ThugLife~1.4~$(date +%Y%m%d)";
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG=$DEVICE"_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-eabi-"
+export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
 
 cd $THUGDIR/$DEVICE
 
