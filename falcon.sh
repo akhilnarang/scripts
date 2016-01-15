@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhil.narang@protonmail.com>
+# Copyright � 2016, Akhil Narang "akhilnarang" <akhil.narang@protonmail.com>
 # Build Script For ThugLife Kernel
 #
 # This software is licensed under the terms of the GNU General Public
@@ -15,14 +15,15 @@
 # Please maintain this if you use this script or any part of it
 #
 
-export DEVICE="bullhead";
-export ARCH="arm64"
-export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
+export DEVICE="falcon";
+export ARCH="arm"
+export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
-export THUGVERSION="ThugLife~1.0~bullhead~$(date +%Y%m%d)";
+export THUGVERSION="ThugLife~1.0~falcon~$(date +%Y%m%d)";
 export DEFCONFIG="thug_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-linux-android-"
+export PREFIX="arm-eabi-"
+export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/$PREFIX"
 
 cd $THUGDIR/$DEVICE
 

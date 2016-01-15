@@ -1,6 +1,6 @@
  #!/bin/bash
  #
- # Copyright � 2015, Akhil Narang "akhilnarang" <akhil.narang@protonmail.com>
+ # Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhil.narang@protonmail.com>
  # Build Script For ThugLife Kernel
  #
  # This software is licensed under the terms of the GNU General Public
