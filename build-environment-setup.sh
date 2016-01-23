@@ -11,6 +11,8 @@ libcap-dev autoconf libgmp-dev build-essential gcc-multilib g++-multilib pkg-con
 liblzma* w3m phablet-tools android-tools-adb
 echo Dependencies have been installed
 echo repo has been Downloaded!
+if [ ! "$(which adb)" == "" ];
+then
 echo Settings up USB Ports
 sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/snowdream/51-android/master/51-android.rules
 sudo chmod 644   /etc/udev/rules.d/51-android.rules
@@ -18,6 +20,7 @@ sudo chown root /etc/udev/rules.d/51-android.rules
 sudo service udev restart
 adb kill-server
 sudo killall adb
+fi
 #echo Cloning LZMA repo
 #git clone https://github.com/peterjc/backports.lzma /tmp/backports.lzma
 #cd /tmp/backports.lzma
