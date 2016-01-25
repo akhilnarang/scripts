@@ -26,6 +26,8 @@ export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-linux-android-"
 
 cd $THUGDIR/$DEVICE
 
+rm -f $IMAGE
+
 make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
