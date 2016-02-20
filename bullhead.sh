@@ -21,8 +21,14 @@ export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export THUGVERSION="ThugLife~1.0~bullhead~$(date +%Y%m%d)";
 export DEFCONFIG="thug_defconfig";
-export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
+export ZIPS_DIR="$THUGDIR/files/$DEVICE"
+export FINAL_ZIP="$ZIPS_DIR/$THUGVERSION.zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-linux-android-"
+
+if [ ! -d "$ZIPS_DIR" ];
+then
+mkdir -p $ZIPS_DIR
+fi
 
 cd $THUGDIR/$DEVICE
 
@@ -50,7 +56,6 @@ cd ..
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
-cp -v $FINAL_ZIP /var/www/html/ThugLife/$DEVICE/
 if [ ! "$PUSHOPTION" == "" ];
 then
 echo -e "Pushing $FINAL_ZIP to /sdcard";
