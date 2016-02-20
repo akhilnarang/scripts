@@ -20,9 +20,9 @@ export ARCH="arm"
 export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export THUGVERSION="ThugLife~1.0~falcon~$(date +%Y%m%d)";
-export DEFCONFIG="thug_defconfig";
+export DEFCONFIG="falcon_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
-export PREFIX="arm-eabi-"
+export PREFIX="arm-linux-androideabi-"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/$PREFIX"
 
 cd $THUGDIR/$DEVICE
@@ -49,7 +49,6 @@ cd ..
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
-cp -v $FINAL_ZIP /var/www/html/ThugLife/$DEVICE/
 if [ ! "$PUSHOPTION" == "" ];
 then
 echo -e "Pushing $FINAL_ZIP to /sdcard";
