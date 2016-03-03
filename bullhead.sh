@@ -19,11 +19,10 @@ export DEVICE="bullhead";
 export ARCH="arm64"
 export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
-export THUGVERSION="ThugLife~1.0~bullhead~$(date +%Y%m%d)";
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="$THUGDIR/files/$DEVICE"
-export FINAL_ZIP="$ZIPS_DIR/$THUGVERSION.zip"
-export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/aarch64-linux-android-"
+export FINAL_ZIP="$ZIPS_DIR/thuglife-bullhead-$(date +%Y%m%d).zip"
+export CROSS_COMPILE="/data/ubertc/out/aarch64-linux-android-5.3-kernel/bin/aarch64-linux-android-"
 
 if [ ! -d "$ZIPS_DIR" ];
 then
