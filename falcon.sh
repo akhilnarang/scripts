@@ -21,15 +21,15 @@ export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="falcon_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/thuglife-falcon-$(date +%Y%m%d).zip"
-export PREFIX="arm-linux-androideabi-"
-export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/$PREFIX"
+export CROSS_COMPILE="/data/ubertc/out/arm-linux-androideabi-5.3/bin/arm-linux-androideabi-"
 
-cd $THUGDIR/$DEVICE
+cd /data/ThugLife/falcon
 rm -f $IMAGE
+make mrproper
 make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
-make -j$(nproc)
+make -j16
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
