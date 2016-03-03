@@ -25,7 +25,7 @@ export PREFIX="arm-linux-androideabi-"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/$PREFIX"
 
 cd $THUGDIR/$DEVICE
-
+rm -f $IMAGE
 make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
