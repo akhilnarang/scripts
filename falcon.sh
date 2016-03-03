@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright � 2016, Akhil Narang "akhilnarang" <akhil.narang@protonmail.com>
+# Copyright � 2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
 # Build Script For ThugLife Kernel
 #
 # This software is licensed under the terms of the GNU General Public
@@ -19,9 +19,8 @@ export DEVICE="falcon";
 export ARCH="arm"
 export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
-export THUGVERSION="ThugLife~1.0~falcon~$(date +%Y%m%d)";
 export DEFCONFIG="falcon_defconfig";
-export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
+export FINAL_ZIP="$THUGDIR/files/$DEVICE/thuglife-falcon-$(date +%Y%m%d).zip"
 export PREFIX="arm-linux-androideabi-"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/$PREFIX"
 
@@ -30,7 +29,7 @@ cd $THUGDIR/$DEVICE
 make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
-make $1
+make -j$(nproc)
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
