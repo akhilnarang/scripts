@@ -36,7 +36,7 @@ rm -f $IMAGE
 make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
-make $1
+make -j$(nproc)
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
