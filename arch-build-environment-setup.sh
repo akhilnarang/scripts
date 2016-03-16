@@ -8,7 +8,14 @@ sudo pacman -S gcc git gnupg flex bison gperf sdl wxgtk \
 squashfs-tools curl ncurses zlib schedtool perl-switch zip \
 unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync
 echo "Enabling multilib if not already enabled!"
-sudo sed -i -e 's/\#\[multilib\]/\[multilib\]/g' /etc/pacman.conf
+# Old Bad Logic
+# sudo sed -i -e 's/\#\[multilib\]/\[multilib\]/g' /etc/pacman.conf
+if [ $(grep "\#\[multilib\]" /etc/pacman.conf) ]; then
+sudo echo "
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+" >> /etc/pacman.conf
+fi
 sudo pacman -Syu
 # Installing 64 bit needed packages
 sudo pacman -S gcc-multilib lib32-zlib lib32-ncurses lib32-readline
