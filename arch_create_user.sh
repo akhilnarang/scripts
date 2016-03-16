@@ -1,5 +1,6 @@
 # username, user_ID
-useradd "$1"
-usermod -g builders "$1"
-mkhomedir_helper "$1"
-passwd "$1"
+username="$1"
+useradd "${username}"
+mkhomedir_helper "${username}"
+passwd "${username}"
+chage -d 0 "${username}"
