@@ -4,7 +4,7 @@ echo Installing Dependencies!
 # Update
 sudo pacman -Syu
 # Install needed packages
-sudo pacman -S gcc git gnupg flex bison gperf sdl wxgtk \
+sudo pacman -S gcc git gnupg flex bison gperf sdl wxgtk bash-completion \
 squashfs-tools curl ncurses zlib schedtool perl-switch zip \
 unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync
 echo "Enabling multilib if not already enabled!"
