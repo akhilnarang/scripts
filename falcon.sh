@@ -23,7 +23,7 @@ export DEFCONFIG="falcon_defconfig";
 export FINAL_ZIP="$THUGDIR/files/$DEVICE/thuglife-falcon-$(date +%Y%m%d).zip"
 export CROSS_COMPILE="$THUGDIR/falcon-toolchain/bin/arm-linux-androideabi-"
 
-cd /data/ThugLife/falcon
+cd $THUGDIR/falcon
 rm -f $IMAGE
 make mrproper
 make $DEFCONFIG

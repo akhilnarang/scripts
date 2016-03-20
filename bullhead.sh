@@ -22,7 +22,7 @@ export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="$THUGDIR/files/$DEVICE"
 export FINAL_ZIP="$ZIPS_DIR/thuglife-bullhead-$(date +%Y%m%d).zip"
-export CROSS_COMPILE="/data/ubertc/out/aarch64-linux-android-5.3-kernel/bin/aarch64-linux-android-"
+export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-linux-android-"
 
 if [ ! -d "$ZIPS_DIR" ];
 then
@@ -36,7 +36,7 @@ rm -f $IMAGE
 make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
-make -j$(nproc)
+make -j16
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
