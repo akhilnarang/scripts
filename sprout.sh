@@ -18,7 +18,7 @@
 export DEVICE="sprout";
 export ZIMAGE="${THUGDIR}/${DEVICE}/arch/arm/boot/zImage"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
-export DEFCONFIG=$DEVICE"_defconfig";
+export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="${THUGDIR}/files/${DEVICE}"
 export FINAL_ZIP="${ZIPS_DIR}/thuglife-${DEVICE}-$(date +%Y%m%d).zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
