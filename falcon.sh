@@ -24,7 +24,7 @@ export ZIP_DIR="${THUGDIR}/files/${DEVICE}"
 export FINAL_ZIP="${ZIP_DIR}/thuglife-falcon-$(date +%Y%m%d).zip"
 export CROSS_COMPILE="$THUGDIR/falcon-toolchain/bin/arm-linux-androideabi-"
 
-[ ! -d $ZIP_DIR ] || mkdir -p $ZIP_DIR
+[ -d $ZIP_DIR ] || mkdir -p $ZIP_DIR
 
 cd $THUGDIR/falcon
 rm -f $IMAGE

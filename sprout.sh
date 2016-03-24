@@ -16,40 +16,16 @@
  #
 
 export DEVICE="sprout";
-export OP_DIR=/tmp/$DEVICE~kernel
-export ZIMAGE="$OP_DIR/arch/arm/boot/zImage"
-export THUGVERSION="ThugLife~1.4~$(date +%Y%m%d)";
+export ZIMAGE="${THUGDIR}/${DEVICE}/arch/arm/boot/zImage"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG=$DEVICE"_defconfig";
-export FINAL_ZIP="$THUGDIR/files/$DEVICE/$THUGVERSION.zip"
+export ZIPS_DIR="${THUGDIR}/files/${DEVICE}"
+export FINAL_ZIP="${ZIPS_DIR}/thuglife-${DEVICE}-$(date +%Y%m%d).zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
 
 cd $THUGDIR/$DEVICE
 
-if [ ! -d "$OP_DIR" ];
-then
-mkdir -p $OP_DIR;
-fi
-
-if [ ! "$2" == "" ];
-then
-export CLEANOPTION=$2
-if [ ! "$3" == "" ];
-then
-export PUSHOPTION=$3
-fi
-fi
-
-if [ "$CLEANOPTION" == "clean" ] || [ "$CLEANOPTION" == "cleanbuild" ];
-then
-make clean
-make mrproper
-rm -f include/linux/autoconf.h
-rm -rf $OP_DIR
-mkdir -p $OP_DIR
-else
-export PUSHOPTION=$CLEANOPTION
-fi
+[ -d "${ZIPS_DIR}" ] || mkdir -p ${ZIPS_DIR}
 
 if [ -f ".config" ];
 then
@@ -61,10 +37,10 @@ then
 rm -f $ZIMAGE;
 fi
 
-make $DEFCONFIG O=$OP_DIR
+make $DEFCONFIG
 figlet ThugLife
 START=$(date +"%s")
-make $1 O=$OP_DIR
+make -j16
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
@@ -80,18 +56,3 @@ cp -v $ZIMAGE $ANYKERNEL/tools/
 cd $ANYKERNEL
 zip -r9 $FINAL_ZIP *;
 cd ..
-if [ -f "$FINAL_ZIP" ];
-then
-echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
-cp -v $FINAL_ZIP /var/www/html/ThugLife/sprout
-if [ ! "$PUSHOPTION" == "" ];
-then
-echo -e "Pushing $FINAL_ZIP to /sdcard";
-adb kill-server
-adb start-server
-adb wait-for-device
-adb push $FINAL_ZIP /sdcard/
-fi
-else
-echo -e "Zip Creation Failed =(";
-fi
