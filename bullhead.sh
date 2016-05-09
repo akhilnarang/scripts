@@ -21,8 +21,15 @@ export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="$THUGDIR/files/$DEVICE"
-export FINAL_ZIP="$ZIPS_DIR/thuglife-bullhead-$(date +%Y%m%d).zip"
+export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
+export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M)-$(hostname).zip"
+export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
+if [ "$1" == "sm" ];
+then
+export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-"
+else
 export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-linux-android-"
+fi
 
 if [ ! -d "$ZIPS_DIR" ];
 then
@@ -54,7 +61,7 @@ zip -r9 $FINAL_ZIP *;
 cd ..
 if [ -f "$FINAL_ZIP" ];
 then
-echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
+echo -e "$ZIPNAME can be found at $FINAL_ZIP";
 if [ ! "$PUSHOPTION" == "" ];
 then
 echo -e "Pushing $FINAL_ZIP to /sdcard";
