@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright � 2015, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
+# Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
 # rsync Script For ThugLife Kernel
 #
 # This software is licensed under the terms of the GNU General Public
@@ -16,6 +16,7 @@
 #
 
 export LOCAL_FILES="$THUGDIR/files/bullhead/";
+[[ -d "${LOCAL_FILES}" ]] || mkdir -p ${LOCAL_FILES}
 echo -e "Starting at $(date)"
 echo -e "Sync bullhead files with SourceForge.net?";
 echo -e "Local files are :"
