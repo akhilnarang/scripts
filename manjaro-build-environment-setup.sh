@@ -22,7 +22,7 @@ sudo pacman -Syu
 # Install needed packages
 sudo pacman -S gcc git gnupg flex bison gperf sdl wxgtk bash-completion \
 squashfs-tools curl ncurses zlib schedtool perl-switch zip \
-unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync vi
+unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync vi ncftp
 # Installing 64 bit needed packages
 sudo pacman -S gcc-multilib lib32-zlib lib32-ncurses lib32-readline
 # yaourt for easy installing from AUR

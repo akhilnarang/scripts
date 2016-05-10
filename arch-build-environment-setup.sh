@@ -21,7 +21,7 @@ sudo pacman -Syu
 # Install needed packages
 sudo pacman -S gcc git gnupg flex bison gperf sdl wxgtk bash-completion \
 squashfs-tools curl ncurses zlib schedtool perl-switch zip \
-unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync
+unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync ncftp
 echo "Enabling multilib if not already enabled!"
 # Old Bad Logic
 # sudo sed -i -e 's/\#\[multilib\]/\[multilib\]/g' /etc/pacman.conf
