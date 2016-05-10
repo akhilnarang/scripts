@@ -1,4 +1,20 @@
 #!/bin/bash
+#
+# Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
+# Build Script For ThugLife Kernel
+#
+# This software is licensed under the terms of the GNU General Public
+# License version 2, as published by the Free Software Foundation, and
+# may be copied, distributed, and modified under those terms.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Please maintain this if you use this script or any part of it
+#
+
 clear
 echo Installing Dependencies!
 sudo apt update
@@ -13,7 +29,7 @@ echo Dependencies have been installed
 echo repo has been Downloaded!
 if [ ! "$(which adb)" == "" ];
 then
-echo Settings up USB Ports
+echo Setting up USB Ports
 sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/snowdream/51-android/master/51-android.rules
 sudo chmod 644   /etc/udev/rules.d/51-android.rules
 sudo chown root /etc/udev/rules.d/51-android.rules

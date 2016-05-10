@@ -1,4 +1,20 @@
 #!/bin/bash
+#
+# Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
+# Build Script For ThugLife Kernel
+#
+# This software is licensed under the terms of the GNU General Public
+# License version 2, as published by the Free Software Foundation, and
+# may be copied, distributed, and modified under those terms.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Please maintain this if you use this script or any part of it
+#
+
 clear
 echo Installing Dependencies!
 # Update
@@ -25,10 +41,16 @@ virtualenv2 <folder name>
 source <folder name>/bin/activate
 export LC_ALL=C"
 
-echo "If you wanna use nano as your git editor (for commit messages, interactive rebase, etc, enter 1."
+echo "If you wanna use nano as your git editor (for commit messages, interactive rebase, etc, enter nano."
 echo "Anything else will result in the default i.e. vim being used"
+echo "Your current editor is $(git config core.editor)"
+
 read giteditor
-if [[ "$giteditor" == "1" ]];
+if [ "$giteditor" == "nano" ];
 then
 git config --global core.editor nano
+else
+git config --global core.editor vi
 fi
+
+echo "Your git editor is now $(git config core.editor)"
