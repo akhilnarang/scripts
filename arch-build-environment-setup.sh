@@ -39,3 +39,12 @@ echo "
 virtualenv2 venv
 source venv/bin/activate
 export LC_ALL=C"
+
+echo "If you wanna use nano as your git editor (for commit messages, interactive rebase, etc, enter 1."
+echo "Anything else will result in the default i.e. vim being used"
+read giteditor
+if [[ "$giteditor" == "1" ]];
+then
+git config --global core.editor nano
+fi
+
