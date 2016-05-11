@@ -21,8 +21,15 @@ export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="falcon_defconfig";
 export ZIP_DIR="${THUGDIR}/files/${DEVICE}"
-export FINAL_ZIP="${ZIP_DIR}/thuglife-falcon-$(date +%Y%m%d).zip"
-export CROSS_COMPILE="$THUGDIR/falcon-toolchain/bin/arm-linux-androideabi-"
+export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/falcon/Makefile | awk '{print $3}')";
+export ZIPNAME="thuglife-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M)-$(hostname).zip"
+export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
+if [ "$1" == "eabi" ];
+then
+export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/arm-eabi-"
+else
+export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/arm-linux-androideabi-"
+fi
 
 [ -d $ZIP_DIR ] || mkdir -p $ZIP_DIR
 
