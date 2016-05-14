@@ -22,7 +22,7 @@ export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="falcon_defconfig";
 export ZIP_DIR="${THUGDIR}/files/${DEVICE}"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/falcon/Makefile | awk '{print $3}')";
-export ZIPNAME="thuglife-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M)-$(hostname).zip"
+export ZIPNAME="thuglife-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 if [ "$1" == "eabi" ];
 then

@@ -22,7 +22,7 @@ export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="$THUGDIR/files/$DEVICE"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
-export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M)-$(hostname).zip"
+export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
 if [ "$1" == "sm" ];
 then
