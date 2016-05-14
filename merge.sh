@@ -4,7 +4,7 @@ function usage()
 {
 echo -e "Usage:"
 echo -e "";
-echo -e "./merge.sh <bullhead|falcon|sprout>"
+echo -e "$0 <bullhead|falcon|sprout>"
 echo -e "";
 exit 1;
 }
