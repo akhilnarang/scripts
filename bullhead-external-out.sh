@@ -15,16 +15,17 @@
 # Please maintain this if you use this script or any part of it
 #
 
+export EXT_OUT_DIR="/run/media/akhil/akhil-mint/out-thug/bullhead"
 export DEVICE="bullhead";
 export ARCH="arm64"
-export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
+export IMAGE="${EXT_OUT_DIR}/arch/$ARCH/boot/Image.gz-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="$THUGDIR/files/$DEVICE"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
 export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
-alias make='make O=/run/media/akhil/akhil-mint/out-thug/bullhead'
+export MAKE_ARGS="-C ${THUGDIR}/${DEVICE} -j16 O=${EXT_OUT_DIR}"
 if [ "$1" == "sm" ];
 then
 export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-"
@@ -41,10 +42,10 @@ cd $THUGDIR/$DEVICE
 
 rm -f $IMAGE
 
-make $DEFCONFIG
+make ${DEFCONFIG} O=${EXT_OUT_DIR}
 figlet ThugLife
 START=$(date +"%s")
-make -j16
+make ${MAKE_ARGS}
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
@@ -63,15 +64,8 @@ cd ..
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$ZIPNAME can be found at $FINAL_ZIP";
-if [ ! "$PUSHOPTION" == "" ];
-then
-echo -e "Pushing $FINAL_ZIP to /sdcard";
-adb kill-server
-adb start-server
-adb wait-for-device
-adb push $FINAL_ZIP /sdcard/
-fi # Checking $PUSHOPTION
 else
 echo -e "Zip Creation Failed =(";
 fi # $FINAL_ZIP found
 fi # no $IMAGE found
+
