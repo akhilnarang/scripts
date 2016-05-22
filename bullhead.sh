@@ -24,7 +24,8 @@ export ZIPS_DIR="$THUGDIR/files/$DEVICE"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
 export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
-if [ "$1" == "sm" ];
+
+if [[ "$1" =~ "sm" ]];
 then
 export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-"
 else
@@ -39,6 +40,16 @@ fi
 cd $THUGDIR/$DEVICE
 
 rm -f $IMAGE
+
+if [[ "$1" =~ "mrproper" ]];
+then
+make mrproper
+fi
+
+if [[ "$1" =~ "clean" ]];
+then
+make clean
+fi
 
 make $DEFCONFIG
 figlet ThugLife
@@ -62,14 +73,6 @@ cd ..
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$ZIPNAME can be found at $FINAL_ZIP";
-if [ ! "$PUSHOPTION" == "" ];
-then
-echo -e "Pushing $FINAL_ZIP to /sdcard";
-adb kill-server
-adb start-server
-adb wait-for-device
-adb push $FINAL_ZIP /sdcard/
-fi # Checking $PUSHOPTION
 else
 echo -e "Zip Creation Failed =(";
 fi # $FINAL_ZIP found

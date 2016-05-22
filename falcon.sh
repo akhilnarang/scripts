@@ -24,7 +24,7 @@ export ZIP_DIR="${THUGDIR}/files/${DEVICE}"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/falcon/Makefile | awk '{print $3}')";
 export ZIPNAME="thuglife-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
-if [ "$1" =~ "eabi" ];
+if [[ "$1" =~ "eabi" ]];
 then
 export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/arm-eabi-"
 else
@@ -36,12 +36,12 @@ fi
 cd $THUGDIR/falcon
 rm -f $IMAGE
 
-if [ "$1" =~ "mrproper" ];
+if [[ "$1" =~ "mrproper" ]];
 then
 make mrproper
 fi
 
-if [ "$1" =~ "clean" ];
+if [[ "$1" =~ "clean" ]];
 then
 make clean
 fi
