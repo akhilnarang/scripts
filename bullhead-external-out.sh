@@ -25,7 +25,7 @@ export ZIPS_DIR="$THUGDIR/files/$DEVICE"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
 export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
-export MAKE_ARGS="-C ${THUGDIR}/${DEVICE} -j16 O=${EXT_OUT_DIR}"
+export MAKE_ARGS="-j16 O=${EXT_OUT_DIR}"
 if [ "$1" == "sm" ];
 then
 export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-"
