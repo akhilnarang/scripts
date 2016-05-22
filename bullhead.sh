@@ -16,6 +16,7 @@
 #
 
 export DEVICE="bullhead";
+export TOOLCHAIN="${THUGDIR}/${DEVICE}-toolchain"
 export ARCH="arm64"
 export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
@@ -25,12 +26,16 @@ export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '
 export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
 
-if [[ "$1" =~ "sm" ]];
+if [ -f "${TOOLCHAIN}/bin/aarch64-gcc" ];
 then
-export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-"
+export CROSS_COMPILE="${TOOLCHAIN}/bin/aarch64-"
+elif [ -f "${TOOLCHAIN}/bin/aarch64-linux-android-gcc" ];
+then
+export CROSS_COMPILE="${TOOLCHAIN}/bin/aarch64-linux-android-"
 else
-export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/aarch64-linux-android-"
+echo -e "No suitable aarch64- or aarch64-linux-android- toolchain found in ${TOOLCHAIN}"
 fi
+
 
 if [ ! -d "$ZIPS_DIR" ];
 then

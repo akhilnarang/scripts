@@ -16,6 +16,7 @@
 #
 
 export DEVICE="falcon";
+export TOOLCHAIN="${THUGDIR}/${DEVICE}-toolchain"
 export ARCH="arm"
 export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
@@ -24,11 +25,15 @@ export ZIP_DIR="${THUGDIR}/files/${DEVICE}"
 export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/falcon/Makefile | awk '{print $3}')";
 export ZIPNAME="thuglife-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
-if [[ "$1" =~ "eabi" ]];
+
+if [ -f "${TOOLCHAIN}/bin/arm-eabi-gcc" ];
 then
-export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/arm-eabi-"
+export CROSS_COMPILE="${TOOLCHAIN}/bin/arm-eabi-"
+elif [ -f "${TOOLCHAIN}/bin/arm-linux-androideabi-gcc" ];
+then
+export CROSS_COMPILE="${TOOLCHAIN}/bin/arm-linux-androideabi-"
 else
-export CROSS_COMPILE="${THUGDIR}/${DEVICE}-toolchain/bin/arm-linux-androideabi-"
+echo -e "No suitable arm-eabi- or arm-linux-androideabi- toolchain found in ${TOOLCHAIN}"
 fi
 
 [ -d $ZIP_DIR ] || mkdir -p $ZIP_DIR
