@@ -26,20 +26,24 @@ echo "Enabling multilib if not already enabled!"
 # Old Bad Logic
 # sudo sed -i -e 's/\#\[multilib\]/\[multilib\]/g' /etc/pacman.conf
 if [ $(grep "\#\[multilib\]" /etc/pacman.conf) ]; then
+if [ ! $(grep "\#AkhilsScriptWasHere" /etc/pacman.conf) ]; then
 sudo echo "
 [multilib]
 Include = /etc/pacman.d/mirrorlist
 " >> /etc/pacman.conf
+fi
 fi
 sudo pacman -Syu
 # Installing 64 bit needed packages
 sudo pacman -S gcc-multilib lib32-zlib lib32-ncurses lib32-readline
 # yaourt for easy installing from AUR
 echo "Installing yaourt!"
+if [ ! $(grep "\#AkhilsScriptWasHere" /etc/pacman.conf) ]; then
 sudo echo "# Added for yaourt
 [archlinuxfr]
 SigLevel = Never
-Server = http://repo.archlinux.fr/$arch" >> /etc/pacman.conf
+Server = http://repo.archlinux.fr/\$arch" >> /etc/pacman.conf
+fi
 sudo pacman -Sy yaourt
 # Disable pgp checking when installing stuff from AUR
 export MAKEPKG="makepkg --skippgpcheck"
@@ -70,3 +74,4 @@ fi
 echo "Your git editor is now $(git config core.editor)"
 
 
+sudo echo "#AkhilsScriptWasHere" >> /etc/pacman.conf
