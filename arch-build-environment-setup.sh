@@ -47,10 +47,11 @@ fi
 sudo pacman -Sy yaourt
 # Disable pgp checking when installing stuff from AUR
 export MAKEPKG="makepkg --skippgpcheck"
-yaourt libtinfo
-yaourt lib32-ncurses5-compat-libs
-yaourt ncurses5-compat-libs
-yaourt phablet-tools
+yaourt -S libtinfo
+yaourt -S lib32-ncurses5-compat-libs
+yaourt -S ncurses5-compat-libs
+yaourt -S phablet-tools
+yaourt -S make-3.81
 
 echo "All Done :'D"
 echo "Don't forget to run these command before building!"
@@ -59,6 +60,8 @@ virtualenv2 venv
 source venv/bin/activate
 export LC_ALL=C"
 
+echo "Also symlink /usr/bin/make-3.81 as make in any bin of your choice 
+for faster builds"
 echo "If you wanna use nano as your git editor (for commit messages, interactive rebase, etc, enter nano."
 echo "Anything else will result in the default i.e. vim being used"
 echo "Your current editor is $(git config core.editor)"
