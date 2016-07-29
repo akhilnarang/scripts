@@ -1,4 +1,5 @@
 #!/bin/bash
+cwd=$PWD
 if [ -z "$1" ];
 then
 echo "Usage: $0 <falcon|bullhead|sprout>"
@@ -25,3 +26,9 @@ for i in $(seq 31); do
           git log --oneline --pretty="tformat:    %h - %s (%cr) <%an>" --after=${After_Date} --until=${Until_Date} >> "$changelog";
 
 done
+cd ${THUGDIR}/misc
+echo "Update changelog and file for $device" > /tmp/thug
+git commit -a -s -S -F /tmp/thug
+git push origin master
+cd $cwd
+rm /tmp/thug
