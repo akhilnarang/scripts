@@ -22,7 +22,9 @@ export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="$THUGDIR/files/$DEVICE"
-export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
+if [ -z $THUGVERSION ]; then
+export THUGVERSION="$(grep "THUGVERSION ?= " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
+fi
 export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
 
