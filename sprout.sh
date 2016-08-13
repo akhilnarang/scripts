@@ -20,7 +20,10 @@ export ZIMAGE="${THUGDIR}/${DEVICE}/arch/arm/boot/zImage"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="thug_defconfig";
 export ZIPS_DIR="${THUGDIR}/files/${DEVICE}"
-export FINAL_ZIP="${ZIPS_DIR}/thuglife-${DEVICE}-$(date +%Y%m%d).zip"
+if [ -z ${THUGVERSION} ]; then
+export THUGVERSION="$(grep "THUGVERSION ?= " ${THUGDIR}/sprout/Makefile | awk '{print $3}')";
+fi
+export FINAL_ZIP="${ZIPS_DIR}/thuglife-${DEVICE}-${THUGVERSION}-$(date +%Y%m%d).zip"
 export CROSS_COMPILE="$THUGDIR/$DEVICE-toolchain/bin/arm-linux-androideabi-"
 
 cd $THUGDIR/$DEVICE
