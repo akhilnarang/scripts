@@ -28,6 +28,7 @@ for i in $(seq 60); do
 done
 cd ${THUGDIR}/misc
 echo "Update changelog and file for $device" > /tmp/thug
+git add -A
 git commit -a -s -S -F /tmp/thug
 git push origin master
 cd $cwd
