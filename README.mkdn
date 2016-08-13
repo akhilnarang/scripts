@@ -3,11 +3,9 @@ Run these commands
 sudo apt-get install git-core
 git clone git://github.com/akhilnarang/scripts
 cd scripts
-. build-environment-setup.sh
+bash <name of script>
 ```
-Or
-```
-sudo apt-get install curl
-curl https://raw.githubusercontent.com/akhilnarang/scripts/master/build-environment-setup.sh | bash
-```
+
+Please choose the name dependending on the distro you have =)
+
 Enjoy!
