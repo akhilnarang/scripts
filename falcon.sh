@@ -22,7 +22,9 @@ export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
 export DEFCONFIG="falcon_defconfig";
 export ZIP_DIR="${THUGDIR}/files/${DEVICE}"
-export THUGVERSION="$(grep "THUGVERSION = " ${THUGDIR}/falcon/Makefile | awk '{print $3}')";
+if [ -z ${THUGVERSION} ]; then
+export THUGVERSION="$(grep "THUGVERSION ?= " ${THUGDIR}/falcon/Makefile | awk '{print $3}')";
+fi
 export ZIPNAME="thuglife-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
