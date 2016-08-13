@@ -10,8 +10,8 @@ export files=${THUGDIR}/misc/$device.files
 curl https://sourceforge.net/projects/thuglife/files/$device/ | grep "https://sourceforge.net/projects/thuglife/files/$device/thuglife-$device-" | awk '{print $2}' | cut -d'"' -f2 | cut -d'/' -f8 > $files
 cd ${THUGDIR}/$device
 export changelog=${THUGDIR}/misc/$device.changelog
-echo "Changelog for past 60 days:" > $changelog
-for i in $(seq 60); do
+echo "Changelog for the past 10 months:" > $changelog
+for i in $(seq 300); do
     export After_Date=$(date --date="$i days ago" +%m-%d-%Y);
     export Until_Date=$(date --date="$(expr $i - 1) days ago" +%m-%d-%Y);
 
