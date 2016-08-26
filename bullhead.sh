@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
 # Build Script For Kronic Kernel
@@ -18,8 +18,8 @@
 if [ -z $KRONICDIR ];
 then
 echo "Please set KRONICDIR";
-return 1;
-fi
+exit 1;
+else
 
 export DEVICE="bullhead";
 export TOOLCHAIN="${KRONICDIR}/${DEVICE}-toolchain"
@@ -87,5 +87,6 @@ then
 echo -e "$ZIPNAME can be found at $FINAL_ZIP";
 else
 echo -e "Zip Creation Failed =(";
-fi # $FINAL_ZIP found
-fi # no $IMAGE found
+fi # FINAL_ZIP found
+fi # no IMAGE found
+fi # KRONICDIR not defined
