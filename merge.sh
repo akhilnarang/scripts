@@ -1,21 +1,6 @@
 #!/usr/bin/env bash
 
-function usage()
-{
-echo -e "Usage:"
-echo -e "";
-echo -e "$0 <bullhead|falcon|sprout>"
-echo -e "";
-exit 1;
-}
-
-if [ ! $1 ];
-then
-usage;
-fi
-case "$1" in
-bullhead|falcon|sprout)
-cd $THUGDIR/$1
+cd $KRONICDIR/bullhead
 ;;
 *)
 usage;

@@ -1,13 +1,6 @@
 #!/bin/bash
 cwd=$PWD
-if [ -z "$1" ];
-then
-echo "Usage: $0 <falcon|bullhead|sprout>"
-exit 1;
-fi
-export device=$1
-export files=${THUGDIR}/misc/$device.files
-curl https://sourceforge.net/projects/thuglife/files/$device/ | grep "https://sourceforge.net/projects/thuglife/files/$device/thuglife-$device-" | awk '{print $2}' | cut -d'"' -f2 | cut -d'/' -f8 > $files
+export device="bullhead"
 cd ${THUGDIR}/$device
 export changelog=${THUGDIR}/misc/$device.changelog
 echo "Changelog for the past 10 months:" > $changelog
@@ -26,10 +19,3 @@ for i in $(seq 300); do
           git log --oneline --pretty="tformat:    %h - %s <%an>" --after=${After_Date} --until=${Until_Date} >> "$changelog";
 
 done
-cd ${THUGDIR}/misc
-echo "Update changelog and file for $device" > /tmp/thug
-git add -A
-git commit -a -s -S -F /tmp/thug
-git push origin master
-cd $cwd
-rm /tmp/thug

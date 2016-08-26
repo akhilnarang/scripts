@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright � 2015-2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
-# Build Script For ThugLife Kernel
+# Build Script For Kronic Kernel
 #
 # This software is licensed under the terms of the GNU General Public
 # License version 2, as published by the Free Software Foundation, and
@@ -15,17 +15,23 @@
 # Please maintain this if you use this script or any part of it
 #
 
+if [ -z $KRONICDIR ];
+then
+echo "Please set KRONICDIR";
+return 1;
+fi
+
 export DEVICE="bullhead";
-export TOOLCHAIN="${THUGDIR}/${DEVICE}-toolchain"
+export TOOLCHAIN="${KRONICDIR}/${DEVICE}-toolchain"
 export ARCH="arm64"
 export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
-export ANYKERNEL=$THUGDIR/$DEVICE/anykernel
-export DEFCONFIG="thug_defconfig";
-export ZIPS_DIR="$THUGDIR/files/$DEVICE"
-if [ -z $THUGVERSION ]; then
-export THUGVERSION="$(grep "THUGVERSION ?= " ${THUGDIR}/bullhead/Makefile | awk '{print $3}')";
+export ANYKERNEL=$KRONICDIR/$DEVICE/anykernel
+export DEFCONFIG="kronic_defconfig";
+export ZIPS_DIR="$KRONICDIR/files/$DEVICE"
+if [ -z $KRONICVERSION ]; then
+export KRONICVERSION="$(grep "CUSTOM_VERSION ?= " ${KRONICDIR}/bullhead/Makefile | awk '{print $3}')";
 fi
-export ZIPNAME="thuglife-bullhead-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
+export ZIPNAME="Kronic-bullhead-${KRONICVERSION}-$(date +%Y%m%d).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
 
 if [ -f "${TOOLCHAIN}/bin/aarch64-gcc" ];
@@ -44,7 +50,7 @@ then
 mkdir -p $ZIPS_DIR
 fi
 
-cd $THUGDIR/$DEVICE
+cd $KRONICDIR/$DEVICE
 
 rm -f $IMAGE
 
@@ -59,7 +65,6 @@ make clean
 fi
 
 make $DEFCONFIG
-figlet ThugLife
 START=$(date +"%s")
 make -j16
 END=$(date +"%s")
@@ -71,7 +76,7 @@ then
 echo -e "Kernel Compilation Failed!";
 echo -e "Fix The Errors!";
 else
-echo -e "Build Succesfull Enjoy Living the ThugLife!"
+echo -e "Build Succesfull Enjoy Living the KRONICLife!"
 
 cp -v $IMAGE $ANYKERNEL/kernel/zImage
 cd $ANYKERNEL
