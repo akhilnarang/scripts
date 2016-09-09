@@ -15,21 +15,21 @@
 # Please maintain this if you use this script or any part of it
 #
 
-if [ -z $KRONICDIR ];
+if [ -z $KERNELDIR ];
 then
-echo "Please set KRONICDIR";
+echo "Please set KERNELDIR";
 exit 1;
 else
 
 export DEVICE="bullhead";
-export TOOLCHAIN="${KRONICDIR}/${DEVICE}-toolchain"
+export TOOLCHAIN="${KERNELDIR}/${DEVICE}-toolchain"
 export ARCH="arm64"
 export IMAGE="arch/$ARCH/boot/Image.gz-dtb"
-export ANYKERNEL=$KRONICDIR/$DEVICE/anykernel
+export ANYKERNEL=$KERNELDIR/$DEVICE/anykernel
 export DEFCONFIG="kronic_defconfig";
-export ZIPS_DIR="$KRONICDIR/files/$DEVICE"
+export ZIPS_DIR="$KERNELDIR/files/$DEVICE"
 if [ -z $KRONICVERSION ]; then
-export KRONICVERSION="$(grep "CUSTOM_VERSION ?= " ${KRONICDIR}/bullhead/Makefile | awk '{print $3}')";
+export KRONICVERSION="$(grep "CUSTOM_VERSION ?= " ${KERNELDIR}/bullhead/Makefile | awk '{print $3}')";
 fi
 export ZIPNAME="Kronic-bullhead-${KRONICVERSION}-$(date +%Y%m%d).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
@@ -50,7 +50,7 @@ then
 mkdir -p $ZIPS_DIR
 fi
 
-cd $KRONICDIR/$DEVICE
+cd $KERNELDIR/$DEVICE
 
 rm -f $IMAGE
 
@@ -89,4 +89,4 @@ else
 echo -e "Zip Creation Failed =(";
 fi # FINAL_ZIP found
 fi # no IMAGE found
-fi # KRONICDIR not defined
+fi # KERNELDIR not defined

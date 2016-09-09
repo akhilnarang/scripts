@@ -1,8 +1,8 @@
 #!/bin/bash
 cwd=$PWD
 export device="bullhead"
-cd ${THUGDIR}/$device
-export changelog=${THUGDIR}/misc/$device.changelog
+cd ${KERNELDIR}/$device
+export changelog=${KERNELDIR}/misc/$device.changelog
 echo "Changelog for the past 10 months:" > $changelog
 for i in $(seq 300); do
     export After_Date=$(date --date="$i days ago" +%m-%d-%Y);

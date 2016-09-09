@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd $KRONICDIR/bullhead
+cd $KERNELDIR/bullhead
 ;;
 *)
 usage;
