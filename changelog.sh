@@ -1,10 +1,16 @@
 #!/bin/bash
 cwd=$PWD
+export DAYS=$1
+if [ -z $DAYS ];
+then
+DAYS=1
+fi
+
 export device="bullhead"
 cd ${KERNELDIR}/$device
 export changelog=${KERNELDIR}/misc/$device.changelog
 echo "Changelog for the past 10 months:" > $changelog
-for i in $(seq 300); do
+for i in $(seq $DAYS); do
     export After_Date=$(date --date="$i days ago" +%m-%d-%Y);
     export Until_Date=$(date --date="$(expr $i - 1) days ago" +%m-%d-%Y);
 
