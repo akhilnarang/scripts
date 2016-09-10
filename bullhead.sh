@@ -86,7 +86,7 @@ then
 echo -e "Kernel Compilation Failed!";
 echo -e "Fix The Errors!";
 else
-echo -e "Build Succesfull Enjoy Living the KRONICLife!"
+echo -e "Build Succesful!"
 
 cp -v $IMAGE $ANYKERNEL/kernel/zImage
 cd $ANYKERNEL
