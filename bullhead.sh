@@ -44,6 +44,9 @@ else
 echo -e "No suitable aarch64- or aarch64-linux-android- toolchain found in ${TOOLCHAIN}"
 fi
 
+export USE_CCACHE=1
+export CCACHE_DIR=${KERNELDIR}/ccache-${DEVICE}
+ccache -M 5G
 
 if [ ! -d "$ZIPS_DIR" ];
 then
