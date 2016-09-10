@@ -48,6 +48,13 @@ export USE_CCACHE=1
 export CCACHE_DIR=${KERNELDIR}/ccache-${DEVICE}
 ccache -M 5G
 
+case $(hostname) in
+randomness) export THREADS=10;;
+aosip.xyz) export THREADS=16;;
+node3) export THREADS=24;;
+*) export THREADS=$(nproc);;
+esac
+
 if [ ! -d "$ZIPS_DIR" ];
 then
 mkdir -p $ZIPS_DIR
@@ -69,7 +76,7 @@ fi
 
 make $DEFCONFIG
 START=$(date +"%s")
-make -j16
+make -j${THREADS}
 END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
