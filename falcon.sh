@@ -25,7 +25,7 @@ export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 if [ -z ${ORIONVERSION} ]; then
 export ORIONVERSION="$(grep "ORIONVERSION ?= " ${KERNELDIR}/falcon/Makefile | awk '{print $3}')";
 fi
-export ZIPNAME="OrionKernel-falcon-${THUGVERSION}-$(date +%Y%m%d-%H%M).zip"
+export ZIPNAME="OrionKernel-falcon-${ORIONVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 if [ -f "${TOOLCHAIN}/bin/arm-eabi-gcc" ];
