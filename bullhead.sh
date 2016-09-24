@@ -29,7 +29,7 @@ export ANYKERNEL=$KERNELDIR/$DEVICE/anykernel
 export DEFCONFIG="kronic_defconfig";
 export ZIPS_DIR="$KERNELDIR/files/$DEVICE"
 if [ -z $KRONICVERSION ]; then
-export KRONICVERSION="$(grep "CUSTOM_VERSION ?= " ${KERNELDIR}/bullhead/Makefile | awk '{print $3}')";
+export KRONICVERSION="$(grep "KRONICVERSION ?= " ${KERNELDIR}/bullhead/Makefile | awk '{print $3}')";
 fi
 export ZIPNAME="Kronic-bullhead-${KRONICVERSION}-$(date +%Y%m%d).zip"
 export FINAL_ZIP="$ZIPS_DIR/$ZIPNAME"
