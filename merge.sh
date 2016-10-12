@@ -17,6 +17,11 @@ do_not_merge="vendor/aosp manifest external/fuse packages/apps/Snap system/bt"
 
 cd ${RROPATH}
 
+for filess in failed success
+do
+rm $filess 2> /dev/null
+touch $filess
+done
 # AOSP-RRO manifest is setup with path first, then repo name, so the path attribute is after 2 spaces, and the name within "" in it
 for repos in $(grep 'remote="rro"' ${RROPATH}/.repo/manifests/default.xml  | awk '{print $2}' | cut -d '"' -f2)
 do
