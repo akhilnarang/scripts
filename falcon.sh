@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright � 2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
-# Build Script For OrionKernel
+# Build Script For KronicKernel
 #
 # This software is licensed under the terms of the GNU General Public
 # License version 2, as published by the Free Software Foundation, and
@@ -22,10 +22,10 @@ export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$KERNELDIR/$DEVICE/anykernel
 export DEFCONFIG="falcon_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
-if [ -z ${ORIONVERSION} ]; then
-export ORIONVERSION="$(grep "ORIONVERSION ?= " ${KERNELDIR}/falcon/Makefile | awk '{print $3}')";
+if [ -z ${KERNELVERSION} ]; then
+export KERNELVERSION="$(grep "KERNELVERSION ?= " ${KERNELDIR}/falcon/Makefile | awk '{print $3}')";
 fi
-export ZIPNAME="OrionKernel-falcon-${ORIONVERSION}-$(date +%Y%m%d-%H%M).zip"
+export ZIPNAME="KronicKernel-falcon-${KERNELVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 if [ -f "${TOOLCHAIN}/bin/arm-eabi-gcc" ];
