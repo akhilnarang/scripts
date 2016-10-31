@@ -5,7 +5,7 @@ git clone git://github.com/akhilnarang/scripts
 cd scripts
 bash <name of script>
 ```
-
+If running Arch Linux, please enable multilib, and install yaourt, before running the script :)
 Please choose the name dependending on the distro you have =)
 
 Enjoy!
