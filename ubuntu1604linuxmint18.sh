@@ -48,3 +48,5 @@ echo "Installing repo"
 sudo install utils/repo /usr/bin/
 echo "Installing ccache"
 sudo install utils/ccache /usr/bin/
+echo "Installing ninja 1.7.2, please make sure your ROM includes the commit to use host ninja"
+sudo install utils/ninja /usr/bin/
