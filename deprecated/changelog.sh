@@ -1,12 +1,16 @@
 #!/bin/bash
 cwd=$PWD
-export DAYS=$1
 if [ -z $DAYS ];
 then
 DAYS=1
 fi
 
-export device="bullhead"
+device=$1
+if [ -z ${device} ];
+then
+export device="bacon"
+fi
+
 cd ${KERNELDIR}/$device
 export changelog=${KERNELDIR}/misc/$device.changelog
 echo "Changelog for the past ${DAYS} days:" > $changelog
