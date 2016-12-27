@@ -16,8 +16,8 @@
 #
 
 export DEVICE="bacon";
-export TOOLCHAIN="${KERNELDIR}/${DEVICE}-toolchain"
 export ARCH="arm"
+export TOOLCHAIN="${KERNELDIR}/toolchain/${ARCH}/${DEVICE}"
 export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$KERNELDIR/$DEVICE-anykernel
 export DEFCONFIG="illusion_bacon_defconfig";
