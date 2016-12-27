@@ -19,13 +19,13 @@ export DEVICE="bacon";
 export ARCH="arm"
 export TOOLCHAIN="${KERNELDIR}/toolchain/${ARCH}/${DEVICE}"
 export IMAGE="arch/$ARCH/boot/zImage-dtb"
-export ANYKERNEL=$KERNELDIR/$DEVICE-anykernel
+export ANYKERNEL=$KERNELDIR/anykernel/${DEVICE}
 export DEFCONFIG="illusion_bacon_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 if [ -z ${CUSTOMVERSION} ]; then
 export CUSTOMVERSION="$(grep "CUSTOMVERSION ?= " ${KERNELDIR}/bacon/Makefile | awk '{print $3}')";
 fi
-export ZIPNAME="Illusion-bacon-${CUSTOMVERSION}-$(date +%Y%m%d-%H%M).zip"
+export ZIPNAME="Illusion-bacon${CUSTOMVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 if [ -f "${TOOLCHAIN}/bin/arm-eabi-gcc" ];
