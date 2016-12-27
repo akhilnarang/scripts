@@ -23,7 +23,6 @@ sudo pacman -S gcc git gnupg flex bison gperf sdl wxgtk bash-completion \
 squashfs-tools curl ncurses zlib schedtool perl-switch zip \
 unzip libxslt maven tmux screen w3m python2-virtualenv bc rsync ncftp \
 ca-certificates-mozilla fakeroot make pkg-config
-echo "Enabling multilib if not already enabled!"
 # Installing 64 bit needed packages
 sudo pacman -S gcc-multilib lib32-zlib lib32-ncurses lib32-readline
 # Disable pgp checking when installing stuff from AUR
@@ -43,16 +42,3 @@ export LC_ALL=C"
 
 echo "Also symlink /usr/bin/make-3.81 as make in any bin of your choice 
 for faster builds"
-echo "If you wanna use nano as your git editor (for commit messages, interactive rebase, etc, enter nano."
-echo "Anything else will result in the default i.e. vim being used"
-echo "Your current editor is $(git config core.editor)"
-
-read giteditor
-if [ "$giteditor" == "nano" ];
-then
-git config --global core.editor nano
-else
-git config --global core.editor vi
-fi
-
-echo "Your git editor is now $(git config core.editor)"
