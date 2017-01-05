@@ -16,7 +16,6 @@
 
 clear
 echo Installing Dependencies!
-sudo apt-add-repository ppa:openjdk-r/ppa -y
 sudo apt update -y
 sudo apt install git-core python gnupg flex bison gperf libsdl1.2-dev libesd0-dev \
 squashfs-tools build-essential zip curl libncurses5-dev zlib1g-dev openjdk-8-jre openjdk-8-jdk pngcrush \

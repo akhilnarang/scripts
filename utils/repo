@@ -23,10 +23,13 @@ REPO_REV = 'stable'
 # limitations under the License.
 
 # increment this whenever we make important changes to this script
-VERSION = (1, 23)
+VERSION = (1, 24)
 
 # increment this if the MAINTAINER_KEYS block is modified
 KEYRING_VERSION = (1, 2)
+
+# Each individual key entry is created by using:
+# gpg --armor --export keyid
 MAINTAINER_KEYS = """
 
      Repo Maintainer <repo@android.kernel.org>
@@ -172,6 +175,9 @@ group.add_option('-b', '--manifest-branch',
 group.add_option('-m', '--manifest-name',
                  dest='manifest_name',
                  help='initial manifest file', metavar='NAME.xml')
+group.add_option('-c', '--current-branch',
+                 dest='current_branch_only', action='store_true',
+                 help='fetch only current manifest branch from server')
 group.add_option('--mirror',
                  dest='mirror', action='store_true',
                  help='create a replica of the remote repositories '
@@ -199,6 +205,9 @@ group.add_option('-p', '--platform',
 group.add_option('--no-clone-bundle',
                  dest='no_clone_bundle', action='store_true',
                  help='disable use of /clone.bundle on HTTP/HTTPS')
+group.add_option('--no-tags',
+                 dest='no_tags', action='store_true',
+                 help="don't fetch tags in the manifest")
 
 
 # Tool
@@ -343,6 +352,10 @@ def _Init(args, gitc_init=False):
 
     dst = os.path.abspath(os.path.join(repodir, S_repo))
     _Clone(url, dst, opt.quiet, not opt.no_clone_bundle)
+
+    if not os.path.isfile('%s/repo' % dst):
+      _print("warning: '%s' does not look like a git-repo repository, is "
+             "REPO_URL set correctly?" % url, file=sys.stderr)
 
     if can_verify and not opt.no_repo_verify:
       rev = _Verify(dst, branch, opt.quiet)
@@ -850,7 +863,10 @@ def main(orig_args):
       try:
         _Init(args, gitc_init=(cmd == 'gitc-init'))
       except CloneFailure:
-        shutil.rmtree(os.path.join(repodir, S_repo), ignore_errors=True)
+        path = os.path.join(repodir, S_repo)
+        _print("fatal: cloning the git-repo repository failed, will remove "
+               "'%s' " % path, file=sys.stderr)
+        shutil.rmtree(path, ignore_errors=True)
         sys.exit(1)
       repo_main, rel_repo_dir = _FindRepo()
     else:
