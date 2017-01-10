@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright � 2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
-# Build Script For Illusion Kernel
+# Build Script For pizzaKernel
 #
 # This software is licensed under the terms of the GNU General Public
 # License version 2, as published by the Free Software Foundation, and
@@ -23,9 +23,9 @@ export ANYKERNEL=$KERNELDIR/anykernel/${DEVICE}
 export DEFCONFIG="illusion_bacon_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 if [ -z ${CUSTOMVERSION} ]; then
-export CUSTOMVERSION="$(grep "CUSTOMVERSION ?= " ${KERNELDIR}/bacon/Makefile | awk '{print $3}')";
+export CUSTOMVERSION="$(grep "EXTRAVERSION ?= " ${KERNELDIR}/bacon/Makefile | awk '{print $3}')";
 fi
-export ZIPNAME="Illusion-bacon${CUSTOMVERSION}-$(date +%Y%m%d-%H%M).zip"
+export ZIPNAME="pizza-bacon${CUSTOMVERSION}-$(date +%Y%m%d-%H%M).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 if [ -f "${TOOLCHAIN}/bin/arm-eabi-gcc" ];
