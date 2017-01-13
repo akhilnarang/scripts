@@ -68,9 +68,10 @@ else
 echo -e "Build Succesful!"
 
 cp -v $IMAGE $ANYKERNEL/zImage
+cd -
 cd $ANYKERNEL
 zip -r9 $FINAL_ZIP *;
-cd ..
+cd -
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
