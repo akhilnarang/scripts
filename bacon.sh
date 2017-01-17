@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Copyright � 2016, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
-# Build Script For pizzaKernel
+# Copyright � 2016-2017, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
+# Build Script For Custom Kernel for the OnePlus One
 #
 # This software is licensed under the terms of the GNU General Public
 # License version 2, as published by the Free Software Foundation, and
@@ -17,15 +17,25 @@
 
 export DEVICE="bacon";
 export ARCH="arm"
-export TOOLCHAIN="${KERNELDIR}/toolchain/${ARCH}/${DEVICE}"
+case $TC_VERSION in
+  "4.9-uber")
+  export TC_VERSION_DISPLAY="UBER-4.9"
+  ;;
+  *)
+  export TC_VERSION="4.9"
+  export TC_VERSION_DISPLAY="GCC-4.9"
+  ;;
+esac
+export TC="arm-linux-androideabi-"
+export TOOLCHAIN="${KERNELDIR}/toolchain/${ARCH}/${TC}${TC_VERSION}"
 export IMAGE="arch/$ARCH/boot/zImage-dtb"
 export ANYKERNEL=$KERNELDIR/anykernel/${DEVICE}
-export DEFCONFIG="illusion_bacon_defconfig";
+export DEFCONFIG="bacon_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
-if [ -z ${CUSTOMVERSION} ]; then
-export CUSTOMVERSION="$(grep "EXTRAVERSION ?= " ${KERNELDIR}/bacon/Makefile | awk '{print $3}')";
+if [ -z ${KRONICVERSION} ]; then
+export KRONICVERSION="$(grep "KRONICVERSION ?= " ${KERNELDIR}/bacon/Makefile | awk '{print $3}')";
 fi
-export ZIPNAME="pizza-bacon${CUSTOMVERSION}-$(date +%Y%m%d-%H%M).zip"
+export ZIPNAME="Kronic-${KRONICVERSION}-${DEVICE}-$(date +%Y%m%d-%H%M)-${TC_VERSION_DISPLAY}.zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 if [ -f "${TOOLCHAIN}/bin/arm-eabi-gcc" ];
@@ -68,9 +78,10 @@ else
 echo -e "Build Succesful!"
 
 cp -v $IMAGE $ANYKERNEL/zImage
+cd -
 cd $ANYKERNEL
 zip -r9 $FINAL_ZIP *;
-cd ..
+cd -
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$THUGVERSION zip can be found at $FINAL_ZIP";
