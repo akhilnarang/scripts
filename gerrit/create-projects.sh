@@ -22,6 +22,6 @@ GERRIT_PROJECT_NAMES="$(grep 'aosip' .repo/manifests/manifests/caf.xml  | awk '{
 # Push everything!
 for PROJECT_NAME in ${GERRIT_PROJECT_NAMES}
 do
-    echo "Creating ${GERRIT_PROJECT_PREFIX}${PROJECT_NAME}
+    echo "Creating ${GERRIT_PROJECT_PREFIX}${PROJECT_NAME}"
     ssh -p${GERRIT_PORT} ${GERRIT_HOST} gerrit create-project ${GERRIT_PROJECT_PREFIX}${PROJECT_NAME};
 done
