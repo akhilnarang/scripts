@@ -31,7 +31,6 @@ yaourt -S libtinfo
 yaourt -S lib32-ncurses5-compat-libs
 yaourt -S ncurses5-compat-libs
 yaourt -S phablet-tools
-yaourt -S make-3.81
 
 echo "All Done :'D"
 echo "Don't forget to run these command before building!"
@@ -39,6 +38,3 @@ echo "
 virtualenv2 venv
 source venv/bin/activate
 export LC_ALL=C"
-
-echo "Also symlink /usr/bin/make-3.81 as make in any bin of your choice 
-for faster builds"

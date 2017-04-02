@@ -37,12 +37,6 @@ adb kill-server
 sudo killall adb
 fi
 
-makeversion=$(make -v | head -1 | awk '{print $3}')
-if [ ! "${makeversion}" == "3.81" ];
-then
-echo "Installing make 3.81 instead of ${makeversion}"
-sudo install utils/make /usr/bin/
-fi
 echo "Installing repo"
 sudo install utils/repo /usr/bin/
 echo "Installing ccache"
