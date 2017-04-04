@@ -37,9 +37,15 @@ adb kill-server
 sudo killall adb
 fi
 
+makeversion=$(make -v | head -1 | awk '{print $3}')
+if [ "${makeversion}" != "4.2.1" ];
+then
+echo "Installing make 4.2.1 instead of ${makeversion}"
+sudo install utils/make /usr/bin/
+fi
 echo "Installing repo"
 sudo install utils/repo /usr/bin/
-echo "Installing ccache"
+echo "Installing ccache 3.3.4"
 sudo install utils/ccache /usr/bin/
 echo "Installing ninja 1.7.2, please make sure your ROM includes the commit to use host ninja"
 sudo install utils/ninja /usr/bin/
