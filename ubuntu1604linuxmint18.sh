@@ -23,7 +23,7 @@ schedtool libxml2 libxml2-utils xsltproc lzop libc6-dev schedtool g++-multilib l
 gcc-multilib liblz4-* pngquant ncurses-dev texinfo gcc gperf patch libtool \
 automake g++ gawk subversion expat libexpat1-dev python-all-dev bc libcloog-isl-dev \
 libcap-dev autoconf libgmp-dev build-essential gcc-multilib g++-multilib pkg-config libmpc-dev libmpfr-dev lzma* \
-liblzma* w3m android-tools-adb maven ncftp htop imagemagick -y
+liblzma* w3m android-tools-adb maven ncftp htop imagemagick android-tools-fastboot -y
 echo Dependencies have been installed
 echo repo has been Downloaded!
 if [ ! "$(which adb)" == "" ];
@@ -35,6 +35,13 @@ sudo chown root /etc/udev/rules.d/51-android.rules
 sudo service udev restart
 adb kill-server
 sudo killall adb
+fi
+
+if [ ! "$(which fastboot)" == "" ];
+then
+echo Setting up fastboot
+sudo chown root:root /usr/bin/fastboot
+sudo chmod +s /usr/bin/fastboot
 fi
 
 makeversion=$(make -v | head -1 | awk '{print $3}')
