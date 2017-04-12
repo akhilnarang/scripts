@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright � 2015-2017, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
 #
@@ -41,11 +41,11 @@ makeversion=$(make -v | head -1 | awk '{print $3}')
 if [ "${makeversion}" != "4.2.1" ];
 then
 echo "Installing make 4.2.1 instead of ${makeversion}"
-sudo install utils/make /usr/bin/
+sudo install utils/make /usr/local/bin/
 fi
 echo "Installing repo"
-sudo install utils/repo /usr/bin/
+sudo install utils/repo /usr/local/bin/
 echo "Installing ccache 3.3.4"
-sudo install utils/ccache /usr/bin/
+sudo install utils/ccache /usr/local/bin/
 echo "Installing ninja 1.7.2, please make sure your ROM includes the commit to use host ninja"
-sudo install utils/ninja /usr/bin/
+sudo install utils/ninja /usr/local/bin/

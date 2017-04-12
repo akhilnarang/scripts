@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright � 2015-2017, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
 #
@@ -39,5 +39,5 @@ virtualenv2 venv
 source venv/bin/activate
 export LC_ALL=C"
 
-echo "Also symlink /usr/bin/make-3.81 as make in any bin of your choice 
+echo "Also symlink /usr/bin/make-3.81 as make in any bin of your choice
 for faster builds"

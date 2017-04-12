@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright � 2015-2017, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
 #
@@ -39,7 +39,7 @@ sudo killall adb
 fi
 
 echo "Installing repo"
-sudo install utils/repo /usr/bin/
+sudo install utils/repo /usr/local/bin/
 echo "Installing ccache"
-sudo install utils/ccache /usr/bin/
+sudo install utils/ccache /usr/local/bin/
 
