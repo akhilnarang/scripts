@@ -26,7 +26,7 @@ rm $filess 2> /dev/null
 touch $filess
 done
 # AOSiP manifest is setup with repo name first, then repo path, so the path attribute is after 3 spaces, and the path itself within "" in it
-for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/manifests/aosip.xml  | awk '{print $3}' | awk -F '"' '{print $2}')
+for repos in $(grep 'remote="aosp-caf"' ${AOSIP_PATH}/.repo/manifests/manifests/caf.xml  | awk '{print $3}' | awk -F '"' '{print $2}')
 do
 echo -e ""
 if [[ "${do_not_merge}" =~ "${repos}" ]];
@@ -36,13 +36,13 @@ else
 echo "$blu Merging $repos $end"
 echo -e ""
 cd $repos;
-git checkout nougat
-git fetch aosip nougat
-git reset --hard aosip/nougat
-git remote rm aosp 2> /dev/null
-git remote add aosp "${AOSP}/platform/$repos"
-git fetch aosp --quiet --tags
-git merge ${TAG} --no-edit
+git fetch aosip nougat;
+git checkout nougat;
+git reset --hard aosip/nougat;
+git remote rm aosp 2> /dev/null;
+git remote add aosp "${AOSP}/platform/$repos";
+git fetch aosp --quiet --tags;
+git merge ${TAG} --no-edit;
 if [ $? -ne 0 ];
 then
 echo "$repos" >> ${AOSIP_PATH}/failed

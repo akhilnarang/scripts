@@ -7,16 +7,18 @@ else
 export BRANCH="$1"
 fi
 
-export RRO_SOURCE_DIR="${HOME}/rro"
+export AOSIP_SOURCE_DIR="${HOME}/aosip"
 export DIR=$PWD
 
-cd ${RRO_SOURCE_DIR}
+cd ${AOSIP_SOURCE_DIR}
 
-for repos in $(grep 'remote="rro"' ${RRO_SOURCE_DIR}/manifest/default.xml  | awk '{print $2}' | cut -d'"' -f2); do
-echo -e "Pushing $repos to $BRANCH";
-cd $repos;
-git push rro HEAD:refs/heads/$BRANCH;
-cd ${RRO_SOURCE_DIR}
+PROJECTS="$(grep aosip .repo/manifests/manifests/aosip.xml | awk '{print $3}' | awk -F'"' '{print $2}')"
+
+
+for project in ${PROJECTS}; do
+cd $project;
+git push $(git remote -v | head -1 | awk '{print $2}' | sed -e 's/https:\/\/github.com\/AOSiP/ssh:\/\/localhost:29418\/AOSIP/') HEAD:nougat;
+cd -;
 done
 
 cd ${DIR}

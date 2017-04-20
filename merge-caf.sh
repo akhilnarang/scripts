@@ -11,10 +11,10 @@ end=$'\e[0m'
 export AOSIP_PATH="${HOME}/nougat"
 
 # Set the tag you want to merge
-export TAG="LA.UM.5.7.r1-08400-8x98.0"
+export TAG="LA.UM.5.7.r1-08900-8x98.0"
 
 # Set the base URL for all repos to be pulled from
-export CAF="git://codeaurora.org"
+export CAF="https://source.codeaurora.org"
 
 do_not_merge="vendor/aosip manifest packages/apps/OmniSwitch packages/apps/OmniStyle packages/apps/OwlsNest external/google packages/apps/ThemeInterfacer packages/apps/Gallery2 device/qcom/sepolicy external/DUtils packages/apps/DUI packages/apps/SlimRecents packages/services/OmniJaws packages/apps/LockClock packages/apps/CalendarWidget hardware/qcom/fm"
 
