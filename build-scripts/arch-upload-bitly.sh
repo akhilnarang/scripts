@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright 2015-2017, Akhil Narang "akhilnarang" <akhilnarang.1999@gmail.com>
-# Build Script To Compile The Android Operating System.
+# Build Script To Compile AOSP
 #
 # This software is licensed under the terms of the GNU General Public
 # License version 2, as published by the Free Software Foundation, and
@@ -35,7 +35,7 @@ breakfast $1
 # 2nd parameter. Pass a target to be made, like clean, clobber, dirty, installclean, etc. If none, will delete old zips, build.prop, kernel's .version
 if [ $2 ];
 then
-make -j16 $2 
+mka $2
 else
 rm -f $OUT/*.zip $OUT/system/build.prop $OUT/obj/KERNEL_OBJ/.version >/dev/null
 fi
@@ -47,19 +47,15 @@ export TARGET_UNOFFICIAL_BUILD_ID=$rom
 [ ! -d logs ] || mkdir logs
 
 # Check for target to be built
-if [ $(grep bacon build/core/Makefile) ];
+if [ $(grep ^bacon build/core/Makefile) ];
 then
 makecommand=bacon;
 else
 makecommand=otapackage;
 fi
 
-# Check number of threads to be used
-jobs=$(cat /proc/cpuinfo | grep ^processor | wc -l)
-makearg="$makecommand -j$jobs";
-
 # Build ang log output
-make $makearg 2>&1 | tee logs/$rom-$1-$(date +%Y%m%d).log
+time mka $makecommand 2>&1 | tee logs/$rom-$1-$(date +%Y%m%d).log
 
 # Get full path to zip, zipname, and declare path on upload server.
 pathzip=$(ls $OUT/*.zip | head -1)
