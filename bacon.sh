@@ -56,14 +56,15 @@ function check_version() {
 check_toolchain;
 check_version;
 
-export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 | awk '{print $2}' | sed -e 's/(//' -e 's/)//')"
-export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 | awk '{print $3}')"
+export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 | awk '{print $2}' | sed -e 's/(//' -e 's/)//' | awk '{print tolower($0)}')"
+export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 | awk '{print $3}' | awk '{print tolower($0)}')"
 export ZIPNAME="${CUSTOMVERSION}-${DEVICE}-$(date +%Y%m%d-%H%M).zip"
 export CUSTOMVERSION="${CUSTOMVERSION}-${TCVERSION1}.${TCVERSION2}"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 [ -d $ZIP_DIR ] || mkdir -p $ZIP_DIR
 
+rm -fv /tmp/IllusionKernel-bacon.zip
 cd $KERNELDIR/bacon
 
 if [[ "$1" =~ "mrproper" ]];
@@ -95,6 +96,7 @@ cp -v $IMAGE $ANYKERNEL/zImage
 cd -
 cd $ANYKERNEL
 zip -r9 ${FINAL_ZIP} *;
+cp -v ${FINAL_ZIP} /tmp/IllusionKernel-bacon.zip
 cd -
 if [ -f "$FINAL_ZIP" ];
 then
