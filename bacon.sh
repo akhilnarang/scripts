@@ -98,7 +98,7 @@ zip -r9 ${FINAL_ZIP} *;
 cd -
 if [ -f "$FINAL_ZIP" ];
 then
-echo -e "$CUSTOMVERSION zip can be found at $FINAL_ZIP";
+echo -e "$ZIPNAME zip can be found at $FINAL_ZIP";
 else
 echo -e "Zip Creation Failed =(";
 fi # $FINAL_ZIP found
