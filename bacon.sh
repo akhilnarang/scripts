@@ -24,7 +24,7 @@ export ARCH="arm"
 export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}"
 export IMAGE="arch/${ARCH}/boot/zImage-dtb"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
-export DEFCONFIG="bacon_defconfig";
+export DEFCONFIG="illusion_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 export CCACHE_DIR="${KERNELDIR}/ccache-${DEVICE}";
 ccache -M 5G
