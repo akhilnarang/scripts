@@ -64,8 +64,8 @@ export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 [ -d $ZIP_DIR ] || mkdir -p $ZIP_DIR
 
-rm -fv /tmp/IllusionKernel-bacon.zip
 cd $KERNELDIR/bacon
+rm -fv /tmp/IllusionKernel-bacon.zip ${IMAGE}
 
 if [[ "$1" =~ "mrproper" ]];
 then
