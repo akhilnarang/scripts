@@ -1,13 +1,39 @@
 
 ## To setup build environment
-Run these commands
-```
-sudo apt-get install git-core
-git clone git://github.com/akhilnarang/scripts
+
+Firsly, install `git`, using whatever package manager has.
+
+Then, run these commands
+
+```bash
+git clone https://github.com/akhilnarang/scripts
 cd scripts
 bash setup/<name of script>
 ```
+
 If running Arch Linux, please enable multilib, and install yaourt, before running the script :)
 Please choose the name dependending on the distro you have =)
 
 Enjoy!
+
+
+### Brief explanation of stuff in here
+
+
+build -> has a bunch of random build scripts I use.
+
+crowdin -> bunch of scripts I use for RR's crowdin.
+
+gerrit -> useful for gerrit up gerrit and stuff.
+
+merge -> scripts to merge upstream AOSP/CAF into a ROM source.
+
+misc -> stuff.
+
+push -> scripts to push multiple repos at once if you don't wanna do it manually #lazyAf.
+
+random-html -> generates an index.html with a table with the list of files in current directory.
+
+setup -> setup Android Build Environment / Android SDK.
+
+utils -> some utilities?
