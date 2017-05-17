@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+
+# A gerrit script to push all repositories from a manifest
+
 # This again, will have to be adapted based on your setup.
 
 PROJECTS="$(grep 'aosip' .repo/manifests/manifests/caf.xml  | awk '{print $3}' | awk -F'"' '{print $2}')"

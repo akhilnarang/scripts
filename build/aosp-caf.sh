@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# My jenkins script to build AOSP-CAF
+
 # REPOSYNC, DEVICE are parameters set in jenkins
 # android_shell_tools is from https://github.com/AdrianDC/android_shell_tools
 

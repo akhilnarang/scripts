@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Script to merge upstream CAF Tags in AOSiP
+
 #COLORS -
 red=$'\e[1;31m'
 grn=$'\e[1;32m'

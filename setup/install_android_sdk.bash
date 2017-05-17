@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Script to setup the Android SDK on a Linux System
+
 tools_url="https://dl.google.com/android/repository/tools_r25.2.3-linux.zip"
 zip_name=$(printf '%s\n' "${tools_url##*/}")
 mkdir -p ~/Android/Sdk/ && cd ~/Android/Sdk

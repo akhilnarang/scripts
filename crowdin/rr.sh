@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# Script to init RR's crowdin manifest and update translations
+
 mkdir crowdin;
 cd crowdin;
 repo init -u ssh://git@github.com/ResurrectionRemix/platform_manifest.git -b nougat -m crowdin.xml

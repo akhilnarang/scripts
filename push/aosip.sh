@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Script to push all AOSiP repositories
+
 if [ -z "$1" ];
 then
 export BRANCH="nougat"

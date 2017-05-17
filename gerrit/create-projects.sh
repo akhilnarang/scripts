@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# A gerrit script to create projects based on ROMs manifest
+
 # Just change these 4 variables
 
 # If you're pushing from the server where Gerrit is hosted, let it be as it is

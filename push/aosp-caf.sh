@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Script to push all AOSP-CAF repos (or any other ROMs) to GitHub based on the list of repositories in manifest
+
 if [ -z "$1" ];
 then
 export BRANCH="n-mr1"

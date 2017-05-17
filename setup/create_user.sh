@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+
+# Script to add a new username to a Linux System
+
 export username="$1"
 if [ -z $username ];
 then

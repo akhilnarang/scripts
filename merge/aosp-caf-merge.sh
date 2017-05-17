@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Script to merge in upstream CAF Tags into AOSP-CAF or other Android ROMs
+
 #COLORS -
 red=$'\e[1;31m'
 grn=$'\e[1;32m'

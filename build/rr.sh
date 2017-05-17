@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# My jenkins script to build RR Nightlies
+
 # DEVICE, THIS_WILL_BE_RUN, RR_BUILDTYPE are set as jenkins parameters
 
 source /home/akhiln/android_shell_tools/android_bash.rc && bashsync && time reposy -j64 || exit 1;

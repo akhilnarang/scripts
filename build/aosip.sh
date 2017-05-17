@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# My jenkins script to build AOSiP
+
 # REPOSYNC, PICKS, DEVICE, MAKECLEAN are setup as parameters in jenkins
 # android_shell_tools is from https://github.com/AdrianDC/android_shell_tools/
 

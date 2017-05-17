@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# A gerrit script to change the merge type of all repositories
+
 # Just change these 4 variables
 
 # If you're pushing from the server where Gerrit is hosted, let it be as it is

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #    Copy a ssh key to Github
 #    Copyright (C) 2015 Christoph "criztovyl" Schulz
 #
