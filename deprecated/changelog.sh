@@ -1,15 +1,12 @@
 #!/bin/bash
 cwd=$PWD
+DAYS=$1
 if [ -z $DAYS ];
 then
-DAYS=1
+export DAYS=1
 fi
 
-device=$1
-if [ -z ${device} ];
-then
 export device="bacon"
-fi
 
 cd ${KERNELDIR}/$device
 export changelog=${KERNELDIR}/misc/$device.changelog
