@@ -80,8 +80,8 @@ while [[ $# -gt 0 ]]; do
 	shift
 done
 
-[ -z "${DEVICE}" ] && DEVICE="kenzo"
-[ -z "${ROM}" ] && ROM="caf"
+[ -z "${DEVICE}" ] && DEVICE="oneplus3"
+[ -z "${ROM}" ] && ROM="rr"
 [ -z "${VARIANT}" ] && VARIANT="userdebug"
 
 ROM_SOURCE_DIR="${HOME}/${ROM}";
@@ -102,12 +102,6 @@ ${ROM};
 
 source build/envsetup.sh;
 
-if [ $(hostname) == "akhil-B85M-D3H-A" ]; then
-	export OUT_DIR_COMMON_BASE="/data/out";
-	export CCACHE_DIR="/data/.ccache/${DEVICE}";
-else
-	export CCACHE_DIR="${HOME}/.ccache-${DEVICE}";
-fi
 
 lunch "${LUNCH}_${DEVICE}-${VARIANT}"
 
@@ -132,8 +126,8 @@ if [ -z "${JOBS}" ];then
 fi
 
 export USE_CCACHE=1;
-export CCACHE_DIR="/data/.ccache/${DEVICE}";
 ccache -M 30;
+export CCACHE_DIR="${HOME}/.ccache-${DEVICE}";
 
 if [ "$(command -v 'mka')" ]; then
 	MAKE="mka ${MAKE}";
@@ -145,7 +139,6 @@ START="$(date +%s)";
 eval "${MAKE}";
 END="$(date +%s)";
 
-source /data/scripts/funcs.sh
 format_time ${END} ${START};
 
 if [ "$(ls ${OUT}/${ZIPNAME}*.zip)" ]; then
