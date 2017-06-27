@@ -69,7 +69,7 @@ fi
 
 make $DEFCONFIG
 START=$(date +"%s")
-time make -j$(nproc)
+time make -j$(nproc) Image
 exitCode="$?"
 END=$(date +"%s")
 DIFF=$(($END - $START))
@@ -81,7 +81,7 @@ echo -e "Fix The Errors!";
 else
 echo -e "Build Succesful!"
 
-cp -v "${IMAGE}" "${ANYKERNEL}/zImage"
+cp -v "${IMAGE}" "${ANYKERNEL}/"
 cd -
 cd ${ANYKERNEL}
 zip -r9 ${FINAL_ZIP} *;

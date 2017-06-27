@@ -20,7 +20,7 @@ Enjoy!
 ### Brief explanation of stuff in here
 
 
-build -> has a bunch of random build scripts I use.
+build-rom -> has a bunch of random build scripts I use to build ROMs.
 
 crowdin -> bunch of scripts I use for RR's crowdin.
 
