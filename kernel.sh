@@ -7,7 +7,7 @@ function check_device() {
 device_to_check=$1;
 shift;
 if [[ "${device_to_check}" =~ "$@" ]] \
-|| [[ "$($(pwd) | awk -F '/' '{print $NF}')" =~ "${device_to_check}" ]]; then
+|| [[ "$(pwd | awk -F '/' '{print $NF}')" =~ "${device_to_check}" ]]; then
     export DEVICE="${device_to_check}"
 fi
 

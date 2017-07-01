@@ -56,7 +56,7 @@ function rr() {
 
 function caf() {
 	export LUNCH="aosp";
-	export ZIPNAME="aosp-caf-n-mr2";
+	export ZIPNAME="aosp-caf";
 }
 
 function aosip() {
