@@ -10,10 +10,10 @@ end=$'\e[0m'
 
 
 # Assumes source is in users home in a directory called "caf"
-export AOSP-CAF_PATH="${HOME}/caf"
+export AOSPCAF_PATH="${HOME}/caf"
 
 # Set the tag you want to merge
-export TAG="LA.UM.5.7.r1-08900-8x98.0"
+export TAG="LA.UM.5.8.r1-02000-8x98.0"
 
 # Set the base URL for all repositories to be pulled from
 export CAF="https://source.codeaurora.org"
@@ -23,11 +23,11 @@ do_not_merge="device/qcom/common external/ant-wireless/antradio-library external
 vendor_repos="vendor/qcom/opensource/dataservices vendor/qcom/opensource/dpm vendor/qcom/opensource/fm"
 
 # AOSP-CAF manifest is setup with repo name first, then repo path, so the path attribute is after 3 spaces, and the path itself within "" in it
-repos="$(grep 'remote="aosp-caf"' ${AOSP-CAF_PATH}/.repo/manifests/manifests/caf.xml  | awk '{print $3}' | awk -F '"' '{print $2}')"
+repos="$(grep 'remote="aosp-caf"' ${AOSPCAF_PATH}/.repo/manifests/manifests/caf.xml  | awk '{print $3}' | awk -F '"' '{print $2}')"
 
-cd ${AOSP-CAF_PATH}
+cd ${AOSPCAF_PATH}
 
-for filess in failed success; do
+for filess in failed success notcaf; do
 	rm $filess 2> /dev/null
 	touch $filess
 done
@@ -40,9 +40,9 @@ for REPO in ${repos}; do
 		echo "$blu Merging $REPO $end"
 		echo -e ""
 		cd $REPO;
-		git checkout n-mr1
-		git fetch aosp-caf n-mr1
-		git reset --hard aosp-caf/n-mr1
+		git checkout n-mr2
+		git fetch aosp-caf n-mr2
+		git reset --hard aosp-caf/n-mr2
 		git remote rm caf 2> /dev/null
 		if [[ "${REPO}" == "device/qcom/sepolicy" ]]; then
 			reponame="${CAF}/${REPO}";
@@ -53,16 +53,24 @@ for REPO in ${repos}; do
 		fi
 		git remote add caf "${reponame}";
 		git fetch caf --quiet --tags;
-		git merge ${TAG} --no-edit;
 		if [ $? -ne 0 ]; then
-			echo "$REPO" >> ${AOSP-CAF_PATH}/failed
-			echo "$red $REPO failed :( $end"
+			echo "$repos" >> ${AOSPCAF_PATH}/notcaf
 		else
-			echo "$REPO" >> ${AOSP-CAF_PATH}/success
-			echo "$grn $REPO succeeded $end"
+			git merge ${TAG} --no-edit;
+			if [ $? -ne 0 ]; then
+				echo "$REPO" >> ${AOSPCAF_PATH}/failed
+				echo "$red $REPO failed :( $end"
+			else
+				if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosp-caf/n-mr2)" ]]; then
+					echo "$REPO" >> ${AOSPCAF_PATH}/success
+					echo "$grn $REPO succeeded $end"
+				else
+					echo "$REPO - unchanged";
+				fi
+			fi
+			echo -e ""
 		fi
-		echo -e ""
-		cd ${AOSP-CAF_PATH};
+			cd ${AOSPCAF_PATH};
 	fi
 done
 
