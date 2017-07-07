@@ -13,22 +13,25 @@ end=$'\e[0m'
 export AOSIP_PATH="${HOME}/nougat"
 
 # Set the tag you want to merge
-export TAG="android-7.1.1_r38"
+export TAG="android-7.1.2_r24"
 
 # Set the base URL for all repos to be pulled from
 export AOSP="https://android.googlesource.com"
 
-do_not_merge="vendor/aosip manifest packages/apps/OmniSwitch packages/apps/OmniStyle packages/apps/OwlsNest external/google packages/apps/ThemeInterfacer packages/apps/Gallery2 device/qcom/sepolicy external/DUtils packages/apps/DUI packages/apps/SlimRecents packages/services/OmniJaws packages/apps/LockClock packages/apps/CalendarWidget hardware/qcom/fm"
+do_not_merge="vendor/* manifest packages/apps/OmniSwitch packages/apps/OmniStyle packages/apps/OwlsNest external/google packages/apps/ThemeInterfacer \
+packages/apps/Gallery2 device/qcom external/DUtils packages/apps/DUI packages/apps/SlimRecents packages/services/OmniJaws packages/apps/LockClock \
+packages/apps/CalendarWidget hardware/* external/ant-wireless external/brctl external/chromium-webview external/connectivity external/busybox \
+external/fuse external/exfat external/ebtables external/ffmpeg external/gson external/json-c external/libncurses external/libnetfilter_conntrack"
 
 cd ${AOSIP_PATH}
 
-for filess in failed success
+for filess in failed success notaosp
 do
 rm $filess 2> /dev/null
 touch $filess
 done
-# AOSiP manifest is setup with repo name first, then repo path, so the path attribute is after 3 spaces, and the path itself within "" in it
-for repos in $(grep 'remote="aosp-caf"' ${AOSIP_PATH}/.repo/manifests/manifests/caf.xml  | awk '{print $3}' | awk -F '"' '{print $2}')
+# AOSiP manifest is setup with repo path first, then repo name, so the path attribute is after 2 spaces, and the path itself within "" in it
+for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/snippets/aosip.xml  | awk '{print $2}' | awk -F '"' '{print $2}')
 do
 echo -e ""
 if [[ "${do_not_merge}" =~ "${repos}" ]];
@@ -38,20 +41,29 @@ else
 echo "$blu Merging $repos $end"
 echo -e ""
 cd $repos;
-git fetch aosip nougat;
-git checkout nougat;
-git reset --hard aosip/nougat;
+git fetch aosip nougat-mr2;
+git checkout nougat-mr2;
+git reset --hard aosip/nougat-mr2;
 git remote rm aosp 2> /dev/null;
 git remote add aosp "${AOSP}/platform/$repos";
 git fetch aosp --quiet --tags;
+if [ $? -ne 0 ];
+then
+echo "$repos" >> ${AOSIP_PATH}/notaosp
+else
 git merge ${TAG} --no-edit;
 if [ $? -ne 0 ];
 then
 echo "$repos" >> ${AOSIP_PATH}/failed
 echo "$red $repos failed :( $end"
 else
+if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/nougat-mr2)" ]]; then
 echo "$repos" >> ${AOSIP_PATH}/success
 echo "$grn $repos succeeded $end"
+else
+echo "$repos - unchanged";
+fi
+fi
 fi
 echo -e ""
 cd ${AOSIP_PATH};
