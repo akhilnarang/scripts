@@ -105,6 +105,11 @@ echo -e "Download $zipname at $url";
 
 }
 
+function haste() {
+a=$(cat);
+curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
+}
+
 function upinfo() #Not sure where this one is kanged from lol
 {
 echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
