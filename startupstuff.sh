@@ -51,7 +51,7 @@ export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:$PATH
 
 export ANDROID_HOME=${BASEDIR}/AndroidSDK
 
-export EDITOR="nano"
+export EDITOR="vim"
 
 # Colors
 black='\e[0;30m'
@@ -115,6 +115,8 @@ function upinfo() #Not sure where this one is kanged from lol
 echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
 }
 
+function onLogin() {
+
 export KERNELDIR=~/kernel
 
 export GIT_PS1_SHOWDIRTYSTATE=1
@@ -146,3 +148,4 @@ source "${ADCSCRIPT}/android_development_shell_tools.rc"
 fi
 
 fortune;
+}

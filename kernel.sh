@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source "${HOME}/scripts/startupstuff.sh";
+
 # Kernel compiling script
 
 function check_toolchain() {
@@ -109,7 +111,7 @@ then
 echo -e "$ZIPNAME zip can be found at $FINAL_ZIP";
 if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
-    transfer "${ZIPNAME}";
+    transfer "${FINAL_ZIP}";
 fi
 else
 echo -e "Zip Creation Failed =(";
