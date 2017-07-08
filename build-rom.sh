@@ -102,7 +102,7 @@ while [[ $# -gt 0 ]]; do
 				exit 1;
 			fi
 			;;
-                "bootimage"|recoveryimage)
+                "bootimage"|"recoveryimage")
                         TARGET="$1";
                         ;;
 		"-h"|"--help")
@@ -119,7 +119,6 @@ done
 [[ -z "${DEVICE}" ]] && DEVICE="oneplus3"
 [[ -z "${ROM}" ]] && ROM="rr"
 [[ -z "${VARIANT}" ]] && VARIANT="userdebug"
-
 
 if [[ "$(hostname)" == "WorldOfVoid" ]]; then
     BASEDIR="/mnt/raidzero";
