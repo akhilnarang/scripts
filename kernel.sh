@@ -65,8 +65,7 @@ export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 |\
 awk -F '(' '{print $2}' | awk '{print tolower($1)}')"
 export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 |\
 awk -F ')' '{print $2}' | awk '{print tolower($1)}')"
-export ZIPNAME="$(echo ${CUSTOMVERSION}-${DEVICE}-$(date +%Y%m%d-%H%M).zip |\
-sed -e 's|™||')"
+export ZIPNAME="${CUSTOMVERSION}-${DEVICE}-$(date +%Y%m%d-%H%M).zip"
 export CUSTOMVERSION="${CUSTOMVERSION}-${TCVERSION1}.${TCVERSION2}"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
