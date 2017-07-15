@@ -4,6 +4,7 @@
 git config --global credential.helper "cache --timeout=7200"
 
 # Some git aliases
+alias git='hub';
 alias gs='git status';
 alias gpul='git pull';
 alias gf='git fetch';
