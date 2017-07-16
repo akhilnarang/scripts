@@ -4,6 +4,7 @@
 git config --global credential.helper "cache --timeout=7200"
 
 # Some git aliases
+alias git='hub';
 alias gs='git status';
 alias gpul='git pull';
 alias gf='git fetch';
@@ -25,6 +26,8 @@ alias gb='git bisect';
 # SSH aliases
 alias rr='ssh akhiln@46.4.51.5'
 alias skylake='ssh akhil@88.99.208.206'
+alias kronic='ssh kronic@88.99.208.206'
+alias rskylake='ssh root@88.99.208.206'
 alias jenkins='ssh root@139.59.22.89'
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
