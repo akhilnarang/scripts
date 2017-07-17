@@ -33,6 +33,14 @@ alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufre
 alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias path='echo ${PATH}'
 
+# https://github.com/AdrianDC/android_development_shell_tools
+# Has some useful stuff :)
+ADCSCRIPT="${HOME}/android_development_shell_tools"
+if [ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ];
+then
+source "${ADCSCRIPT}/android_development_shell_tools.rc"
+fi
+
 if [[ "$(hostname)" == "WorldOfVoid" ]]; then
     BASEDIR="/mnt/raidzero";
 else
@@ -141,14 +149,6 @@ echo -e "${red}Kernel Information: \t${cyan}" `uname -smr`
 echo -ne "${cyan}";upinfo;echo ""
 echo ""
 
-
-# https://github.com/AdrianDC/android_development_shell_tools
-# Has some useful stuff :)
-ADCSCRIPT="/home/akhil/android_development_shell_tools"
-if [ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ];
-then
-source "${ADCSCRIPT}/android_development_shell_tools.rc"
-fi
 
 fortune;
 }
