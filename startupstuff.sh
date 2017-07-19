@@ -41,7 +41,7 @@ then
 source "${ADCSCRIPT}/android_development_shell_tools.rc"
 fi
 
-if [[ "$(hostname)" == "WorldOfVoid" ]]; then
+if [[ "$(mount | grep raidzero)" ]]; then
     BASEDIR="/mnt/raidzero";
 else
     BASEDIR="${HOME}";
