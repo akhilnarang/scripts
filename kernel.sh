@@ -69,7 +69,8 @@ export ZIPNAME="${CUSTOMVERSION}-${DEVICE}-$(date +%Y%m%d-%H%M).zip"
 export CUSTOMVERSION="${CUSTOMVERSION}-${TCVERSION1}.${TCVERSION2}"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
-mkdir -pv "${ZIP_DIR} ${OUTDIR}";
+[ ! -d "${ZIP_DIR}" ] && mkdir -pv ${ZIP_DIR}
+[ ! -d "${OUTDIR}" ] && mkdir -pv ${OUTDIR}
 
 cd "${SRCDIR}";
 rm -fv ${IMAGE};
@@ -100,6 +101,11 @@ fi
 echo -e "Copying kernel image";
 cp -v "${IMAGE}" "${ANYKERNEL}/";
 
+WLAN_MODULE="drivers/staging/qcacld-2.0/wlan.ko";
+if [[ -f "${OUTDIR}/${WLAN_MODULE}" ]]; then
+    ${CROSS_COMPILE}strip --strip-unneeded ${OUTDIR}/${WLAN_MODULE};
+    cp -v ${OUTDIR}/${WLAN_MODULE} ${ANYKERNEL}/modules/;
+fi
 cd -;
 cd ${ANYKERNEL};
 zip -r9 ${FINAL_ZIP} *;
