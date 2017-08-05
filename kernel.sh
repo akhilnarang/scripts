@@ -6,14 +6,11 @@ source "${HOME}/scripts/startupstuff.sh";
 
 function check_toolchain() {
 
-	if [ -f "${TOOLCHAIN}/bin/aarch64-gcc" ]; then
-		export CROSS_COMPILE="${TOOLCHAIN}/bin/aarch64-";
-		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
-	elif [ -f "${TOOLCHAIN}/bin/aarch64-linux-android-gcc" ]; then
-		export CROSS_COMPILE="${TOOLCHAIN}/bin/aarch64-linux-android-";
-		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
-	elif [ -f "${TOOLCHAIN}/bin/aarch64-linux-gnu-gcc" ]; then
-		export CROSS_COMPILE="${TOOLCHAIN}/bin/aarch64-linux-gnu-";
+    TC="$(find ${TOOLCHAIN}/bin -type f -name *-gcc)";
+
+	if [[ -f "${TC}" ]]; then
+		export CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo '${TC}' | awk -F '/' '{print $NF'} |\
+sed -e 's/gcc//')";
 		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
 	else
 		echo -e "No suitable toolchain found in ${TOOLCHAIN}";
