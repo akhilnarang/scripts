@@ -9,7 +9,7 @@ function check_toolchain() {
     export TC="$(find ${TOOLCHAIN}/bin -type f -name *-gcc)";
 
 	if [[ -f "${TC}" ]]; then
-		export CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo '${TC}' | awk -F '/' '{print $NF'} |\
+		export CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
 sed -e 's/gcc//')";
 		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
 	else
