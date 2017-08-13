@@ -50,20 +50,28 @@ fi
 # Kernel Directory
 export KERNELDIR="${BASEDIR}/kernel";
 
+# Use ccache
 export USE_CCACHE=1
 export CCACHE_ROOT=${BASEDIR}
 
-if  [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" > 8 ]]; then
+# Conditionally set jack server heap size
+if [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" > 8 ]]; then
     export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4096M"
     export SERVER_NB_COMPILE=2
     export ANDROID_JACK_VM_ARGS=$JACK_SERVER_VM_ARGUMENTS
 fi
 
+# Extend the default PATH a bit
 export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:$PATH
 
+# Set a custom path to install Android SDK into
 export ANDROID_HOME=${BASEDIR}/AndroidSDK
 
-export EDITOR="vim"
+# Set default editor to vim
+export EDITOR="vim";
+
+# Set timezone
+export TZ="Asia/Kolkata";
 
 # Colors
 black='\e[0;30m'
