@@ -24,10 +24,9 @@ alias grbs='grb --skip';
 alias gb='git bisect';
 
 # SSH aliases
-alias rr='ssh akhiln@46.4.51.5'
-alias skylake='ssh akhil@88.99.208.206'
-alias kronic='ssh kronic@88.99.208.206'
-alias rskylake='ssh root@88.99.208.206'
+alias rr='ssh akhil@5.9.104.210'
+alias aosip='ssh akhil@178.63.68.66'
+alias kronic='ssh kronic@178.63.68.66'
 alias jenkins='ssh root@139.59.22.89'
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
@@ -54,9 +53,11 @@ export KERNELDIR="${BASEDIR}/kernel";
 export USE_CCACHE=1
 export CCACHE_ROOT=${BASEDIR}
 
-export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4096M"
-export SERVER_NB_COMPILE=2
-export ANDROID_JACK_VM_ARGS=$JACK_SERVER_VM_ARGUMENTS
+if  [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" > 8 ]]; then
+    export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4096M"
+    export SERVER_NB_COMPILE=2
+    export ANDROID_JACK_VM_ARGS=$JACK_SERVER_VM_ARGUMENTS
+fi
 
 export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:$PATH
 
