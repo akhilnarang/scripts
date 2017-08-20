@@ -51,8 +51,9 @@ fi
 export KERNELDIR="${BASEDIR}/kernel";
 
 # Use ccache
-export USE_CCACHE=1
-export CCACHE_ROOT=${BASEDIR}
+export USE_CCACHE=1;
+export CCACHE_ROOT="${BASEDIR}";
+export CCACHE_DIR="${BASEDIR}/.ccache";
 
 # Conditionally set jack server heap size
 if [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" -lt 8 ]]; then
