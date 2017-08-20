@@ -44,7 +44,6 @@ export ARCH="arm64";
 export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}";
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
-export CCACHE_DIR="${KERNELDIR}/ccache-${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
 
 if [[ -z "${JOBS}" ]]; then
@@ -53,8 +52,6 @@ fi
 
 export MAKE="make O=${OUTDIR}";
 
-echo -e "Setting ccache - 5gb - ${CCACHE_DIR}"
-ccache -M 5G;
 check_toolchain;
 check_version;
 
