@@ -4,7 +4,6 @@
 git config --global credential.helper "cache --timeout=7200"
 
 # Some git aliases
-alias git='hub';
 alias gs='git status';
 alias gpul='git pull';
 alias gf='git fetch';
@@ -94,8 +93,7 @@ white='\e[1;37m'
 nc='\e[0m'
 
 
-function syncc()
-{
+function syncc() {
 if [[ "$(python --version | awk '{print $2}' | awk -F '.' '{print $1}')" -ne 2 ]];
 then
     if [[ "$(command -v 'virtualenv2')" ]]; then
@@ -118,22 +116,23 @@ fi
 }
 
 function transfer() {
-
-zipname="$(echo $1 | awk -F '/' '{print $NF}')";
-url="$(curl -# -T $1 https://transfer.sh)";
-printf '\n';
-echo -e "Download $zipname at $url";
-
+    zipname="$(echo $1 | awk -F '/' '{print $NF}')";
+    url="$(curl -# -T $1 https://transfer.sh)";
+    printf '\n';
+    echo -e "Download $zipname at $url";
 }
 
 function haste() {
-a=$(cat);
-curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
+    a=$(cat);
+    curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
 }
 
-function upinfo() #Not sure where this one is kanged from lol
-{
-echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
+function git() {
+    hub $@;
+}
+
+function upinfo() { #Not sure where this one is kanged from lol
+    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
 }
 
 function onLogin() {
