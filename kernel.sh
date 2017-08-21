@@ -50,6 +50,10 @@ if [[ -z "${JOBS}" ]]; then
     export JOBS="$(grep -c '^processor' /proc/cpuinfo)";
 fi
 
+if [[ ! -d "${ANYKERNEL}" ]]; then
+    git clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}";
+fi
+
 export MAKE="make O=${OUTDIR}";
 
 check_toolchain;
