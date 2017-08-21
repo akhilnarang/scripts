@@ -56,7 +56,7 @@ export CCACHE_ROOT="${BASEDIR}";
 export CCACHE_DIR="${BASEDIR}/.ccache";
 
 # Conditionally set jack server heap size
-if [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" -lt 8 ]]; then
+if [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" < 8 ]]; then
     export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4096M"
     export SERVER_NB_COMPILE=2
     export ANDROID_JACK_VM_ARGS=$JACK_SERVER_VM_ARGUMENTS
