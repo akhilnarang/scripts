@@ -51,7 +51,7 @@ if [[ -z "${JOBS}" ]]; then
 fi
 
 if [[ ! -d "${ANYKERNEL}" ]]; then
-    git clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}";
+    hub clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}";
 fi
 
 export MAKE="make O=${OUTDIR}";
