@@ -55,12 +55,8 @@ export USE_CCACHE=1;
 export CCACHE_ROOT="${BASEDIR}";
 export CCACHE_DIR="${BASEDIR}/.ccache";
 
-# Conditionally set jack server heap size
-if [[ "$(free -h | grep Mem | awk '{print $2}' | sed -e 's/G//')" < 8 ]]; then
-    export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4096M"
-    export SERVER_NB_COMPILE=2
-    export ANDROID_JACK_VM_ARGS=$JACK_SERVER_VM_ARGUMENTS
-fi
+# Disable jack <3 <3 <3
+export ANDROID_COMPILE_WITH_JACK=false
 
 # Extend the default PATH a bit
 export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:$PATH
