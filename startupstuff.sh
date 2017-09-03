@@ -55,9 +55,6 @@ export USE_CCACHE=1;
 export CCACHE_ROOT="${BASEDIR}";
 export CCACHE_DIR="${BASEDIR}/.ccache";
 
-# Disable jack <3 <3 <3
-export ANDROID_COMPILE_WITH_JACK=false
-
 # Extend the default PATH a bit
 export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:$PATH
 
