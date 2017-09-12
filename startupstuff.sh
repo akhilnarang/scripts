@@ -142,7 +142,7 @@ export GIT_PS1_SHOWCOLORHINTS=1
 source ~/git-prompt.sh
 unset PS1;
 #PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
-PS1='| \w$(__git_ps1 " (%s)") |-> ';
+PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
 clear;
 echo -e "${LIGHTGRAY}";figlet -f slant "$(hostname)";
 echo ""
