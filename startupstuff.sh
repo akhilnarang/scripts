@@ -56,7 +56,7 @@ export CCACHE_ROOT="${BASEDIR}";
 export CCACHE_DIR="${BASEDIR}/.ccache";
 
 # Extend the default PATH a bit
-export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:$PATH
+export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/AndroidSDK/platform-tools:${BASEDIR}/adb-sync:$PATH
 
 # Set a custom path to install Android SDK into
 export ANDROID_HOME=${BASEDIR}/AndroidSDK
