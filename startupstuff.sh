@@ -144,13 +144,13 @@ unset PS1;
 #PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
 PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
 clear;
-echo -e "${LIGHTGRAY}";figlet -f slant "$(hostname)";
+echo -e "${LIGHTGRAY}";figlet -c "Derp";
 echo ""
 echo -ne "${red}Today is:\t\t${cyan}" `date`; echo ""
 echo -e "${red}Kernel Information: \t${cyan}" `uname -smr`
 echo -ne "${cyan}";
 upinfo;
-echo ""
+echo "";
 echo -e "Welcome to $(hostname), $(whoami)!\n";
 fortune;
 }
