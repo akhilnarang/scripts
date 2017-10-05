@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Script to merge upstream AOSP Tags in AOSiP
+# Script to merge upstream AOSP tags in AOSiP
 
 #COLORS -
 red=$'\e[1;31m'
@@ -9,11 +9,14 @@ blu=$'\e[1;34m'
 end=$'\e[0m'
 
 
-# Assumes source is in users home in a directory called "nougat"
-export AOSIP_PATH="${HOME}/nougat"
+# Assumes source is in users home in a directory called "oreo"
+export AOSIP_PATH="${HOME}/oreo"
 
-# Set the tag you want to merge
-export TAG="android-7.1.2_r24"
+# Set OLD_TAG to the tag you are currently based on
+export OLD_TAG="android-8.0.0_r15"
+
+# Set NEW_TAG to the tag you want to merge
+export NEW_TAG="android-8.0.0_rXY"
 
 # Set the base URL for all repos to be pulled from
 export AOSP="https://android.googlesource.com"
@@ -41,9 +44,9 @@ else
 echo "$blu Merging $repos $end"
 echo -e ""
 cd $repos;
-git fetch aosip nougat-mr2;
-git checkout nougat-mr2;
-git reset --hard aosip/nougat-mr2;
+git fetch aosip oreo;
+git checkout oreo;
+git reset --hard aosip/oreo;
 git remote rm aosp 2> /dev/null;
 git remote add aosp "${AOSP}/platform/$repos";
 git fetch aosp --quiet --tags;
@@ -51,14 +54,15 @@ if [ $? -ne 0 ];
 then
 echo "$repos" >> ${AOSIP_PATH}/notaosp
 else
-git merge ${TAG} --no-edit;
+git merge ${NEW_TAG} --no-edit --log=$(git rev-list --count ${OLD_TAG}..${NEW_TAG});
 if [ $? -ne 0 ];
 then
 echo "$repos" >> ${AOSIP_PATH}/failed
 echo "$red $repos failed :( $end"
 else
-if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/nougat-mr2)" ]]; then
+if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/oreo)" ]]; then
 echo "$repos" >> ${AOSIP_PATH}/success
+git commit -as --amend --no-edit
 echo "$grn $repos succeeded $end"
 else
 echo "$repos - unchanged";
@@ -71,6 +75,7 @@ fi
 done
 
 echo -e ""
+
 echo -e "$red These repos failed $end"
 cat ./failed
 echo -e ""
