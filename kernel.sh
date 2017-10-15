@@ -54,11 +54,11 @@ export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 |\
 awk -F '(' '{print $2}' | awk '{print tolower($1)}')"
 export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 |\
 awk -F ')' '{print $2}' | awk '{print tolower($1)}')"
-if [[ -z "${LOCALVERSION}" ]]; then
-    export LOCALVERSION="derp";
+if [[ -z "${NAME}" ]]; then
+    export NAME="derp";
 fi
-export ZIPNAME="${LOCALVERSION}-${DEVICE}-$(date +%Y%m%d-%H%M).zip"
-export LOCALVERSION="${LOCALVERSION}-${TCVERSION1}.${TCVERSION2}"
+export ZIPNAME="${NAME}-${DEVICE}-$(date +%Y%m%d-%H%M).zip"
+export LOCALVERSION="${TCVERSION1}.${TCVERSION2}"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 [ ! -d "${ZIP_DIR}" ] && mkdir -pv ${ZIP_DIR}

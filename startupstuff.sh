@@ -87,39 +87,44 @@ white='\e[1;37m'
 nc='\e[0m'
 
 
-function syncc()
+function run_virtualenv()
 {
-if [[ "$(python --version | awk '{print $2}' | awk -F '.' '{print $1}')" -ne 2 ]];
-then
-    if [[ "$(command -v 'virtualenv2')" ]]; then
-        virtualenv2 "${BASEDIR}/virtualenv";
-        source "${BASEDIR}/virtualenv/bin/activate";
-    else
-        echo "Please install 'virtualenv2', or make 'python' point to python2";
-        exit 1;
+    PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
+    if [[ "${PYV}" == "3" ]]; then
+        if [[ "$(command -v 'virtualenv2')" ]]; then
+            if [[ ! -d "${BASEDIR}/virtualenv" ]]; then
+                virtualenv2 "${BASEDIR}/virtualenv";
+            fi
+            source "${BASEDIR}/virtualenv/bin/activate";
+        else
+            echo "Please install 'virtualenv2', or make 'python' point to python2";
+            exit 1;
+        fi
     fi
-fi
 
-time repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@
+    $@;
 
-if [[ -d "${BASEDIR}/virtualenv" ]]; then
-    echo -e "virtualenv detected, deactivating!";
-    deactivate;
-    rm -rf "${BASEDIR}/virtualenv";
-fi
-
+    if [[ -d "${BASEDIR}/virtualenv" ]]; then
+        echo -e "virtualenv detected, deactivating!";
+        deactivate;
+    fi
 }
 
-function transfer() {
+function syncc()
+{
+run_virtualenv time repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@
+}
 
+function transfer()
+{
 zipname="$(echo $1 | awk -F '/' '{print $NF}')";
 url="$(curl -# -T $1 https://transfer.sh)";
 printf '\n';
 echo -e "Download $zipname at $url";
-
 }
 
-function haste() {
+function haste()
+{
 a=$(cat);
 curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
 }
@@ -129,7 +134,8 @@ function upinfo() #Not sure where this one is kanged from lol
 echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
 }
 
-function onLogin() {
+function onLogin()
+{
 
 export KERNELDIR=~/kernel
 
