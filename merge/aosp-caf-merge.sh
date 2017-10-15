@@ -20,8 +20,6 @@ export CAF="https://source.codeaurora.org"
 
 do_not_merge="device/qcom/common external/ant-wireless/antradio-library external/bash external/busybox external/connectivity external/exfat external/fuse external/ntfs-3g hardware/qcom/bt hardware/qcom/bt-caf hardware/qcom/keymaster hardware/qcom/wlan hardware/qcom/wlan-caf hardware/ril hardware/ril-caf vendor/aosp vendor/qcom/opensource/softap"
 
-vendor_repos="vendor/qcom/opensource/dataservices vendor/qcom/opensource/dpm vendor/qcom/opensource/fm"
-
 # AOSP-CAF manifest is setup with repo name first, then repo path, so the path attribute is after 3 spaces, and the path itself within "" in it
 repos="$(grep 'remote="aosp-caf"' ${AOSPCAF_PATH}/.repo/manifests/manifests/caf.xml  | awk '{print $3}' | awk -F '"' '{print $2}')"
 
@@ -46,8 +44,8 @@ for REPO in ${repos}; do
 		git remote rm caf 2> /dev/null
 		if [[ "${REPO}" == "device/qcom/sepolicy" ]]; then
 			reponame="${CAF}/${REPO}";
-		elif [[ "${REPO}" =~ "${vendor_repos}" ]]; then
-			reponame="${CAF}/$(echo ${REPO} | sed -e 's/qcom\/opensource/qcom-opensource/')";
+		elif [[ "${REPO}" =~ "vendor/qcom" ]]; then
+			reponame="${CAF}/platform/$(echo ${REPO} | sed -e 's|qcom/opensource|qcom-opensource|')";
 		else
 			reponame="${CAF}/platform/$REPO";
 		fi
