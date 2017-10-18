@@ -6,7 +6,7 @@ source "${HOME}/scripts/startupstuff.sh";
 
 function check_toolchain() {
 
-    export TC="$(find ${TOOLCHAIN}/bin -type f -name *-gcc)";
+    export TC="$(find ${TOOLCHAIN}/bin -type f -name aarch64-*-gcc)";
 
 	if [[ -f "${TC}" ]]; then
 		export CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
