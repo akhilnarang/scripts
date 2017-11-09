@@ -57,8 +57,9 @@ awk -F ')' '{print $2}' | awk '{print tolower($1)}')"
 if [[ -z "${NAME}" ]]; then
     export NAME="derp";
 fi
-export ZIPNAME="${NAME}-${DEVICE}-$(date +%Y%m%d-%H%M).zip"
-export LOCALVERSION="${TCVERSION1}.${TCVERSION2}"
+export NAME="${NAME}-${DEVICE}-$(date +%Y%m%d-%H%M)";
+export ZIPNAME="${NAME}.zip"
+#export LOCALVERSION="${TCVERSION1}${TCVERSION2}"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 [ ! -d "${ZIP_DIR}" ] && mkdir -pv ${ZIP_DIR}
@@ -105,10 +106,17 @@ cd -;
 
 if [ -f "$FINAL_ZIP" ];
 then
-echo -e "$ZIPNAME zip can be found at $FINAL_ZIP";
+echo -e "$NAME zip can be found at $FINAL_ZIP";
+git log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
 if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
     transfer "${FINAL_ZIP}";
+fi
+if [[ "$@" =~ "upload" ]]; then
+    for f in -changelog.txt .zip
+    do
+    scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
+    done
 fi
 else
 echo -e "Zip Creation Failed =(";
