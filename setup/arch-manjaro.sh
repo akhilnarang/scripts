@@ -18,6 +18,11 @@ export MAKEPKG="makepkg --skippgpcheck"
 yaourt -S libtinfo --noconfirm
 yaourt -S lib32-ncurses5-compat-libs --noconfirm
 yaourt -S ncurses5-compat-libs --noconfirm
+# Downgrade curl for now
+yaourt -S agetpkg-git --noconfirm
+agetpkg --install curl 7.55.1 1
+sudo pacman -R agetpkg-git
+sudo sed -i '/\[options\]/a IgnorePkg = curl' /etc/pacman.conf
 
 if [ -d "utils" ]; then
 	if [ "$(command -v make)" ]; then
