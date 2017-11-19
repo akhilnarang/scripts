@@ -9,7 +9,7 @@ else
 export BRANCH="$1"
 fi
 
-export AOSIP_SOURCE_DIR="/mnt/raidzero/aosip"
+export AOSIP_SOURCE_DIR="/home/akhil/oreo"
 export DIR=$PWD
 
 cd ${AOSIP_SOURCE_DIR}

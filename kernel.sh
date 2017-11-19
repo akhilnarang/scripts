@@ -107,7 +107,7 @@ cd -;
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$NAME zip can be found at $FINAL_ZIP";
-git log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
+git -C ${SRCDIR} log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
 if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
     transfer "${FINAL_ZIP}";
@@ -117,6 +117,7 @@ if [[ "$@" =~ "upload" ]]; then
     do
     scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
     done
+    bash ~/kronicbot/send_tg.sh @caesiumkernel "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
 fi
 else
 echo -e "Zip Creation Failed =(";

@@ -16,15 +16,20 @@ export AOSIP_PATH="${HOME}/oreo"
 export OLD_TAG="android-8.0.0_r15"
 
 # Set NEW_TAG to the tag you want to merge
-export NEW_TAG="android-8.0.0_rXY"
+export NEW_TAG="android-8.0.0_r32"
 
 # Set the base URL for all repos to be pulled from
 export AOSP="https://android.googlesource.com"
 
-do_not_merge="vendor/* manifest packages/apps/OmniSwitch packages/apps/OmniStyle packages/apps/OwlsNest external/google packages/apps/ThemeInterfacer \
-packages/apps/Gallery2 device/qcom external/DUtils packages/apps/DUI packages/apps/SlimRecents packages/services/OmniJaws packages/apps/LockClock \
-packages/apps/CalendarWidget hardware/* external/ant-wireless external/brctl external/chromium-webview external/connectivity external/busybox \
-external/fuse external/exfat external/ebtables external/ffmpeg external/gson external/json-c external/libncurses external/libnetfilter_conntrack"
+do_not_merge="vendor/* manifest packages/apps/OmniSwitch packages/apps/OmniStyle \
+packages/apps/OwlsNest external/google packages/apps/ThemeInterfacer \
+packages/apps/Gallery2 device/qcom external/DUtils packages/apps/DUI \
+packages/apps/SlimRecents packages/services/OmniJaws packages/apps/LockClock \
+packages/apps/CalendarWidget hardware/qcom/*-caf external/ant-wireless \
+external/brctl external/chromium-webview external/connectivity external/busybox \
+external/fuse external/exfat external/ebtables external/ffmpeg external/gson \
+external/json-c external/libncurses external/libnetfilter_conntrack \
+external/libnfnetlink"
 
 cd ${AOSIP_PATH}
 
@@ -44,6 +49,9 @@ else
 echo "$blu Merging $repos $end"
 echo -e ""
 cd $repos;
+if [[ "$repos" == "build/make" ]]; then
+    repos="build";
+fi
 git fetch aosip oreo;
 git checkout oreo;
 git reset --hard aosip/oreo;
