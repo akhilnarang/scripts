@@ -118,6 +118,7 @@ if [[ "$@" =~ "upload" ]]; then
     scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
     done
     bash ~/kronicbot/send_tg.sh @caesiumkernel "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
+    bash ~/kronicbot/send_tg.sh "-1001223901635" "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
 fi
 else
 echo -e "Zip Creation Failed =(";
