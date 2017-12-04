@@ -9,7 +9,7 @@ function check_toolchain() {
     export TC="$(find ${TOOLCHAIN}/bin -type f -name aarch64-*-gcc)";
 
 	if [[ -f "${TC}" ]]; then
-		export CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
+		export CROSS_COMPILE="${CCACHE} ${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
 sed -e 's/gcc//')";
 		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
 	else
@@ -32,8 +32,10 @@ fi
 export SRCDIR="${KERNELDIR}/${DEVICE}";
 export OUTDIR="${KERNELDIR}/${DEVICE}/out";
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}";
+export MODULES_DIR="${ANYKERNEL}/modules";
 export ARCH="arm64";
 export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}";
+export CCACHE="$(command -v ccache)";
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
@@ -50,16 +52,11 @@ export MAKE="make O=${OUTDIR}";
 
 check_toolchain;
 
-export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 |\
-awk -F '(' '{print $2}' | awk '{print tolower($1)}')"
-export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 |\
-awk -F ')' '{print $2}' | awk '{print tolower($1)}')"
 if [[ -z "${NAME}" ]]; then
     export NAME="derp";
 fi
 export NAME="${NAME}-${DEVICE}-$(date +%Y%m%d-%H%M)";
 export ZIPNAME="${NAME}.zip"
-#export LOCALVERSION="${TCVERSION1}${TCVERSION2}"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 
 [ ! -d "${ZIP_DIR}" ] && mkdir -pv ${ZIP_DIR}
@@ -76,7 +73,8 @@ if [[ "$@" =~ "clean" ]]; then
     ${MAKE} clean
 fi
 
-${MAKE} $DEFCONFIG;
+${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && exit 1);
+
 START=$(date +"%s");
 ${MAKE} -j${JOBS};
 exitCode="$?";
@@ -94,11 +92,13 @@ fi
 echo -e "Copying kernel image";
 cp -v "${IMAGE}" "${ANYKERNEL}/";
 
-WLAN_MODULE="drivers/staging/qcacld-2.0/wlan.ko";
-if [[ -f "${OUTDIR}/${WLAN_MODULE}" ]]; then
-    ${CROSS_COMPILE}strip --strip-unneeded ${OUTDIR}/${WLAN_MODULE};
-    cp -v ${OUTDIR}/${WLAN_MODULE} ${ANYKERNEL}/modules/;
-fi
+grep -q "=m" ${OUTDIR}/.config;
+if [[ "$?" -eq 0 ]]; then
+    find ${OUTDIR} -name "*.ko" -exec cp {} ${MODULES_DIR} \;
+    for module in $(ls ${MODULES_DIR/*.ko}); do
+  		${CROSS_COMPILE}strip --strip-unneeded "${MODULES_DIR}/${module}";
+  	done
+fi # Modules check 
 cd -;
 cd ${ANYKERNEL};
 zip -r9 ${FINAL_ZIP} *;
@@ -107,12 +107,12 @@ cd -;
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$NAME zip can be found at $FINAL_ZIP";
-git -C ${SRCDIR} log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
 if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
     transfer "${FINAL_ZIP}";
 fi
 if [[ "$@" =~ "upload" ]]; then
+	git -C ${SRCDIR} log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
     for f in -changelog.txt .zip
     do
     scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
