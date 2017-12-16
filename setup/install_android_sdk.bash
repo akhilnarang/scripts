@@ -10,11 +10,4 @@ wget $tools_url
 rm $zip_name
 echo 'export ANDROID_HOME=~/Android/Sdk' >> ~/.bashrc
 export ANDROID_HOME=~/Android/Sdk
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter android-26
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter extra-android-m2repository
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter extra-google-m2repository
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter build-tools-26.0.2
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter tools
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter platform-tool
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter tools
-
+yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
