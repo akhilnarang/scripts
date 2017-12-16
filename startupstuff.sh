@@ -11,9 +11,12 @@ alias gf='git fetch';
 alias grem='git remote';
 alias gremv='git remote -v';
 alias gpu='git push';
+alias gpf='gpu -f'
+alias gpfu='gpu -fu';
 alias grev='git revert';
 alias gcp='git cherry-pick';
 alias gcpc='gcp --continue';
+alias gcpa='gcp --abort';
 alias gr='git reset';
 alias grh='gr --hard';
 alias grs='gr --soft';
@@ -21,13 +24,16 @@ alias grb='git rebase';
 alias grbi='grb --interactive';
 alias grbc='grb --continue';
 alias grbs='grb --skip';
+alias grba='grb --abort';
 alias gb='git bisect';
+alias gd='git diff';
+alias gc='git commit';
 
 # SSH aliases
-alias rr='ssh akhil@kaby'
-alias aosip='ssh akhil@Illusion'
-alias kronic='ssh kronic@Illusion'
-alias jenkins='ssh root@buildbot'
+alias rr='ssh akhil@rr.akhilnarang.me'
+alias aosip='ssh akhil@aosiprom.com'
+alias kronic='ssh kronic@aosiprom.com'
+alias jenkins='ssh root@jenkins.akhilnarang.me'
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 alias path='echo ${PATH}'
@@ -56,13 +62,13 @@ export CCACHE_ROOT="${BASEDIR}";
 export CCACHE_DIR="${BASEDIR}/.ccache";
 
 # Extend the default PATH a bit
-export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/AndroidSDK/platform-tools:${BASEDIR}/adb-sync:$PATH
+export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/Android/Sdk/platform-tools:${BASEDIR}/adb-sync:$PATH
 
-# Set a custom path to install Android SDK into
-export ANDROID_HOME=${BASEDIR}/AndroidSDK
+# Set a custom path for the Android SDK
+export ANDROID_HOME=${BASEDIR}/Android/Sdk;
 
 # Set default editor to vim
-export EDITOR="vim";
+export EDITOR="nano";
 
 # Set timezone
 export TZ="Asia/Kolkata";
@@ -136,9 +142,6 @@ echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {p
 
 function onLogin()
 {
-
-export KERNELDIR=~/kernel
-
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
@@ -150,7 +153,7 @@ unset PS1;
 #PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
 PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
 clear;
-echo -e "${LIGHTGRAY}";figlet -c "Derp";
+echo -e "${LIGHTGRAY}";figlet -c "$(hostname)";
 echo ""
 echo -ne "${red}Today is:\t\t${cyan}" `date`; echo ""
 echo -e "${red}Kernel Information: \t${cyan}" `uname -smr`
