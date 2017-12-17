@@ -118,48 +118,48 @@ function run_virtualenv()
 
 function syncc()
 {
-run_virtualenv time repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@
+    time run_virtualenv repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@
 }
 
 function transfer()
 {
-zipname="$(echo $1 | awk -F '/' '{print $NF}')";
-url="$(curl -# -T $1 https://transfer.sh)";
-printf '\n';
-echo -e "Download $zipname at $url";
+    zipname="$(echo $1 | awk -F '/' '{print $NF}')";
+    url="$(curl -# -T $1 https://transfer.sh)";
+    printf '\n';
+    echo -e "Download $zipname at $url";
 }
 
 function haste()
 {
-a=$(cat);
-curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
+    a=$(cat);
+    curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
 }
 
 function upinfo() #Not sure where this one is kanged from lol
 {
-echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
+    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
 }
 
 function onLogin()
 {
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
-export GIT_PS1_SHOWUPSTREAM=auto
-export GIT_PS1_SHOWCOLORHINTS=1
+    export GIT_PS1_SHOWDIRTYSTATE=1
+    export GIT_PS1_SHOWSTASHSTATE=1
+    export GIT_PS1_SHOWUNTRACKEDFILES=1
+    export GIT_PS1_SHOWUPSTREAM=auto
+    export GIT_PS1_SHOWCOLORHINTS=1
 
-source ~/git-prompt.sh
-unset PS1;
-#PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
-PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
-clear;
-echo -e "${LIGHTGRAY}";figlet -c "$(hostname)";
-echo ""
-echo -ne "${red}Today is:\t\t${cyan}" `date`; echo ""
-echo -e "${red}Kernel Information: \t${cyan}" `uname -smr`
-echo -ne "${cyan}";
-upinfo;
-echo "";
-echo -e "Welcome to $(hostname), $(whoami)!\n";
-fortune;
+    source ~/git-prompt.sh
+    unset PS1;
+    #PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
+    PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
+    clear;
+    echo -e "${LIGHTGRAY}";figlet -c "$(hostname)";
+    echo ""
+    echo -ne "${red}Today is:\t\t${cyan}" `date`; echo ""
+    echo -e "${red}Kernel Information: \t${cyan}" `uname -smr`
+    echo -ne "${cyan}";
+    upinfo;
+    echo "";
+    echo -e "Welcome to $(hostname), $(whoami)!\n";
+    fortune;
 }
