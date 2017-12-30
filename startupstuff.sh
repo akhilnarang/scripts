@@ -3,8 +3,11 @@
 # Git Configurations
 git config --global credential.helper "cache --timeout=7200"
 
+if [[ "$(command -v hub)" ]]; then
+    alias git='hub';
+fi
+
 # Some git aliases
-alias git='hub';
 alias gs='git status';
 alias gpul='git pull';
 alias gf='git fetch';
@@ -67,7 +70,7 @@ export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BAS
 # Set a custom path for the Android SDK
 export ANDROID_HOME=${BASEDIR}/Android/Sdk;
 
-# Set default editor to vim
+# Set default editor to nano
 export EDITOR="nano";
 
 # Set timezone
