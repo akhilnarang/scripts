@@ -8,7 +8,7 @@ echo Installing Dependencies!
 sudo pacman -Syyu
 
 # check if pacaur is installed
-if pacman -Qi $package &> /dev/null; then
+if pacman -Qi pacaur &> /dev/null; then
     echo "Requirement satisfied - pacaur is installed, moving on to next step"
 else
     # Install pacaur (not available in official repos)
@@ -34,7 +34,8 @@ else
     makepkg -i PKGBUILD --noconfirm
 
     # cleanup build directory
-    cd && rm -r ~/tmp
+    cd -;
+    rm -rf ~/tmp
 fi
 
 # Downgrade curl for now
