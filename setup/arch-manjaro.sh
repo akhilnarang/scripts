@@ -6,30 +6,36 @@ clear
 echo Installing Dependencies!
 # Update
 sudo pacman -Syyu
-# Install pacaur (not available in official repos)
-# sudo pacman -S pacaur
 
-# Install pacaur from AUR
-# Pacaur depends on cower also from AUR so first build cower
+# check if pacaur is installed
+if pacman -Qi $package &> /dev/null; then
+    echo "Requirement satisfied - pacaur is installed, moving on to next step"
+else
+    # Install pacaur (not available in official repos)
+    # sudo pacman -S pacaur
 
-# First, install the necessary dependencies.
-sudo pacman -S expac yajl --noconfirm
+    # Install pacaur from AUR
+    # Pacaur depends on cower also from AUR so first build cower
 
-# create a temporary working directory
-mkdir ~/tmp
-cd ~/tmp/
+    # First, install the necessary dependencies.
+    sudo pacman -S expac yajl --noconfirm
 
-# build cower (import keys for cower alternatively use --skipgpcheck in makepkg)
-gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53
-curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=cower
-makepkg -i PKGBUILD --noconfirm
+    # create a temporary working directory
+    mkdir ~/tmp
+    cd ~/tmp/
 
-# next install pacaur
-curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=pacaur
-makepkg -i PKGBUILD --noconfirm
+    # build cower (import keys for cower alternatively use --skipgpcheck in makepkg)
+    gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53
+    curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=cower
+    makepkg -i PKGBUILD --noconfirm
 
-# cleanup build directory
-cd && rm -r ~/tmp
+    # next install pacaur
+    curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=pacaur
+    makepkg -i PKGBUILD --noconfirm
+
+    # cleanup build directory
+    cd && rm -r ~/tmp
+fi
 
 # Downgrade curl for now
 pacaur -S agetpkg-git --noconfirm
