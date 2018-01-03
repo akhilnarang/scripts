@@ -8,10 +8,6 @@ echo Installing Dependencies!
 sudo pacman -Syyu
 # Install pacaur
 sudo pacman -S pacaur
-# Downgrade curl for now
-pacaur -S agetpkg-git --noconfirm
-agetpkg --install curl 7.55.1 1
-sudo sed -i '/\[options\]/a IgnorePkg = curl' /etc/pacman.conf
 # Import PGP signatures for ncurses5-compat-libs and lib32-ncurses5-compat-libs
 gpg --recv-keys 702353E0F7E48EDB
 # Install aosp-devel (and lineageos-devel because quite a few probably build Lineage/Lineage based ROMs as well.
