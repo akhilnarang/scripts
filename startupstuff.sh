@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Git Configurations
-git config --global credential.helper "cache --timeout=7200"
-
 if [[ "$(command -v hub)" ]]; then
     alias git='hub';
 fi
@@ -33,25 +30,22 @@ alias gd='git diff';
 alias gc='git commit';
 
 # SSH aliases
-alias rr='ssh akhil@rr.akhilnarang.me'
-alias aosip='ssh akhil@aosiprom.com'
-alias kronic='ssh kronic@aosiprom.com'
-alias jenkins='ssh root@jenkins.akhilnarang.me'
-alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
-alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
-alias path='echo ${PATH}'
+alias rr='ssh akhil@rr.akhilnarang.me';
+alias aosip='ssh akhil@aosiprom.com';
+alias kronic='ssh kronic@aosiprom.com';
+alias jenkins='ssh root@jenkins.akhilnarang.me';
+alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
+alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
+alias path='echo ${PATH}';
 
 # https://github.com/AdrianDC/android_development_shell_tools
 # Has some useful stuff :)
-ADCSCRIPT="${HOME}/android_development_shell_tools"
-if [ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ];
-then
-source "${ADCSCRIPT}/android_development_shell_tools.rc"
+ADCSCRIPT="${HOME}/android_development_shell_tools";
+if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
+    source "${ADCSCRIPT}/android_development_shell_tools.rc";
 fi
 
-if [[ "$(mount | grep raidzero)" ]]; then
-    BASEDIR="/mnt/raidzero";
-else
+if [[ -z "${HOME}" ]]; then
     BASEDIR="${HOME}";
 fi
 
@@ -65,7 +59,7 @@ export CCACHE_ROOT="${BASEDIR}";
 export CCACHE_DIR="${BASEDIR}/.ccache";
 
 # Extend the default PATH a bit
-export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/Android/Sdk/platform-tools:${BASEDIR}/adb-sync:$PATH
+export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/Android/Sdk/platform-tools:${BASEDIR}/adb-sync:$PATH;
 
 # Set a custom path for the Android SDK
 export ANDROID_HOME=${BASEDIR}/Android/Sdk;
@@ -77,23 +71,23 @@ export EDITOR="nano";
 export TZ="Asia/Kolkata";
 
 # Colors
-black='\e[0;30m'
-blue='\e[0;34m'
-green='\e[0;32m'
-cyan='\e[0;36m'
-red='\e[0;31m'
-purple='\e[0;35m'
-brown='\e[0;33m'
-lightgray='\e[0;37m'
-darkgray='\e[1;30m'
-lightblue='\e[1;34m'
-lightgreen='\e[1;32m'
-lightcyan='\e[1;36m'
-lightred='\e[1;31m'
-lightpurple='\e[1;35m'
-yellow='\e[1;33m'
-white='\e[1;37m'
-nc='\e[0m'
+black='\e[0;30m';
+blue='\e[0;34m';
+green='\e[0;32m';
+cyan='\e[0;36m';
+red='\e[0;31m';
+purple='\e[0;35m';
+brown='\e[0;33m';
+lightgray='\e[0;37m';
+darkgray='\e[1;30m';
+lightblue='\e[1;34m';
+lightgreen='\e[1;32m';
+lightcyan='\e[1;36m';
+lightred='\e[1;31m';
+lightpurple='\e[1;35m';
+yellow='\e[1;33m';
+white='\e[1;37m';
+nc='\e[0m';
 
 
 function run_virtualenv()
@@ -107,7 +101,6 @@ function run_virtualenv()
             source "${BASEDIR}/virtualenv/bin/activate";
         else
             echo "Please install 'virtualenv2', or make 'python' point to python2";
-            exit 1;
         fi
     fi
 
@@ -121,7 +114,7 @@ function run_virtualenv()
 
 function syncc()
 {
-    time run_virtualenv repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@
+    time run_virtualenv repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@;
 }
 
 function transfer()
@@ -140,21 +133,24 @@ function haste()
 
 function upinfo() #Not sure where this one is kanged from lol
 {
-    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
+    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}';
 }
 
 function onLogin()
 {
-    export GIT_PS1_SHOWDIRTYSTATE=1
-    export GIT_PS1_SHOWSTASHSTATE=1
-    export GIT_PS1_SHOWUNTRACKEDFILES=1
-    export GIT_PS1_SHOWUPSTREAM=auto
-    export GIT_PS1_SHOWCOLORHINTS=1
-
-    source ~/git-prompt.sh
+    export GIT_PS1_SHOWDIRTYSTATE=1;
+    export GIT_PS1_SHOWSTASHSTATE=1;
+    export GIT_PS1_SHOWUNTRACKEDFILES=1;
+    export GIT_PS1_SHOWUPSTREAM=auto;
+    export GIT_PS1_SHOWCOLORHINTS=1;
     unset PS1;
     #PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
-    PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
+    if [[ -f "${HOME}/git-prompt.sh" ]]; then
+        source ~/git-prompt.sh
+        PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
+    else
+        PS1='| \h (\w) |-> ';
+    fi
     clear;
     echo -e "${LIGHTGRAY}";figlet -c "$(hostname)";
     echo ""
