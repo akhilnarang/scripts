@@ -5,3 +5,6 @@ glibc-devel.i686 libstdc++.i686 libXrandr.i686 zip perl-Digest-SHA wget lzop ope
 java-1.8.0-openjdk-devel ImageMagick ncurses-compat-libs
 
 echo -e ("INSTALLED EVERYTHING!")
+echo -e ("we may need your password for this next part")
+sudo ln -s /usr/lib/libncurses.so.6 /usr/lib/libncurses.so.5
+sudo ln -s /usr/lib/libncurses.so.6 /usr/lib/libtinfo.so.5
