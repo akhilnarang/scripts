@@ -15,7 +15,7 @@ sudo sed -i '/\[options\]/a IgnorePkg = curl' /etc/pacman.conf
 # Import PGP signatures for ncurses5-compat-libs and lib32-ncurses5-compat-libs
 gpg --recv-keys 702353E0F7E48EDB
 # Install aosp-devel (and lineageos-devel because quite a few probably build Lineage/Lineage based ROMs as well.
-pacaur -S aosp-devel lineageos-devel --noconfirm
+pacaur -S aosp-devel lineageos-devel
 # Just a couple of other useful tools I use, others do too probably
 pacaur -S hub neofetch fortune-mod --noconfirm
 
