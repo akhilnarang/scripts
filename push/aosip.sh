@@ -4,12 +4,12 @@
 
 if [ -z "$1" ];
 then
-export BRANCH="oreo"
+export BRANCH="oreo-mr1"
 else
 export BRANCH="$1"
 fi
 
-export AOSIP_SOURCE_DIR="/home/akhil/oreo"
+export AOSIP_SOURCE_DIR="/home/akhil/${BRANCH}"
 export DIR=$PWD
 
 cd ${AOSIP_SOURCE_DIR}
