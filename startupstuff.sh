@@ -45,7 +45,7 @@ if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
     source "${ADCSCRIPT}/android_development_shell_tools.rc";
 fi
 
-if [[ -z "${HOME}" ]]; then
+if [[ -z "${BASEDIR}" ]]; then
     BASEDIR="${HOME}";
 fi
 
