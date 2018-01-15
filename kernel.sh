@@ -116,6 +116,7 @@ if [[ "$@" =~ "upload" ]]; then
     for f in -changelog.txt .zip
     do
     scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
+    ssh akhil@downloads.akhilnarang.me ~/gdrive sync upload downloads/kernel 1DnrCzSchI9MNHXkbiaqlw-qyRkNIDKFQ
     done
     bash ~/kronicbot/send_tg.sh @caesiumkernel "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
     bash ~/kronicbot/send_tg.sh "-1001223901635" "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
