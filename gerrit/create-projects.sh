@@ -19,7 +19,7 @@ GERRIT_PROJECT_PREFIX="AOSIP/";
 # Might need slight modifications
 # For AOSiP the format is <project name path remote>.
 # Depending on yours the path and the awks will have to be ajusted.
-GERRIT_PROJECT_NAMES="$(grep 'aosip' .repo/manifests/manifests/caf.xml  | awk '{print $2}' | awk -F'"' '{print $2}')";
+GERRIT_PROJECT_NAMES="$(grep 'aosip' ~/nougat-mr2/.repo/manifests/snippets/aosip.xml | awk '{print $3}' | awk -F'"' '{print $2}' | uniq)";
 
 # Push everything!
 for PROJECT_NAME in ${GERRIT_PROJECT_NAMES}
