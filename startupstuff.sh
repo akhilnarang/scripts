@@ -45,7 +45,7 @@ if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
     source "${ADCSCRIPT}/android_development_shell_tools.rc";
 fi
 
-if [[ -z "${HOME}" ]]; then
+if [[ -z "${BASEDIR}" ]]; then
     BASEDIR="${HOME}";
 fi
 
@@ -55,8 +55,9 @@ export KERNELDIR="${BASEDIR}/kernel";
 
 # Use ccache
 export USE_CCACHE=1;
-export CCACHE_ROOT="${BASEDIR}";
-export CCACHE_DIR="${BASEDIR}/.ccache";
+if [[ -z "${CCACHE_DIR}" ]]; then
+    export CCACHE_DIR="${BASEDIR}/.ccache";
+fi
 
 # Extend the default PATH a bit
 export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/Android/Sdk/platform-tools:${BASEDIR}/adb-sync:$PATH;
@@ -71,27 +72,13 @@ export EDITOR="nano";
 export TZ="Asia/Kolkata";
 
 # Colors
-black='\e[0;30m';
-blue='\e[0;34m';
 green='\e[0;32m';
 cyan='\e[0;36m';
 red='\e[0;31m';
-purple='\e[0;35m';
-brown='\e[0;33m';
 lightgray='\e[0;37m';
-darkgray='\e[1;30m';
-lightblue='\e[1;34m';
-lightgreen='\e[1;32m';
-lightcyan='\e[1;36m';
-lightred='\e[1;31m';
-lightpurple='\e[1;35m';
-yellow='\e[1;33m';
-white='\e[1;37m';
-nc='\e[0m';
 
 
-function run_virtualenv()
-{
+function run_virtualenv() {
     PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
     if [[ "${PYV}" == "3" ]]; then
         if [[ "$(command -v 'virtualenv2')" ]]; then
@@ -104,7 +91,7 @@ function run_virtualenv()
         fi
     fi
 
-    $@;
+    "$@";
 
     if [[ -d "${BASEDIR}/virtualenv" ]]; then
         echo -e "virtualenv detected, deactivating!";
@@ -112,32 +99,28 @@ function run_virtualenv()
     fi
 }
 
-function syncc()
-{
-    time run_virtualenv repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags $@;
+function syncc() {
+    time run_virtualenv repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags "$@";
 }
 
-function transfer()
-{
-    zipname="$(echo $1 | awk -F '/' '{print $NF}')";
-    url="$(curl -# -T $1 https://transfer.sh)";
+function transfer() {
+    zipname=$(echo "$1" | awk -F '/' '{print $NF}')
+    url=$(curl -# -T "$1" https://transfer.sh);
     printf '\n';
     echo -e "Download $zipname at $url";
 }
 
-function haste()
-{
+function haste() {
     a=$(cat);
     curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
 }
 
-function upinfo() #Not sure where this one is kanged from lol
-{
-    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}';
+# Not sure where this one is kanged from lol
+function upinfo() {
+    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \\t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}';
 }
 
-function onLogin()
-{
+function onLogin() {
     export GIT_PS1_SHOWDIRTYSTATE=1;
     export GIT_PS1_SHOWSTASHSTATE=1;
     export GIT_PS1_SHOWUNTRACKEDFILES=1;
@@ -152,13 +135,25 @@ function onLogin()
         PS1='| \h (\w) |-> ';
     fi
     clear;
-    echo -e "${LIGHTGRAY}";figlet -c "$(hostname)";
+    echo -e "${lightgray}";figlet -c "$(hostname)";
     echo ""
-    echo -ne "${red}Today is:\t\t${cyan}" `date`; echo ""
-    echo -e "${red}Kernel Information: \t${cyan}" `uname -smr`
+    echo -ne "${red}Today is:\\t\\t${cyan} $(date)";
+    echo ""
+    echo -e "${red}Kernel Information: \\t${cyan} $(uname -smr)"
     echo -ne "${cyan}";
     upinfo;
     echo "";
-    echo -e "Welcome to $(hostname), $(whoami)!\n";
+    echo -e "Welcome to $(hostname), $(whoami)!";
+    echo -e;
     fortune;
+}
+
+function venv() {
+    virtualenv2 /tmp/venv;
+    source /tmp/venv/bin/activate;
+}
+
+function rmvenv() {
+    deactivate;
+    rm -rf /tmp/venv/bin/activate;
 }
