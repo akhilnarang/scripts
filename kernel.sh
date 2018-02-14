@@ -111,12 +111,14 @@ if [[ "$@" =~ "transfer" ]]; then
     transfer "${FINAL_ZIP}";
 fi
 if [[ "$@" =~ "upload" ]]; then
-    for f in -changelog.txt .zip
-    do
-    scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
+    for f in -changelog.txt .zip; do
+        scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
     done
-    bash ~/kronicbot/send_tg.sh @caesiumkernel "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
-    bash ~/kronicbot/send_tg.sh "-1001223901635" "Check https://downloads.akhilnarang.me/kernel/oneplus3/Test for ${NAME}";
+    ssh akhil@downloads.akhilnarang.me ~/gdrive sync upload downloads/kernel 1DnrCzSchI9MNHXkbiaqlw-qyRkNIDKFQ
+    GDRIVE_URL="https://drive.google.com/drive/folders/1PwLPGxfk0A1oj2nGATxdfYuguU7hZdJ4";
+    DOWNLOADS_URL="https://downloads.akhilnarang.me/kernel/oneplus3/Test";
+    bash ~/kronicbot/send_tg.sh "-1001122772970" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
+    bash ~/kronicbot/send_tg.sh "-1001223901635" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
 fi
 else
 echo -e "Zip Creation Failed =(";

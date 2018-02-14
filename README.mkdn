@@ -24,7 +24,7 @@ build-rom -> has a bunch of random build scripts I use to build ROMs.
 
 crowdin -> bunch of scripts I use for RR's crowdin.
 
-gerrit -> useful for gerrit up gerrit and stuff.
+gerrit -> useful for setting up gerrit and stuff.
 
 merge -> scripts to merge upstream AOSP/CAF into a ROM source.
 
@@ -36,4 +36,4 @@ random-html -> generates an index.html with a table with the list of files in cu
 
 setup -> setup Android Build Environment / Android SDK.
 
-utils -> some utilities?
+utils -> some binaries.
