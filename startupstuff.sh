@@ -135,7 +135,10 @@ function onLogin() {
         PS1='| \h (\w) |-> ';
     fi
     clear;
-    echo -e "${lightgray}";figlet -c "$(hostname)";
+    HOST=$(hostname);
+    if [[ ${#HOST} -lt 14 ]]; then
+        echo -e "${lightgray}";figlet -c "$(hostname)";
+    fi
     echo ""
     echo -ne "${red}Today is:\\t\\t${cyan} $(date)";
     echo ""
