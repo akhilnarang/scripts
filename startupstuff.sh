@@ -33,10 +33,14 @@ alias gc='git commit';
 alias rr='ssh akhil@rr.akhilnarang.me';
 alias aosip='ssh akhil@aosiprom.com';
 alias kronic='ssh kronic@aosiprom.com';
-alias jenkins='ssh root@jenkins.akhilnarang.me';
+alias jenkins='ssh ubuntu@jenkins.akhilnarang.me';
+alias bot='ssh bot@bot.akhilnarang.me'
+
+# Misc
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
 alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
 alias path='echo ${PATH}';
+alias stopjack='jack-admin stop-server';
 
 # https://github.com/AdrianDC/android_development_shell_tools
 # Has some useful stuff :)
@@ -45,25 +49,20 @@ if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
     source "${ADCSCRIPT}/android_development_shell_tools.rc";
 fi
 
-if [[ -z "${BASEDIR}" ]]; then
-    BASEDIR="${HOME}";
-fi
-
-
 # Kernel Directory
-export KERNELDIR="${BASEDIR}/kernel";
+export KERNELDIR="${HOME}/kernel";
 
 # Use ccache
 export USE_CCACHE=1;
 if [[ -z "${CCACHE_DIR}" ]]; then
-    export CCACHE_DIR="${BASEDIR}/.ccache";
+    export CCACHE_DIR="${HOME}/.ccache";
 fi
 
 # Extend the default PATH a bit
-export PATH=${BASEDIR}/bin:${BASEDIR}/android-studio/bin:${BASEDIR}/pidcat:${BASEDIR}/caddy:${BASEDIR}/Android/Sdk/platform-tools:${BASEDIR}/adb-sync:$PATH;
+export PATH=${HOME}/bin:/opt/android-studio/bin:${HOME}/pidcat:${HOME}/Android/Sdk/platform-tools:${HOME}/adb-sync:$PATH;
 
 # Set a custom path for the Android SDK
-export ANDROID_HOME=${BASEDIR}/Android/Sdk;
+export ANDROID_HOME=${HOME}/Android/Sdk;
 
 # Set default editor to nano
 export EDITOR="nano";
@@ -82,10 +81,10 @@ function run_virtualenv() {
     PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
     if [[ "${PYV}" == "3" ]]; then
         if [[ "$(command -v 'virtualenv2')" ]]; then
-            if [[ ! -d "${BASEDIR}/virtualenv" ]]; then
-                virtualenv2 "${BASEDIR}/virtualenv";
+            if [[ ! -d "${HOME}/virtualenv" ]]; then
+                virtualenv2 "${HOME}/virtualenv";
             fi
-            source "${BASEDIR}/virtualenv/bin/activate";
+            source "${HOME}/virtualenv/bin/activate";
         else
             echo "Please install 'virtualenv2', or make 'python' point to python2";
         fi
@@ -93,7 +92,7 @@ function run_virtualenv() {
 
     "$@";
 
-    if [[ -d "${BASEDIR}/virtualenv" ]]; then
+    if [[ -d "${HOME}/virtualenv" ]]; then
         echo -e "virtualenv detected, deactivating!";
         deactivate;
     fi
