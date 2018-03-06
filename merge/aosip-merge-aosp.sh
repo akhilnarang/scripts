@@ -1,29 +1,37 @@
 #!/usr/bin/env bash
 
 AOSIP_PATH=$PWD
-bash ~/kronicbot/send_tg.sh "-1001055786180" "Merging in ${NEW_TAG}. Check progress [here](${BUILD_URL})!";
+bash ~/kronicbot/send_tg_nomd.sh -1001055786180 "Merging in ${TAG}";
+bash ~/kronicbot/send_tg.sh -1001055786180 "Check progress [here]($BUILD_URL)!";
 git config --global user.name "Akhil's Lazy Buildbot"
 git config --global user.email "jenkins@akhilnarang.me"
 git config --global user.signingkey 219187E8
 
-do_not_merge="vendor manifest packages/apps/OmniSwitch packages/apps/OmniStyle \
-packages/apps/OwlsNest external/google packages/apps/ThemeInterfacer \
-packages/apps/Gallery2 device/qcom external/DUtils packages/apps/DUI \
+do_not_merge="vendor/aosip manifest updater packages/apps/OmniSwitch packages/apps/OmniStyle \
+packages/apps/OwlsNest external/google packages/apps/Launcher3 hardware/qcom/power \
+packages/apps/Gallery2 device/qcom/common device/qcom/sepolicy device/aosip/sepolicy \
+external/DUtils packages/apps/DUI packages/apps/Updater packages/apps/FMRadio \
 packages/apps/SlimRecents packages/services/OmniJaws packages/apps/LockClock \
-packages/apps/CalendarWidget hardware/qcom/*-caf external/ant-wireless \
-external/brctl external/chromium-webview external/connectivity external/busybox \
-external/fuse external/exfat external/ebtables external/ffmpeg external/gson \
-external/json-c external/libncurses external/libnetfilter_conntrack \
-external/libnfnetlink"
+packages/apps/CalendarWidget hardware/qcom/fm  external/ant-wireless/ant_native \
+external/ant-wireless/ant_service external/ant-wireless/antradio-library  external/bash \
+external/brctl external/chromium-webview external/connectivity external/busybox external/htop \
+external/fuse external/exfat external/ebtables external/ffmpeg external/gson vendor/codeaurora/telephony \
+external/json-c external/libncurses external/libnetfilter_conntrack system/qcom \
+external/libnfnetlink external/libnfc-nxp external/nano external/ntfs-3g vendor/qcom/opensource/cryptfs_hw \
+vendor/qcom/opensource/dataservices vendor/qcom/opensource/interfaces vendor/qcom/opensource/rcs-service packages/apps/MusicFX"
 
+AOSP="https://android.googlesource.com";
 
 for filess in failed success notaosp; do
     rm $filess 2> /dev/null
     touch $filess
 done
 
+. build/envsetup.sh
+repo sync --detach --quiet;
+
 # AOSiP manifest is setup with repo path first, then repo name, so the path attribute is after 2 spaces, and the path itself within "" in it
-for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/snippets/aosip.xml  | awk '{print $2}' | awk -F '"' '{print $2}'); do
+for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/snippets/aosip.xml  | awk '{print $2}' | awk -F '"' '{print $2}' | grep -v caf); do
     echo -e ""
     if [[ "${do_not_merge}" =~ "${repos}" ]]; then
         echo -e "${repos} is not to be merged";
@@ -35,28 +43,25 @@ for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/snippets/aosi
             repos="build";
         fi
         git fetch aosip $SRC;
-        git checkout $SRC;
-        git reset --hard aosip/$SRC;
+        git branch -D $SRC;
+        git checkout -b $SRC aosip/$SRC;
         git remote rm aosp 2> /dev/null;
         git remote add aosp "${AOSP}/platform/$repos";
         git fetch aosp --quiet --tags;
         if [[ $? -ne 0 ]]; then
             echo "$repos" >> ${AOSIP_PATH}/notaosp
         else
-            RANGE=${OLD_TAG}..${NEW_TAG};
-            COUNT=$(git rev-list --count ${RANGE});
-            echo "Merge ${NEW_TAG} into ${SRC}" >> /tmp/aosip-merge;
-            echo "\nCommits in ${TAG}: ($(git rev-list --count ${RANGE}) commits)" >> /tmp/aosip-merge;
-            git log --reverse --format="    %s" ${RANGE} >> /tmp/aosip-merge;
-            git merge ${NEW_TAG} --no-edit;
+            git merge ${TAG} --no-edit;
             if [[ $? -ne 0 ]]; then
                 echo "$repos" >> ${AOSIP_PATH}/failed
                 echo "$red $repos failed :( $end"
             else
                 if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/${SRC})" ]]; then
                     echo "$repos" >> ${AOSIP_PATH}/success
-                    git commit -as --amend --no-edit;
-                    echo "$grn $repos succeeded $end"
+                    git commit --signoff --date="$(date)" --amend --no-edit;
+                    echo "$grn $repos succeeded $end";
+                    echo "Pushing!";
+                    gerrit; git push gerrit $SRC;
                 else
                     echo "$repos - unchanged";
                 fi
@@ -67,5 +72,10 @@ for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/snippets/aosi
     fi
 done
 
+FAILED=$(cat $AOSIP_PATH/failed)
 bash ~/kronicbot/send_tg.sh "-1001055786180" "Failed repos:";
-bash ~/kronicbot/send_tg.sh "-1001055786180" "$(cat $AOSIP_PATH/failed)";
+bash ~/kronicbot/send_tg.sh "-1001055786180" $FAILED;
+
+git config --global user.name "Akhil Narang";
+git config --global user.email "akhilnarang.1999@gmail.com";
+git config --global user.signingkey 944082E8
