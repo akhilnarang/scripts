@@ -10,6 +10,8 @@ sudo pacman -Syyu
 sudo pacman -S pacaur
 # Import PGP signatures for ncurses5-compat-libs and lib32-ncurses5-compat-libs
 gpg --recv-keys 702353E0F7E48EDB
+# Install a pre-request libs before installing ncurses5-compat-libs
+pacaur -S make fakeroot --noconfirm
 # Install aosp-devel (and lineageos-devel because quite a few probably build Lineage/Lineage based ROMs as well.
 pacaur -S aosp-devel lineageos-devel
 # Just a couple of other useful tools I use, others do too probably
