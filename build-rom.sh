@@ -2,6 +2,18 @@
 
 # Build script to compile Android ROMs
 
+
+function repopick_stuff() {
+	export oldifs=$IFS;
+	export IFS="|";
+	for f in ${REPOPICK_LIST}; do
+	    echo $f;
+	    repopick $f;
+	    [[ $? -ne 0 ]] && exit 1;
+	done
+	export IFS=$oldifs;
+}
+
 # FORMATS THE TIME
 function format_time() {
     MINS=$(((${1}-${2})/60))
@@ -38,20 +50,20 @@ function format_time() {
 
 function sendHelp() {
 	echo -e "Usage";
-	echo -e "bash $0 <rom> <device> [NEEDED] [ROM can be aosip|caf|rr, device bacon|kenzo]"
+	echo -e "bash $0 <rom> -d <device> [NEEDED] [ROM can be aosip|caf|rr, device oneplus3|kenzo]"
 	echo -e "Optional flags: <sync|nosync> <clean|noclean> <user|userdebug|eng> <rmccache> <-j X|--jobs X> <bootimage|recoveryimage>";
     exit 1;
 }
 
 function rr() {
-	export LUNCH="lineage";
+	export LUNCH="rr";
 	if [[ -z "${RR_BUILDTYPE}" ]]; then
 		export RR_BUILDTYPE="Experimental";
 	fi
 	if [[ -z "${days_to_log}" ]]; then
 		export days_to_log="0";
 	fi
-	export ZIPNAME="RR-N";
+	export ZIPNAME="RR-O";
 }
 
 function caf() {
@@ -74,8 +86,14 @@ while [[ $# -gt 0 ]]; do
 			ROM="$1";
 			echo -e "ROM: ${ROM}";
 			;;
-		"oneplus3"|"kenzo")
-			DEVICE="$1";
+		"-d"|"--device")
+			shift;
+			if [[ "$#" -gt 0 ]]; then
+				DEVICE="$1";
+			else
+				echo -e "Please specify device!";
+				exit 1;
+			fi
 			echo -e "DEVICE: ${DEVICE}";
 			;;
 		"sync"|"nosync")
@@ -116,20 +134,16 @@ while [[ $# -gt 0 ]]; do
 	shift
 done
 
-[[ -z "${DEVICE}" ]] && DEVICE="oneplus3"
-[[ -z "${ROM}" ]] && ROM="rr"
+[[ -z "${DEVICE}" ]] && DEVICE="kenzo"
+[[ -z "${ROM}" ]] && ROM="aosip"
 [[ -z "${VARIANT}" ]] && VARIANT="userdebug"
 
-if [[ "$(hostname)" == "WorldOfVoid" ]]; then
-    BASEDIR="/mnt/raidzero";
-else
-    BASEDIR="${HOME}";
-fi
+${ROM};
 
-ROM_SOURCE_DIR="${BASEDIR}/${ROM}";
+ROM_SOURCE_DIR="${HOME}/${DIR}";
 
 if [[ ! -d "${ROM_SOURCE_DIR}" ]]; then
-	echo -e "${ROM_SOURCE_DIR} dosen\'t exist, please sync up in the correct folder and rerun";
+	echo -e "${ROM_SOURCE_DIR} dosen't exist, please sync up in the correct folder and rerun";
 	exit 1;
 fi
 
@@ -140,17 +154,15 @@ if [[ ! -d ".repo" ]]; then
 	exit 1;
 fi
 
-${ROM};
-
-
-if [[ "$(python --version | awk '{print $2}' | awk -F '.' '{print $1}')" -ne 2 ]];
-then
+PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
+if [[ "${PYV}" == "3" ]]; then
     if [[ "$(command -v 'virtualenv2')" ]]; then
-        virtualenv2 "${BASEDIR}/virtualenv";
-        source "${BASEDIR}/virtualenv/bin/activate";
+        if [[ ! -d "/tmp/venv" ]]; then
+            venv;
+        fi
+        source "/tmp/venv/bin/activate";
     else
         echo "Please install 'virtualenv2', or make 'python' point to python2";
-        exit 1;
     fi
 fi
 
@@ -184,11 +196,11 @@ if [[ -z "${JOBS}" ]];then
 fi
 
 export USE_CCACHE=1;
-export CCACHE_DIR="${BASEDIR}/.ccache-${DEVICE}";
-ccache -M 30;
+export CCACHE_DIR="${HOME}/.ccache";
+ccache -M 200;
 
 if [[ "${SYNC}" == "sync" ]]; then
-    time repo sync -j${JOBS} --current-branch --no-tags --no-clone-bundle --optimized-fetch --prune
+    time repo sync -j${JOBS} --current-branch --no-tags --no-clone-bundle --optimized-fetch --prune --force-sync --force-broken
 fi
 
 if [[ "$(command -v 'mka')" ]]; then
@@ -197,7 +209,7 @@ else
 	MAKE="make -j${JOBS} ${TARGET}";
 fi
 
-LOG="${BASEDIR}/logs/${ROM}_${DEVICE}_$(date +%Y%m%d-%H%M).log"
+LOG="${HOME}/logs/${ROM}_${DEVICE}_$(date +%Y%m%d-%H%M).log"
 
 START="$(date +%s)";
 eval "${MAKE}" 2>&1 | tee ${LOG}
@@ -221,10 +233,8 @@ else
 fi
 
 
-if [[ -d "${BASEDIR}/virtualenv" ]]; then
-    echo -e "virtualenv detected, deactivating!";
-    deactivate;
-    rm -rf "${BASEDIR}/virtualenv";
+if [[ -d "/tmp/venv" ]]; then
+    rmvenv;
 fi
 
 echo -e "Stopping jack server";
