@@ -4,5 +4,5 @@ git config --global credential.helper "cache --timeout=7200"
 echo "" >> ~/.bashrc
 echo "source ~/scripts/startupstuff.sh" >> ~/.bashrc
 echo "onLogin" >> ~/.bashrc
-pacaur -S figlet fortune-mod hub
+yaourt -S figlet fortune-mod hub --noconfirm
 

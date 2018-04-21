@@ -1,0 +1,6 @@
+function aur() {
+	git clone https://aur.archlinux.org/$1;
+	cd $1;
+	makepkg -si $2;
+	cd -;
+}

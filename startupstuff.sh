@@ -59,7 +59,7 @@ if [[ -z "${CCACHE_DIR}" ]]; then
 fi
 
 # Extend the default PATH a bit
-export PATH=${HOME}/bin:/opt/android-studio/bin:${HOME}/pidcat:${HOME}/Android/Sdk/platform-tools:${HOME}/adb-sync:$PATH;
+export PATH=${HOME}/bin:/opt/android-studio/bin:${HOME}/pidcat:/opt/android-sdk/platform-tools:${HOME}/adb-sync:$PATH;
 
 # Set a custom path for the Android SDK
 export ANDROID_HOME=${HOME}/Android/Sdk;
