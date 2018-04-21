@@ -14,7 +14,6 @@ libexpat1-dev python-all-dev bc libcloog-isl-dev libcap-dev autoconf libgmp-dev 
 build-essential gcc-multilib g++-multilib pkg-config libmpc-dev libmpfr-dev \
 lzma* liblzma* w3m adb fastboot maven ncftp htop imagemagick libssl-dev -y
 echo Dependencies have been installed
-echo repo has been Downloaded!
 if [[ ! "$(which adb)" == "" ]]; then
 	echo -e "Setting up some stuff for adb!"
 	sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L \
@@ -38,8 +37,9 @@ else
 	echo "Please run the script from root of cloned repo!";
 fi
 echo "Installing repo";
-curl -L https://github.com/akhilnarang/repo/raw/master/repo | sudo tee \
+curl -L -s https://github.com/akhilnarang/repo/raw/master/repo | sudo tee \
 /usr/local/bin/repo;
+sudo chmod a+x /usr/local/bin/repo
 
 bash ./setup/ccache.sh;
 bash ./setup/ninja.sh;
