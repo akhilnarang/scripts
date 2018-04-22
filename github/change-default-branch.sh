@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-# List of repositories. Add them manually, or adjust the following command
-export REPOS=$(curl -s -L https://github.com/AOSiP/platform_manifest/raw/oreo-mr1/snippets/aosip.xml | grep "<project" | awk '{print $3}' | awk -F '"' '{print $2}');
-
-# GitHub API Token - Place your own and don't share it with anyone
-export GITHUB_API_TOKEN="";
-
 # The branch you want to change to
-export BRANCH="oreo-mr1";
+BRANCH="oreo-mr1"
 
 # The organizations whose repositories you want to change default branch of
-export ORG="AOSiP";
+ORG="AOSiP"
 
-for r in ${REPOS}; do
-    curl -s -X PATCH -H "Authorization: token ${GITHUB_API_TOKEN}" -d '{ "name": "'"$r"'", "default_branch": "'"${BRANCH}"'" }' "https://api.github.com/repos/AOSiP/$r";
+# The name of your manifest repository
+MANIFEST="platform_manifest"
+
+# List of repositories. Add them manually, or adjust the following command
+REPOS=$(curl -s -L https://github.com/${ORG}/${MANIFEST}/raw/${BRANCH}/snippets/aosip.xml | grep "<project" | awk '{print $2}' | awk -F '"' '{print $2}')
+
+for REPO in ${REPOS}; do
+    curl -s -X PATCH -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"${REPO}"'", "default_branch": "'"${BRANCH}"'" }' "https://api.github.com/repos/${ORG}/${REPO}"
 done
