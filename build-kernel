@@ -9,7 +9,7 @@ function check_toolchain() {
     TC=$(find "${TOOLCHAIN}"/bin -type f -name "aarch64-*-gcc");
 
 	if [[ -f "${TC}" ]]; then
-		CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo "${TC}" | awk -F '/' '{print $NF}' |\
+		CROSS_COMPILE="${CCACHE} ${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
 sed -e 's/gcc//')";
 		export CROSS_COMPILE;
 		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
@@ -33,8 +33,10 @@ fi
 export SRCDIR="${KERNELDIR}/${DEVICE}";
 export OUTDIR="${KERNELDIR}/${DEVICE}/out";
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}";
+export MODULES_DIR="${ANYKERNEL}/modules";
 export ARCH="arm64";
 export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}";
+export CCACHE="$(command -v ccache)";
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
@@ -74,7 +76,8 @@ if [[ "$@" =~ "clean" ]]; then
     ${MAKE} clean
 fi
 
-${MAKE} $DEFCONFIG;
+${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && exit 1);
+
 START=$(date +"%s");
 ${MAKE} -j"${JOBS}";
 exitCode="$?";
@@ -92,11 +95,13 @@ fi
 echo -e "Copying kernel image";
 cp -v "${IMAGE}" "${ANYKERNEL}/";
 
-WLAN_MODULE="drivers/staging/qcacld-2.0/wlan.ko";
-if [[ -f "${OUTDIR}/${WLAN_MODULE}" ]]; then
-    "${CROSS_COMPILE}strip" --strip-unneeded "${OUTDIR}/${WLAN_MODULE}";
-    cp -v "${OUTDIR}/${WLAN_MODULE}" "${ANYKERNEL}/modules/";
-fi
+grep -q "=m" ${OUTDIR}/.config;
+if [[ "$?" -eq 0 ]]; then
+    find ${OUTDIR} -name "*.ko" -exec cp {} ${MODULES_DIR} \;
+    for module in $(ls ${MODULES_DIR/*.ko}); do
+  		${CROSS_COMPILE}strip --strip-unneeded "${MODULES_DIR}/${module}";
+  	done
+fi # Modules check 
 cd - || exit;
 cd "${ANYKERNEL}" || exit;
 zip -r9 "${FINAL_ZIP}" *;
@@ -105,7 +110,6 @@ cd - || exit;
 if [ -f "$FINAL_ZIP" ];
 then
 echo -e "$NAME zip can be found at $FINAL_ZIP";
-git -C "${SRCDIR}" log akhilnarang/stable..HEAD > "${ZIP_DIR}"/"${NAME}"-changelog.txt;
 if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
     transfer "${FINAL_ZIP}";
@@ -113,6 +117,7 @@ fi
 if [[ "$@" =~ "upload" ]]; then
     for f in -changelog.txt .zip; do
         scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
+		git -C ${SRCDIR} log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
     done
     ssh akhil@downloads.akhilnarang.me ~/gdrive sync upload downloads/kernel 1DnrCzSchI9MNHXkbiaqlw-qyRkNIDKFQ
     GDRIVE_URL="https://drive.google.com/drive/folders/1PwLPGxfk0A1oj2nGATxdfYuguU7hZdJ4";
