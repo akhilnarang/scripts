@@ -53,3 +53,48 @@ function repopick_stuff() {
 	done
 	export IFS=$oldifs;
 }
+
+# Creates a virtualenv and activates it
+function venv() {
+    PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
+    if [[ "${PYV}" == "3" ]]; then
+        if [[ "$(command -v 'virtualenv2')" ]]; then
+            virtualenv2 /tmp/venv;
+            source /tmp/venv/bin/activate;
+        else
+            echo "Please install 'virtualenv2', or make 'python' point to python2";
+        fi
+    fi
+}
+
+# Deactivates a virtualenv and deletes the folder
+function rmvenv() {
+    if [[ -d "/tmp/venv/" ]]; then
+        deactivate;
+        rm -rf /tmp/venv/bin/activate;
+    fi
+}
+
+# Uploads a given file to transfer.sh
+function transfer() {
+    file="$1";
+    zipname=$(echo "${file}" | awk -F '/' '{print $NF}')
+    destination="$2";
+    url=$(curl -# -T "${file}" https://transfer.sh/${destination});
+    printf '\n';
+    echo -e "Download $zipname at $url";
+}
+
+# Creates a virtualenv if required, runs the given command, and then deactivates it
+function run_virtualenv() {
+	venv
+
+    "$@";
+
+    rmvenv;
+}
+
+# Function to repo sync with a lot of flags because I'm lazy to type them over and and over again
+function syncc() {
+    time run_virtualenv repo sync --force-broken --force-sync --no-clone-bundle --current-branch --no-tags "$@";
+}

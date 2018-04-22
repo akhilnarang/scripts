@@ -108,20 +108,9 @@ if [[ ! -d ".repo" ]]; then
 	exit 1;
 fi
 
-PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
-if [[ "${PYV}" == "3" ]]; then
-    if [[ "$(command -v 'virtualenv2')" ]]; then
-        if [[ ! -d "/tmp/venv" ]]; then
-            venv;
-        fi
-        source "/tmp/venv/bin/activate";
-    else
-        echo "Please install 'virtualenv2', or make 'python' point to python2";
-    fi
-fi
+venv;
 
 source build/envsetup.sh;
-
 
 lunch "${LUNCH}_${DEVICE}-${VARIANT}"
 
@@ -146,7 +135,7 @@ if [[ -z "${TARGET}" ]]; then
 fi
 
 if [[ -z "${JOBS}" ]];then
-	JOBS="$(nproc --all)";
+	JOBS="$(nproc)";
 fi
 
 export USE_CCACHE=1;
@@ -154,7 +143,7 @@ export CCACHE_DIR="${HOME}/.ccache";
 ccache -M 200;
 
 if [[ "${SYNC}" == "sync" ]]; then
-    time repo sync -j${JOBS} --current-branch --no-tags --no-clone-bundle --optimized-fetch --prune --force-sync --force-broken
+    syncc -j${JOBS}
 fi
 
 if [[ "$(command -v 'mka')" ]]; then

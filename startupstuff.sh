@@ -1,33 +1,33 @@
 #!/usr/bin/env bash
 
+source functions;
+
 if [[ "$(command -v hub)" ]]; then
     alias git='hub';
 fi
 
 # Some git aliases
-alias gs='git status';
-alias gpul='git pull';
-alias gf='git fetch';
-alias grem='git remote';
-alias gremv='git remote -v';
-alias gpu='git push';
-alias gpf='gpu -f'
-alias gpfu='gpu -fu';
-alias grev='git revert';
-alias gcp='git cherry-pick';
-alias gcpc='gcp --continue';
-alias gcpa='gcp --abort';
-alias gr='git reset';
-alias grh='gr --hard';
-alias grs='gr --soft';
-alias grb='git rebase';
-alias grbi='grb --interactive';
-alias grbc='grb --continue';
-alias grbs='grb --skip';
-alias grba='grb --abort';
-alias gb='git bisect';
-alias gd='git diff';
-alias gc='git commit';
+git config --global alias.s='status';
+git config --global alias.p='push';
+git config --global alias.pl='pull';
+git config --global alias.f='fetch';
+git config --global alias.r='remote';
+git config --global alias.rv='remote --verbose';
+git config --global alias.rev='revert';
+git config --global alias.re='reset';
+git config --global alias.cp='cherry-pick';
+git config --global alias.cpc='cherry-pick --continue';
+git config --global alias.cpa='cherry-pick --abort';
+git config --global alias.rh='reset --hard';
+git config --global alias.rs='reset --soft';
+git config --global alias.rb='rebase';
+git config --global alias.rbi='rebase --interactive';
+git config --global alias.rbc='rebase --continue';
+git config --global alias.rba='rebase --abort';
+git config --global alias.rbs='rebase --skip';
+git config --global alias.d='diff';
+git config --global alias.b='bisect';
+git config --global alias.c='commit';
 
 # SSH aliases
 alias rr='ssh akhil@rr.akhilnarang.me';
@@ -35,8 +35,9 @@ alias aosip='ssh akhil@aosiprom.com';
 alias kronic='ssh kronic@aosiprom.com';
 alias jenkins='ssh ubuntu@jenkins.akhilnarang.me';
 alias bot='ssh bot@bot.akhilnarang.me'
+alias downloads='ssh akhil@downloads.akhilnarang.me';
 
-# Misc
+# Miscellaneous aliases
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
 alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
 alias path='echo ${PATH}';
@@ -49,20 +50,14 @@ if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
     source "${ADCSCRIPT}/android_development_shell_tools.rc";
 fi
 
-# Kernel Directory
-export KERNELDIR="${HOME}/kernel";
+# Some PATH changes and stuff only for my laptop
+if [[ "$(hostname)" == "randomness" ]]; then
+    # Extend the default PATH a bit
+    export PATH=${HOME}/bin:/opt/android-studio/bin:${HOME}/pidcat:/opt/android-sdk/platform-tools:${HOME}/adb-sync:$PATH;
 
-# Use ccache
-export USE_CCACHE=1;
-if [[ -z "${CCACHE_DIR}" ]]; then
-    export CCACHE_DIR="${HOME}/.ccache";
+    # Set a custom path for the Android SDK
+    export ANDROID_HOME=${HOME}/Android/Sdk;
 fi
-
-# Extend the default PATH a bit
-export PATH=${HOME}/bin:/opt/android-studio/bin:${HOME}/pidcat:/opt/android-sdk/platform-tools:${HOME}/adb-sync:$PATH;
-
-# Set a custom path for the Android SDK
-export ANDROID_HOME=${HOME}/Android/Sdk;
 
 # Set default editor to nano
 export EDITOR="nano";
@@ -75,44 +70,6 @@ green='\e[0;32m';
 cyan='\e[0;36m';
 red='\e[0;31m';
 lightgray='\e[0;37m';
-
-
-function run_virtualenv() {
-    PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
-    if [[ "${PYV}" == "3" ]]; then
-        if [[ "$(command -v 'virtualenv2')" ]]; then
-            if [[ ! -d "${HOME}/virtualenv" ]]; then
-                virtualenv2 "${HOME}/virtualenv";
-            fi
-            source "${HOME}/virtualenv/bin/activate";
-        else
-            echo "Please install 'virtualenv2', or make 'python' point to python2";
-        fi
-    fi
-
-    "$@";
-
-    if [[ -d "${HOME}/virtualenv" ]]; then
-        echo -e "virtualenv detected, deactivating!";
-        deactivate;
-    fi
-}
-
-function syncc() {
-    time run_virtualenv repo sync --force-broken --force-sync --detach --no-clone-bundle --quiet --current-branch --no-tags "$@";
-}
-
-function transfer() {
-    zipname=$(echo "$1" | awk -F '/' '{print $NF}')
-    url=$(curl -# -T "$1" https://transfer.sh);
-    printf '\n';
-    echo -e "Download $zipname at $url";
-}
-
-function haste() {
-    a=$(cat);
-    curl -X POST -s -d "$a" http://haste.akhilnarang.me/documents | awk -F '"' '{print "http://haste.akhilnarang.me/"$4}';
-}
 
 # Not sure where this one is kanged from lol
 function upinfo() {
@@ -150,12 +107,3 @@ function onLogin() {
     fortune;
 }
 
-function venv() {
-    virtualenv2 /tmp/venv;
-    source /tmp/venv/bin/activate;
-}
-
-function rmvenv() {
-    deactivate;
-    rm -rf /tmp/venv/bin/activate;
-}
