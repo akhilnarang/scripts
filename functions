@@ -1,6 +1,43 @@
+#!/usr/bin/env bash
+
+# Builds a package from the Arch User Repository
 function aur() {
 	git clone https://aur.archlinux.org/$1;
 	cd $1;
 	makepkg -si $2;
 	cd -;
+}
+
+# FORMATS THE TIME
+function format_time() {
+    MINS=$(((${1}-${2})/60))
+    SECS=$(((${1}-${2})%60))
+    if [[ ${MINS} -ge 60 ]]; then
+        HOURS=$((${MINS}/60))
+        MINS=$((${MINS}%60))
+    fi
+
+    if [[ ${HOURS} -eq 1 ]]; then
+        TIME_STRING+="1 HOUR, "
+    elif [[ ${HOURS} -ge 2 ]]; then
+        TIME_STRING+="${HOURS} HOURS, "
+    fi
+
+    if [[ ${MINS} -eq 1 ]]; then
+        TIME_STRING+="1 MINUTE"
+    else
+        TIME_STRING+="${MINS} MINUTES"
+    fi
+
+    if [[ ${SECS} -eq 1 && -n ${HOURS} ]]; then
+        TIME_STRING+=", AND 1 SECOND"
+    elif [[ ${SECS} -eq 1 && -z ${HOURS} ]]; then
+        TIME_STRING+=" AND 1 SECOND"
+    elif [[ ${SECS} -ne 1 && -n ${HOURS} ]]; then
+        TIME_STRING+=", AND ${SECS} SECONDS"
+    elif [[ ${SECS} -ne 1 && -z ${HOURS} ]]; then
+        TIME_STRING+=" AND ${SECS} SECONDS"
+    fi
+
+    echo ${TIME_STRING}
 }

@@ -2,40 +2,6 @@
 
 # Build script to compile Android ROMs
 
-# FORMATS THE TIME
-function format_time() {
-    MINS=$(((${1}-${2})/60))
-    SECS=$(((${1}-${2})%60))
-    if [[ ${MINS} -ge 60 ]]; then
-        HOURS=$((${MINS}/60))
-        MINS=$((${MINS}%60))
-    fi
-
-    if [[ ${HOURS} -eq 1 ]]; then
-        TIME_STRING+="1 HOUR, "
-    elif [[ ${HOURS} -ge 2 ]]; then
-        TIME_STRING+="${HOURS} HOURS, "
-    fi
-
-    if [[ ${MINS} -eq 1 ]]; then
-        TIME_STRING+="1 MINUTE"
-    else
-        TIME_STRING+="${MINS} MINUTES"
-    fi
-
-    if [[ ${SECS} -eq 1 && -n ${HOURS} ]]; then
-        TIME_STRING+=", AND 1 SECOND"
-    elif [[ ${SECS} -eq 1 && -z ${HOURS} ]]; then
-        TIME_STRING+=" AND 1 SECOND"
-    elif [[ ${SECS} -ne 1 && -n ${HOURS} ]]; then
-        TIME_STRING+=", AND ${SECS} SECONDS"
-    elif [[ ${SECS} -ne 1 && -z ${HOURS} ]]; then
-        TIME_STRING+=" AND ${SECS} SECONDS"
-    fi
-
-    echo ${TIME_STRING}
-}
-
 function sendHelp() {
 	echo -e "Usage";
 	echo -e "bash $0 <rom> <device> [NEEDED] [ROM can be aosip|caf|rr, device bacon|kenzo]"
@@ -62,7 +28,7 @@ function caf() {
 function aosip() {
 	export LUNCH="aosip";
 	if [[ -z "${AOSIP_BUILDTYPE}" ]]; then
-		export AOSIP_BUILDTYPE="Experimental";
+		export AOSIP_BUILDTYPE="DerpFest";
 	fi
 	export ZIPNAME="AOSiP";
 	export MAKE="kronic"
