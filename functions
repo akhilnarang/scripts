@@ -41,3 +41,15 @@ function format_time() {
 
     echo ${TIME_STRING}
 }
+
+# Repopicks a | delimited set of commits
+function repopick_stuff() {
+	export oldifs=$IFS;
+	export IFS="|";
+	for f in ${REPOPICK_LIST}; do
+	    echo $f;
+	    repopick $f;
+	    [[ $? -ne 0 ]] && exit 1;
+	done
+	export IFS=$oldifs;
+}
