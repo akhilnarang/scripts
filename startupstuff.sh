@@ -6,29 +6,6 @@ if [[ "$(command -v hub)" ]]; then
     alias git='hub';
 fi
 
-# Some git aliases
-git config --global alias.s 'status';
-git config --global alias.p 'push';
-git config --global alias.pl 'pull';
-git config --global alias.f 'fetch';
-git config --global alias.r 'remote';
-git config --global alias.rv 'remote --verbose';
-git config --global alias.rev 'revert';
-git config --global alias.re 'reset';
-git config --global alias.cp 'cherry-pick';
-git config --global alias.cpc 'cherry-pick --continue';
-git config --global alias.cpa 'cherry-pick --abort';
-git config --global alias.rh 'reset --hard';
-git config --global alias.rs 'reset --soft';
-git config --global alias.rb 'rebase';
-git config --global alias.rbi 'rebase --interactive';
-git config --global alias.rbc 'rebase --continue';
-git config --global alias.rba 'rebase --abort';
-git config --global alias.rbs 'rebase --skip';
-git config --global alias.d 'diff';
-git config --global alias.b 'bisect';
-git config --global alias.c 'commit';
-
 # SSH aliases
 alias rr='ssh akhil@rr.akhilnarang.me';
 alias aosip='ssh akhil@aosiprom.com';
