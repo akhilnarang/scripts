@@ -6,11 +6,11 @@ source "${HOME}/scripts/startupstuff.sh";
 
 function check_toolchain() {
 
-    TC=$(find "${TOOLCHAIN}"/bin -type f -name "aarch64-*-gcc");
+    TC=$(find "${TOOLCHAIN}"/bin -type f -name "aarch64-*gnu-gcc");
 
 	if [[ -f "${TC}" ]]; then
-		CROSS_COMPILE="${CCACHE} ${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
-sed -e 's/gcc//')";
+		CROSS_COMPILE="${CCACHE} ${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' \
+				'{print $NF'} | sed -e 's/gcc//')";
 		export CROSS_COMPILE;
 		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
 	else
@@ -40,6 +40,8 @@ export CCACHE="$(command -v ccache)";
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
+export DONWLOAD_BASE_URL_1="downloads.akhilnarang.me";
+export DOWNLOAD_BASE_URL_2="derpfest.msfjarvis.website";
 
 if [[ -z "${JOBS}" ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)";
@@ -76,7 +78,8 @@ if [[ "$@" =~ "clean" ]]; then
     ${MAKE} clean
 fi
 
-${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && exit 1);
+${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && \
+		exit 1);
 
 START=$(date +"%s");
 ${MAKE} -j"${JOBS}";
@@ -119,11 +122,11 @@ if [[ "$@" =~ "upload" ]]; then
         scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
 		git -C ${SRCDIR} log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
     done
-    ssh akhil@downloads.akhilnarang.me ~/gdrive sync upload downloads/kernel 1DnrCzSchI9MNHXkbiaqlw-qyRkNIDKFQ
-    GDRIVE_URL="https://drive.google.com/drive/folders/1PwLPGxfk0A1oj2nGATxdfYuguU7hZdJ4";
-    DOWNLOADS_URL="https://downloads.akhilnarang.me/kernel/oneplus3/Test";
+    ssh akhil@downloads.akhilnarang.me rsync -av --progress --delete kernel/ \
+    		${DOWNLOAD_BASE_URL_2}/nginx/kernel
+    MAIN_DOWNLOAD_URL="https://${DONWLOAD_BASE_URL_1}/kernel/oneplus3/Test";
+    MIRROR_DOWNLOAD_URL="https://${DONWLOAD_BASE_URL_2}/kernel/oneplus3/Test";
     bash ~/kronicbot/send_tg.sh "-1001122772970" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
-    bash ~/kronicbot/send_tg.sh "-1001223901635" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
 fi
 else
 echo -e "Zip Creation Failed =(";
