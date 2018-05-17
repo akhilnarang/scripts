@@ -19,6 +19,12 @@ sed -e 's/gcc//')";
 	fi
 }
 
+function send_tg() {
+    for send in $ID0 $ID1; do
+         bash ~/kronicbot/send_tg.sh $send "${1}"
+    done
+}
+
 if [[ -z ${KERNELDIR} ]]; then
     echo -e "Please set KERNELDIR";
     exit 1;
@@ -40,6 +46,8 @@ export CCACHE="$(command -v ccache)";
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
+ID0=-1001122772970
+ID1=-1001223901635
 
 if [[ -z "${JOBS}" ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)";
@@ -122,8 +130,8 @@ if [[ "$@" =~ "upload" ]]; then
     ssh akhil@downloads.akhilnarang.me ~/gdrive sync upload downloads/kernel 1DnrCzSchI9MNHXkbiaqlw-qyRkNIDKFQ
     GDRIVE_URL="https://drive.google.com/drive/folders/1PwLPGxfk0A1oj2nGATxdfYuguU7hZdJ4";
     DOWNLOADS_URL="https://downloads.akhilnarang.me/kernel/oneplus3/Test";
-    bash ~/kronicbot/send_tg.sh "-1001122772970" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
-    bash ~/kronicbot/send_tg.sh "-1001223901635" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
+    send_tg "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
+
 fi
 else
 echo -e "Zip Creation Failed =(";
