@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
 # Copyright (C) 2018 Harsh 'MSF Jarvis' Shandilya
-# SPDX-License-Identifier: GPL-3.0-only #
+# Copyright (C) 2018 Akhil Narang
+# SPDX-License-Identifier: GPL-3.0-only
 
-if [ ! -d utils ]; then
-    echo "Run this script from the root of the repository"
-    exit 1
-fi
+# Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
+LATEST_MAKE_VERSION="4.2.1"
 UBUNTU_14_PACKAGES="git-core libesd0-dev libwxgtk2.8-dev curl schedtool binutils-static figlet libesd0-dev"
 UBUNTU_16_PACKAGES="libesd0-dev"
 CORE_PACKAGES="python gnupg flex bison gperf libsdl1.2-dev squashfs-tools build-essential zip libncurses5-dev zlib1g-dev openjdk-8-jre openjdk-8-jdk
@@ -21,7 +20,7 @@ LSB_RELEASE=$(lsb_release -d)
 
 if [[ ${LSB_RELEASE} =~ "Mint 19" || ${LSB_RELEASE} =~ "Ubuntu 18" ]]; then
     PACKAGES="${CORE_PACKAGES}"
-elif [[ ${LSB_RELEASE} =~ "Ubuntu 16" ]]; then
+elif [[ ${LSB_RELEASE} =~ "Mint 18" || ${LSB_RELEASE} =~ "Ubuntu 16" ]]; then
     PACKAGES="${CORE_PACKAGES} ${UBUNTU_16_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Ubuntu 14" ]]; then
     PACKAGES="${CORE_PACKAGES} ${UBUNTU_14_PACKAGES}"
@@ -29,8 +28,8 @@ fi
 
 apt install "${PACKAGES}"
 
-if [[ ! "$(which adb)" == "" ]]; then
-    echo -e "Setting up some stuff for adb!"
+if [[ ! "$(command -v adb)" == "" ]]; then
+    echo -e "Setting up udev rules for adb!"
     sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
     sudo chmod 644 /etc/udev/rules.d/51-android.rules
     sudo chown root /etc/udev/rules.d/51-android.rules
@@ -39,11 +38,11 @@ if [[ ! "$(which adb)" == "" ]]; then
     sudo killall adb
 fi
 
-if [ "$(command -v make)" ]; then
+if [[ "$(command -v make)" ]]; then
     makeversion="$(make -v | head -1 | awk '{print $3}')";
-    if [ "${makeversion}" != "4.2.1" ]; then
-        echo "Installing make 4.2.1 instead of ${makeversion}";
-	sudo install utils/make /usr/local/bin/;
+    if [[ "${makeversion}" != "${LATEST_MAKE_VERSION}" ]]; then
+        echo "Installing make "${LATEST_MAKE_VERSION}" instead of ${makeversion}";
+        bash ./setup/make.sh ${LATEST_MAKE_VERSION};
     fi
 fi
 
@@ -52,4 +51,4 @@ sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhil
 sudo chmod a+x /usr/local/bin/repo
 
 bash ./setup/ccache.sh;
-bash ./setup/ninja.sh;
+bash ./setup/ninja.sh;  
