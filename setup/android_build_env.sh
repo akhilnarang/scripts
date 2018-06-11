@@ -39,10 +39,10 @@ if [[ ! "$(command -v adb)" == "" ]]; then
 fi
 
 if [[ "$(command -v make)" ]]; then
-    makeversion="$(make -v | head -1 | awk '{print $3}')";
+    makeversion="$(make -v | head -1 | awk '{print $3}')"
     if [[ "${makeversion}" != "${LATEST_MAKE_VERSION}" ]]; then
-        echo "Installing make "${LATEST_MAKE_VERSION}" instead of ${makeversion}";
-        bash ./setup/make.sh ${LATEST_MAKE_VERSION};
+        echo "Installing make "${LATEST_MAKE_VERSION}" instead of ${makeversion}"
+        bash ./setup/make.sh ${LATEST_MAKE_VERSION}
     fi
 fi
 
@@ -50,5 +50,5 @@ echo "Installing repo"
 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
 sudo chmod a+x /usr/local/bin/repo
 
-bash ./setup/ccache.sh;
-bash ./setup/ninja.sh;  
+bash ./setup/ccache.sh
+bash ./setup/ninja.sh
