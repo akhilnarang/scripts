@@ -26,7 +26,8 @@ elif [[ ${LSB_RELEASE} =~ "Ubuntu 14" ]]; then
     PACKAGES="${CORE_PACKAGES} ${UBUNTU_14_PACKAGES}"
 fi
 
-apt install "${PACKAGES}"
+sudo apt update -y
+sudo apt install "${PACKAGES}"
 
 if [[ ! "$(command -v adb)" == "" ]]; then
     echo -e "Setting up udev rules for adb!"
