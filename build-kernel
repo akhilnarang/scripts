@@ -1,23 +1,10 @@
 #!/usr/bin/env bash
 
-source "${HOME}/scripts/startupstuff.sh";
+# Copyright (C) 2018 Akhil Narang
+# SPDX-License-Identifier: GPL-3.0-only
+# Kernel build script
 
-# Kernel compiling script
-
-function check_toolchain() {
-
-    TC=$(find "${TOOLCHAIN}"/bin -type f -name "aarch64-*-gcc");
-
-	if [[ -f "${TC}" ]]; then
-		CROSS_COMPILE="${CCACHE} ${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
-sed -e 's/gcc//')";
-		export CROSS_COMPILE;
-		echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
-	else
-		echo -e "No suitable toolchain found in ${TOOLCHAIN}";
-		exit 1;
-	fi
-}
+source "${HOME}/scripts/functions";
 
 if [[ -z ${KERNELDIR} ]]; then
     echo -e "Please set KERNELDIR";
@@ -26,12 +13,12 @@ fi
 
 export DEVICE=$1;
 if [[ -z ${DEVICE} ]]; then
-    export DEVICE="oneplus3";
+    export DEVICE="whyred";
 fi
 
 # These won't change
 export SRCDIR="${KERNELDIR}/${DEVICE}";
-export OUTDIR="${KERNELDIR}/${DEVICE}/out";
+export OUTDIR="${KERNELDIR}/${DEVICE}/obj";
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}";
 export MODULES_DIR="${ANYKERNEL}/modules";
 export ARCH="arm64";
@@ -47,7 +34,7 @@ if [[ -z "${JOBS}" ]]; then
 fi
 
 if [[ ! -d "${ANYKERNEL}" ]]; then
-    hub clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}";
+    git clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}";
 fi
 
 export MAKE="make O=${OUTDIR}";

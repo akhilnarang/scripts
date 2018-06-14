@@ -11,6 +11,9 @@ cd scripts
 bash setup/<name of script>
 ```
 
+android-build-env.sh is for Ubuntu/Linux Mint/other distributions using the `apt` package manager
+The rest are named as per the distro
+
 If running Arch Linux, please enable multilib, and install yaourt, before running the script :)
 Please choose the name dependending on the distro you have =)
 

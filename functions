@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Copyright (C) 2018 Akhil Narang
+# SPDX-License-Identifier: GPL-3.0-only
+
+# Script defining various functions used in the scripts across this repository
+
+source ~/scripts/aliases;
+
 # Builds a package from the Arch User Repository
 function aur() {
 	git clone https://aur.archlinux.org/$1;
@@ -99,6 +106,7 @@ function syncc() {
     time run_virtualenv repo sync --force-broken --force-sync --no-clone-bundle --current-branch --no-tags "$@";
 }
 
+# Function to set some aliases for git
 function gitalias() {
 	git config --global alias.s 'status';
 	git config --global alias.p 'push';
@@ -119,10 +127,49 @@ function gitalias() {
 	git config --global alias.rba 'rebase --abort';
 	git config --global alias.rbs 'rebase --skip';
 	git config --global alias.d 'diff';
+    git config --global alias.dc 'diff --cached';
 	git config --global alias.b 'bisect';
 	git config --global alias.c 'commit';
 	git config --global alias.cs 'commit --signoff';
 	git config --global alias.ca 'commit --amend';
+    git config --global alias.cn 'commit --no-edit';
 	git config --global alias.gerrit 'push gerrit HEAD:refs/for/oreo-mr1';
-	git config --global alias.add-change-id = "!EDITOR='sed -i -re s/^pick/e/' sh -c 'git rebase -i $1 && while test -f .git/rebase-merge/interactive; do git commit --amend --no-edit && git rebase --continue; done' -";
+	git config --global alias.add-change-id "!EDITOR='sed -i -re s/^pick/e/' sh -c 'git rebase -i $1 && while test -f .git/rebase-merge/interactive; do git commit --amend --no-edit && git rebase --continue; done' -";
+}
+
+# Function to display uptime of a system. All credits to the original author.
+function upinfo() {
+    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \\t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}';
+}
+
+# Function run on login to display some stuff and set my custom PS1
+function onLogin() {
+    export GIT_PS1_SHOWDIRTYSTATE=1;
+    export GIT_PS1_SHOWSTASHSTATE=1;
+    export GIT_PS1_SHOWUNTRACKEDFILES=1;
+    export GIT_PS1_SHOWUPSTREAM=auto;
+    export GIT_PS1_SHOWCOLORHINTS=1;
+    unset PS1;
+    #PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ ';
+    if [[ -f "${HOME}/git-prompt.sh" ]]; then
+        source ~/git-prompt.sh
+        PS1='| \h (\w)$(__git_ps1 " {%s}") |-> ';
+    else
+        PS1='| \h (\w) |-> ';
+    fi
+    clear;
+    HOST=$(hostname);
+    if [[ ${#HOST} -lt 14 ]]; then
+        echo -e "${lightgray}";figlet -c "$(hostname)";
+    fi
+    echo ""
+    echo -ne "${red}Today is:\\t\\t${cyan} $(date)";
+    echo ""
+    echo -e "${red}Kernel Information: \\t${cyan} $(uname -smr)"
+    echo -ne "${cyan}";
+    upinfo;
+    echo "";
+    echo -e "Welcome to $(hostname), $(whoami)!";
+    echo -e;
+    fortune;
 }
