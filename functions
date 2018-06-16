@@ -208,6 +208,7 @@ function sendTG() {
         "derp")
             CHAT_ID="-1001313293729";
         ;;
+    esac
 
     curl -s "https://api.telegram.org/bot${BOT_API_KEY}?/sendMessage" --data "text=${@}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null;
 }
