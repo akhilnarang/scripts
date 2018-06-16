@@ -11,19 +11,24 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1;
 fi
 
-export DEVICE=$1;
-if [[ -z ${DEVICE} ]]; then
-    export DEVICE="whyred";
-fi
+export DEVICE=whyred;
+#if [[ -z ${DEVICE} ]]; then
+#    export DEVICE="whyred";
+#fi
 
 # These won't change
 export SRCDIR="${KERNELDIR}/${DEVICE}";
 export OUTDIR="${KERNELDIR}/${DEVICE}/obj";
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}";
-export MODULES_DIR="${ANYKERNEL}/modules";
+export MODULES_DIR="${ANYKERNEL}/modules/vendor/lib/modules";
 export ARCH="arm64";
-export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}";
 export CCACHE="$(command -v ccache)";
+export CLANG_DIR="${HOME}/clang-build/build";
+export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu";
+export CROSS_COMPILE="${GCC_DIR}/bin/aarch64-linux-gnu-";
+export CLANG_TRIPLE="aarch64-linux-gnu-";
+export CC="${CLANG_DIR}/bin/clang";
+export KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
@@ -38,8 +43,6 @@ if [[ ! -d "${ANYKERNEL}" ]]; then
 fi
 
 export MAKE="make O=${OUTDIR}";
-
-check_toolchain;
 
 if [[ -z "${NAME}" ]]; then
     export NAME="derp";
@@ -66,7 +69,11 @@ fi
 ${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && exit 1);
 
 START=$(date +"%s");
-${MAKE} -j"${JOBS}";
+if [[ "$@" =~ "quiet" ]]; then
+    ${MAKE} -j"${JOBS}" CC="$(command -v ccache) ${CC}" CLANG_TRIPLE="${CLANG_TRIPLE}" |& ag -ia "error:|warning:"
+else
+    ${MAKE} -j"${JOBS}" CC="$(command -v ccache) ${CC}" CLANG_TRIPLE="${CLANG_TRIPLE}";
+fi
 exitCode="$?";
 END=$(date +"%s")
 DIFF=$((END - START))
@@ -84,11 +91,11 @@ cp -v "${IMAGE}" "${ANYKERNEL}/";
 
 grep -q "=m" ${OUTDIR}/.config;
 if [[ "$?" -eq 0 ]]; then
-    find ${OUTDIR} -name "*.ko" -exec cp {} ${MODULES_DIR} \;
+    find ${OUTDIR} -name "*.ko" -exec cp -v {} ${MODULES_DIR} \;
     for module in $(ls ${MODULES_DIR/*.ko}); do
   		${CROSS_COMPILE}strip --strip-unneeded "${MODULES_DIR}/${module}";
   	done
-fi # Modules check 
+fi # Modules check
 cd - || exit;
 cd "${ANYKERNEL}" || exit;
 zip -r9 "${FINAL_ZIP}" *;
@@ -100,17 +107,6 @@ echo -e "$NAME zip can be found at $FINAL_ZIP";
 if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
     transfer "${FINAL_ZIP}";
-fi
-if [[ "$@" =~ "upload" ]]; then
-    for f in -changelog.txt .zip; do
-        scp "${ZIP_DIR}/${NAME}$f" "akhil@downloads.akhilnarang.me:downloads/kernel/oneplus3/Test/";
-		git -C ${SRCDIR} log akhilnarang/stable..HEAD > ${ZIP_DIR}/${NAME}-changelog.txt;
-    done
-    ssh akhil@downloads.akhilnarang.me ~/gdrive sync upload downloads/kernel 1DnrCzSchI9MNHXkbiaqlw-qyRkNIDKFQ
-    GDRIVE_URL="https://drive.google.com/drive/folders/1PwLPGxfk0A1oj2nGATxdfYuguU7hZdJ4";
-    DOWNLOADS_URL="https://downloads.akhilnarang.me/kernel/oneplus3/Test";
-    bash ~/kronicbot/send_tg.sh "-1001122772970" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
-    bash ~/kronicbot/send_tg.sh "-1001223901635" "Check [Main]($DOWNLOADS_URL) | [Mirror]($GDRIVE_URL) for ${NAME}";
 fi
 else
 echo -e "Zip Creation Failed =(";
