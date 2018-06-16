@@ -32,6 +32,8 @@ export KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
+export DONWLOAD_BASE_URL_1="downloads.akhilnarang.me";
+export DOWNLOAD_BASE_URL_2="derpfest.msfjarvis.website";
 
 if [[ -z "${JOBS}" ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)";
@@ -66,7 +68,8 @@ if [[ "$@" =~ "clean" ]]; then
     ${MAKE} clean
 fi
 
-${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && exit 1);
+${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && \
+		exit 1);
 
 START=$(date +"%s");
 if [[ "$@" =~ "quiet" ]]; then

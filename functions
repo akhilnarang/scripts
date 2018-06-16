@@ -61,15 +61,17 @@ function repopick_stuff() {
 	export IFS=$oldifs;
 }
 
-# Creates a virtualenv and activates it
+# Creates a virtualenv if required and activates it
 function venv() {
-    PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]));sys.stdout.write(t)");
+    PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]))\
+            ;sys.stdout.write(t)");
     if [[ "${PYV}" == "3" ]]; then
         if [[ "$(command -v 'virtualenv2')" ]]; then
             virtualenv2 /tmp/venv;
             source /tmp/venv/bin/activate;
         else
-            echo "Please install 'virtualenv2', or make 'python' point to python2";
+            echo "Please install 'virtualenv2', or make 'python' point to \
+                    python2";
         fi
     fi
 }
@@ -92,7 +94,7 @@ function transfer() {
     echo -e "Download $zipname at $url";
 }
 
-# Creates a virtualenv if required, runs the given command, and then deactivates it
+# Calls venv(), runs the given command, and then calls rmvenv()
 function run_virtualenv() {
 	venv
 
@@ -101,12 +103,13 @@ function run_virtualenv() {
     rmvenv;
 }
 
-# Function to repo sync with a lot of flags because I'm lazy to type them over and and over again
+# Repo sync with various flags I'm lazy to type each time
 function syncc() {
-    time run_virtualenv repo sync --force-broken --force-sync --no-clone-bundle --current-branch --no-tags "$@";
+    time run_virtualenv repo sync --force-broken --force-sync --no-clone-bundle\
+             --current-branch --no-tags "$@";
 }
 
-# Function to set some aliases for git
+# Some git aliases for an easier workflow
 function gitalias() {
 	git config --global alias.s 'status';
 	git config --global alias.p 'push';
@@ -172,4 +175,39 @@ function onLogin() {
     echo -e "Welcome to $(hostname), $(whoami)!";
     echo -e;
     fortune;
+}
+
+# Sends messages to Telegram to a specified chat via the desired bot
+function sendTG() {
+    bot=${1};
+    shift;
+    chat=${1};
+    shift;
+    parse_mode=${1};
+    shift;
+    case ${bot} in
+        "ts")
+            BOT_API_KEY="$(cat ~/.tskey)";
+        ;;
+        "kronic")
+            BOT_API_KEY="$(cat ~/.kronickey)";
+        ;;
+        "rr")
+            BOT_API_KEY="$(cat ~/.rrkey)";
+        ;;
+        *)
+            echo -e "Invalid bot, must be one of ts|kronic|rr!";
+            exit 1;
+        ;;
+    esac
+
+    case ${chat} in
+        "me")
+            CHAT_ID="92027269";
+        ;;
+        "derp")
+            CHAT_ID="-1001313293729";
+        ;;
+
+    curl -s "https://api.telegram.org/bot${BOT_API_KEY}?/sendMessage" --data "text=${@}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null;
 }
