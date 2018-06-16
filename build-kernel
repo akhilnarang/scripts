@@ -108,6 +108,11 @@ if [[ "$@" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
     transfer "${FINAL_ZIP}";
 fi
+if [[ "$@" =~ "upload" ]]; then
+    echo -e "Uploading ${ZIPNAME}";
+    rsync -av --progress --delete ${ZIP_DIR} akhil@downloads.akhilnarang.me:/var/www/downloads.akhilnarang.me/kernel/${DEVICE}/Test/;
+    rsync -av --progress --delete ${ZIP_DIR} akhil@mirror.akhilnarang.me:/var/www/mirror.akhilnarang.me/kernel/${DEVICE}/Test/;
+fi
 else
 echo -e "Zip Creation Failed =(";
 fi # FINAL_ZIP check
