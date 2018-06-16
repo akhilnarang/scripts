@@ -16,6 +16,7 @@ alias kronic='ssh kronic@aosiprom.com';
 alias jenkins='ssh ubuntu@jenkins.akhilnarang.me';
 alias bot='ssh bot@bot.akhilnarang.me'
 alias downloads='ssh akhil@downloads.akhilnarang.me';
+alias mirror='ssh akhil@mirror.akhilnarang.me';
 
 # Miscellaneous aliases
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
