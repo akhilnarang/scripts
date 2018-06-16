@@ -4,31 +4,34 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Kernel release script
 
-export DOWNLOAD_HOST="downloads.akhilnarang.me";
-export MIRROR_HOST="mirror.akhilnarang.me";
-export KERNEL_PATH="kernel/whyred";
-export NAME=$(ssh ${DOWNLOAD_HOST} ls /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Test/*.zip | tail -1);
-export ZIPNAME=$(echo $NAME | awk -F '/' '{print $NF}');
+source ~/scripts/functions
+
+export DOWNLOAD_HOST="downloads.akhilnarang.me"
+export MIRROR_HOST="mirror.akhilnarang.me"
+export KERNEL_PATH="kernel/whyred"
+export NAME=$(ssh ${DOWNLOAD_HOST} ls /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Test/*.zip | tail -1)
+export ZIPNAME=$(echo $NAME | awk -F '/' '{print $NF}')
 export DERPVERSION=$1
-export TAG="Derp-v${DERPVERSION}";
-export RELEASE_ZIPNAME="${TAG}.zip";
-shift;
+export TAG="Derp-v${DERPVERSION}"
+export RELEASE_ZIPNAME="${TAG}.zip"
+shift
 export CHANGELOG=$@
 
-sendTG kronic derp md "Releasing Derp v$DERPVERSION";
+sendTG kronic derp md "Releasing Derp v$DERPVERSION"
 
-ssh ${DOWNLOAD_HOST} "cp -v ${NAME} /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum;";
-ssh ${DOWNLOAD_HOST} ./bin/mirrorsync;
-sendTG kronic derp md "Derp v$DERPVERSION is up, grab it [here](https://${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})";
-sendTG kronic derp md "```Changelog: ${CHANGELOG}```";
+ssh ${DOWNLOAD_HOST} "cp -v ${NAME} /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum;"
+ssh ${DOWNLOAD_HOST} ./bin/mirrorsync
+sendTG kronic derp md "Derp v$DERPVERSION is up, grab it [here](https://${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
+sendTG kronic derp md "Changelog:"
+sendTG kronic derp md "\`\`\`${CHANGELOG}\`\`\`"
 
-cd ${KERNELDIR}/whyred;
-git tag -as ${TAG};
-git p origin ${TAG};
-cd /tmp;
-wget https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME};
-wget https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum;
-hub release create ${TAG} -a ${RELEASE_ZIPNAME} -a ${RELEASE_ZIPNAME}.md5sum;
-rm ${RELEASE_ZIPNAME}* -v;
-cd -;
-sendTG kronic me md "${TAG} released!";
+cd ${KERNELDIR}/whyred
+git tag -as ${TAG}
+git p origin ${TAG}
+cd /tmp
+wget https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}
+wget https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum
+cd -
+hub release create ${TAG} -a /tmp/${RELEASE_ZIPNAME} -a /tmp/${RELEASE_ZIPNAME}.md5sum
+rm /tmp/${RELEASE_ZIPNAME}* -v
+sendTG kronic me md "${TAG} released!"

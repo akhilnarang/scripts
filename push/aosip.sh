@@ -2,7 +2,7 @@
 
 # Script to push all AOSiP repositories
 
-if [ -z "$1" ];
+if [ -z "$1" ]
 then
 export BRANCH="oreo-mr1"
 else
@@ -19,11 +19,11 @@ PROJECTS="$(grep aosip .repo/manifests/snippets/aosip.xml | awk '{print $2}' | a
 
 
 for project in ${PROJECTS}; do
-cd $project;
-#git push $(git remote -v | head -1 | awk '{print $2}' | sed -e 's/https:\/\/github.com\/AOSiP/ssh:\/\/akhil@review.aosiprom.com:29418\/AOSIP/') HEAD:oreo;
+cd $project
+#git push $(git remote -v | head -1 | awk '{print $2}' | sed -e 's/https:\/\/github.com\/AOSiP/ssh:\/\/akhil@review.aosiprom.com:29418\/AOSIP/') HEAD:oreo
 gerrit
-git push gerrit HEAD:refs/heads/${BRANCH};
-cd -;
+git push gerrit HEAD:refs/heads/${BRANCH}
+cd -
 done
 
 cd ${DIR}

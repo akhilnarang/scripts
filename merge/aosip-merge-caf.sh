@@ -31,13 +31,13 @@ done
 for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/manifests/aosip.xml  | awk '{print $3}' | awk -F '"' '{print $2}')
 do
 echo -e ""
-if [[ "${do_not_merge}" =~ "${repos}" ]];
+if [[ "${do_not_merge}" =~ "${repos}" ]]
 then
-echo -e "${repos} is not to be merged";
+echo -e "${repos} is not to be merged"
 else
 echo "$blu Merging $repos $end"
 echo -e ""
-cd $repos;
+cd $repos
 git checkout nougat
 git fetch aosip nougat
 git reset --hard aosip/nougat
@@ -45,7 +45,7 @@ git remote rm caf 2> /dev/null
 git remote add caf "${CAF}/platform/$repos"
 git fetch caf --quiet --tags
 git merge ${TAG} --no-edit
-if [ $? -ne 0 ];
+if [ $? -ne 0 ]
 then
 echo "$repos" >> ${AOSIP_PATH}/failed
 echo "$red $repos failed :( $end"
@@ -54,7 +54,7 @@ echo "$repos" >> ${AOSIP_PATH}/success
 echo "$grn $repos succeeded $end"
 fi
 echo -e ""
-cd ${AOSIP_PATH};
+cd ${AOSIP_PATH}
 fi
 done
 

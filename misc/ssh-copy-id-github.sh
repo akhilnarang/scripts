@@ -58,7 +58,7 @@ ssh_copy_id_github() {
         ssh-keygen -f `echo ${key_file%.pub}`
       else
         echo "Need SSH key file to upload, e.g. $DEFAULT_KEY"
-        exit 1;
+        exit 1
       fi
 
     fi
@@ -82,7 +82,7 @@ ssh_copy_id_github() {
     [ `echo "$response" | grep 'Status: 422\|key is already in use' | wc -l` -eq 2 ] && { echo "Key is already uploaded."; exit 5; }
 
     # Display raw response for unkown 400 messages
-    [ `echo $response | grep 'Status: 4[0-9][0-9]' | wc -l` -eq 1 ] && echo "$response"; exit 1;
+    [ `echo $response | grep 'Status: 4[0-9][0-9]' | wc -l` -eq 1 ] && echo "$response"; exit 1
 
     if [ "$otp" == "$TRUE"  ]; then
         read -sp "Enter your OTP code (check your $type): " code && echo

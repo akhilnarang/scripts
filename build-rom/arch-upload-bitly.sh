@@ -20,7 +20,7 @@ source ../.credentials
 breakfast $1
 
 # 2nd parameter. Pass a target to be made, like clean, clobber, dirty, installclean, etc. If none, will delete old zips, build.prop, kernel's .version
-if [ $2 ];
+if [ $2 ]
 then
 mka $2
 else
@@ -34,11 +34,11 @@ export TARGET_UNOFFICIAL_BUILD_ID=$rom
 [ ! -d logs ] || mkdir logs
 
 # Check for target to be built
-if [ $(grep ^bacon build/core/Makefile) ];
+if [ $(grep ^bacon build/core/Makefile) ]
 then
-makecommand=bacon;
+makecommand=bacon
 else
-makecommand=otapackage;
+makecommand=otapackage
 fi
 
 # Build ang log output
@@ -61,12 +61,12 @@ echo $bitlyarg1
 
 # Another script, which uses bitly.com API to make a short url :).
 bitly $bitlyarg1
-echo "";
+echo ""
 
 # Again, related to my serving of files directly from the server
 #bitlyarg2="${phoenixlink}${path}${zip}"
 #echo $bitlyarg2
 #bitly $bitlyarg2
-#echo "";
-echo "md5sum is $(md5sum $pathzip | awk '{print $1}')";
+#echo ""
+echo "md5sum is $(md5sum $pathzip | awk '{print $1}')"
 figlet thuglife

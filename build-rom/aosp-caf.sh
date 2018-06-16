@@ -6,16 +6,16 @@
 # android_shell_tools is from https://github.com/AdrianDC/android_shell_tools
 
 source /home/akhil/android_shell_tools/android_bash.rc
-bashsync;
-if [ "${REPOSYNC}" == "yes" ];
+bashsync
+if [ "${REPOSYNC}" == "yes" ]
 then
 rm -rf .repo/local_manifests 2>/dev/null
 mkdir -v .repo/local_manifests
 cd .repo/local_manifests
 wget https://raw.githubusercontent.com/akhilnarang/local_manifests/master/${DEVICE}.xml
-if [ ! -f "${DEVICE}.xml" ];
+if [ ! -f "${DEVICE}.xml" ]
 then
-exit 1;
+exit 1
 fi
 cd -
 time reposy -j32

@@ -6,50 +6,50 @@
 # Script with some aliases and exports
 
 if [[ "$(command -v hub)" ]]; then
-    alias git='hub';
+    alias git='hub'
 fi
 
 # SSH aliases
-alias rr='ssh akhil@rr.akhilnarang.me';
-alias aosip='ssh akhil@aosiprom.com';
-alias kronic='ssh kronic@aosiprom.com';
-alias jenkins='ssh ubuntu@jenkins.akhilnarang.me';
+alias rr='ssh akhil@rr.akhilnarang.me'
+alias aosip='ssh akhil@aosiprom.com'
+alias kronic='ssh kronic@aosiprom.com'
+alias jenkins='ssh ubuntu@jenkins.akhilnarang.me'
 alias bot='ssh bot@bot.akhilnarang.me'
-alias downloads='ssh akhil@downloads.akhilnarang.me';
-alias mirror='ssh akhil@mirror.akhilnarang.me';
+alias downloads='ssh akhil@downloads.akhilnarang.me'
+alias mirror='ssh akhil@mirror.akhilnarang.me'
 
 # Miscellaneous aliases
-alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
-alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor';
-alias path='echo ${PATH}';
-alias stopjack='jack-admin stop-server';
+alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
+alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
+alias path='echo ${PATH}'
+alias stopjack='jack-admin stop-server'
 
 # https://github.com/AdrianDC/android_development_shell_tools
 # Has some useful stuff :)
-ADCSCRIPT="${HOME}/android_development_shell_tools";
+ADCSCRIPT="${HOME}/android_development_shell_tools"
 if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
-    source "${ADCSCRIPT}/android_development_shell_tools.rc";
+    source "${ADCSCRIPT}/android_development_shell_tools.rc"
 fi
 
 # Some PATH changes and stuff only for my laptop
 if [[ "$(hostname)" == "randomness" || "$(hostname)" == "akhil-Lenovo-Y50-70" ]]; then
     # Extend the default PATH a bit
-    export PATH=${HOME}/bin:${HOME}/android-studio/bin:${HOME}/pidcat:${HOME}/Android/Sdk/platform-tools:${HOME}/adb-sync:$PATH;
+    export PATH=${HOME}/bin:${HOME}/android-studio/bin:${HOME}/pidcat:${HOME}/Android/Sdk/platform-tools:${HOME}/adb-sync:$PATH
 
     # Set a custom path for the Android SDK
-    export ANDROID_HOME=${HOME}/Android/Sdk;
+    export ANDROID_HOME=${HOME}/Android/Sdk
 fi
 
 # Set default editor to nano
-export EDITOR="nano";
+export EDITOR="nano"
 
 # Set timezone
-export TZ="Asia/Kolkata";
+export TZ="Asia/Kolkata"
 
 # Colors
-green='\e[0;32m';
-cyan='\e[0;36m';
-red='\e[0;31m';
-lightgray='\e[0;37m';
+green='\e[0;32m'
+cyan='\e[0;36m'
+red='\e[0;31m'
+lightgray='\e[0;37m'
 
 

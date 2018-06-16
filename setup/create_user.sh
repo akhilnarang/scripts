@@ -3,7 +3,7 @@
 # Script to add a new username to a Linux System
 
 export username="$1"
-if [ -z $username ];
+if [ -z $username ]
 then
 echo -e "Please enter a username"
 read username

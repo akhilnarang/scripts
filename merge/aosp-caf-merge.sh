@@ -33,28 +33,28 @@ done
 for REPO in ${repos}; do
 	echo -e ""
 	if [[ "${do_not_merge}" =~ "${REPO}" ]]; then
-		echo -e "${REPO} is not to be merged";
+		echo -e "${REPO} is not to be merged"
 	else
 		echo "$blu Merging $REPO $end"
 		echo -e ""
-		cd $REPO;
+		cd $REPO
 		git checkout n-mr2
 		git fetch aosp-caf n-mr2
 		git reset --hard aosp-caf/n-mr2
 		git remote rm caf 2> /dev/null
 		if [[ "${REPO}" == "device/qcom/sepolicy" ]]; then
-			reponame="${CAF}/${REPO}";
+			reponame="${CAF}/${REPO}"
 		elif [[ "${REPO}" =~ "vendor/qcom" ]]; then
-			reponame="${CAF}/platform/$(echo ${REPO} | sed -e 's|qcom/opensource|qcom-opensource|')";
+			reponame="${CAF}/platform/$(echo ${REPO} | sed -e 's|qcom/opensource|qcom-opensource|')"
 		else
-			reponame="${CAF}/platform/$REPO";
+			reponame="${CAF}/platform/$REPO"
 		fi
-		git remote add caf "${reponame}";
-		git fetch caf --quiet --tags;
+		git remote add caf "${reponame}"
+		git fetch caf --quiet --tags
 		if [ $? -ne 0 ]; then
 			echo "$repos" >> ${AOSPCAF_PATH}/notcaf
 		else
-			git merge ${TAG} --no-edit;
+			git merge ${TAG} --no-edit
 			if [ $? -ne 0 ]; then
 				echo "$REPO" >> ${AOSPCAF_PATH}/failed
 				echo "$red $REPO failed :( $end"
@@ -63,12 +63,12 @@ for REPO in ${repos}; do
 					echo "$REPO" >> ${AOSPCAF_PATH}/success
 					echo "$grn $REPO succeeded $end"
 				else
-					echo "$REPO - unchanged";
+					echo "$REPO - unchanged"
 				fi
 			fi
 			echo -e ""
 		fi
-			cd ${AOSPCAF_PATH};
+			cd ${AOSPCAF_PATH}
 	fi
 done
 

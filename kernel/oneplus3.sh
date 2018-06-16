@@ -6,15 +6,15 @@
 
 [ -z ${KERNELDIR} ] && echo -e "Please set KERNELDIR" && exit 1
 
-export DEVICE="oneplus3";
-export SRCDIR="${KERNELDIR}/${DEVICE}";
-export ARCH="arm64";
-export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}";
-export IMAGE="${SRCDIR}/arch/${ARCH}/boot/Image.gz-dtb";
-export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}";
-export DEFCONFIG="oneplus3_defconfig";
-export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
-export CCACHE_DIR="${KERNELDIR}/ccache-${DEVICE}";
+export DEVICE="oneplus3"
+export SRCDIR="${KERNELDIR}/${DEVICE}"
+export ARCH="arm64"
+export TOOLCHAIN="${KERNELDIR}/toolchain/${DEVICE}"
+export IMAGE="${SRCDIR}/arch/${ARCH}/boot/Image.gz-dtb"
+export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
+export DEFCONFIG="oneplus3_defconfig"
+export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
+export CCACHE_DIR="${KERNELDIR}/ccache-${DEVICE}"
 ccache -M 5G
 
 function check_toolchain() {
@@ -31,20 +31,20 @@ function check_toolchain() {
 	else
 		echo -e "No suitable aarch64- or aarch64-linux-android- or aarch64-linux-gnu- \
                 toolchain found in ${TOOLCHAIN}"
-		exit 1;
+		exit 1
 	fi
 }
 
 function check_version() {
 
 	if [ -z ${CUSTOMVERSION} ]; then
-		export CUSTOMVERSION="Derp";
+		export CUSTOMVERSION="Derp"
 	fi
 }
 
 
-check_toolchain;
-check_version;
+check_toolchain
+check_version
 
 export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 | awk -F '(' '{print $2}' | awk '{print tolower($1)}')"
 export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 | awk -F ')' '{print $2}' | awk '{print tolower($1)}')"
@@ -57,12 +57,12 @@ export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 cd $KERNELDIR/oneplus3
 rm -fv /tmp/Derp-oneplus3.zip ${IMAGE}
 
-if [[ "$1" =~ "mrproper" ]];
+if [[ "$1" =~ "mrproper" ]]
 then
 make mrproper
 fi
 
-if [[ "$1" =~ "clean" ]];
+if [[ "$1" =~ "clean" ]]
 then
 make clean
 fi
@@ -73,25 +73,25 @@ time make -j$(nproc) Image
 exitCode="$?"
 END=$(date +"%s")
 DIFF=$(($END - $START))
-echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
+echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
 
 if [[ ! -f "${IMAGE}" ]]; then
-echo -e "Kernel Compilation Failed!";
-echo -e "Fix The Errors!";
+echo -e "Kernel Compilation Failed!"
+echo -e "Fix The Errors!"
 else
 echo -e "Build Succesful!"
 
 cp -v "${IMAGE}" "${ANYKERNEL}/"
 cd -
 cd ${ANYKERNEL}
-zip -r9 ${FINAL_ZIP} *;
+zip -r9 ${FINAL_ZIP} *
 cp -v ${FINAL_ZIP} /tmp/Derp-oneplus3.zip
 cd -
-if [ -f "$FINAL_ZIP" ];
+if [ -f "$FINAL_ZIP" ]
 then
-echo -e "$ZIPNAME zip can be found at $FINAL_ZIP";
+echo -e "$ZIPNAME zip can be found at $FINAL_ZIP"
 else
-echo -e "Zip Creation Failed =(";
+echo -e "Zip Creation Failed =("
 fi # $FINAL_ZIP found
 fi # no $IMAGE found
 exit ${exitCode}

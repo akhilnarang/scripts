@@ -2,7 +2,7 @@
 
 # Script to push all AOSP-CAF repos (or any other ROMs) to GitHub based on the list of repositories in manifest
 
-if [ -z "$1" ];
+if [ -z "$1" ]
 then
 export BRANCH="n-mr1"
 else
@@ -18,9 +18,9 @@ PROJECTS="$(grep aosp-caf .repo/manifests/manifests/caf.xml | awk '{print $3}' |
 
 
 for project in ${PROJECTS}; do
-cd $project;
-git push $(git remote -v | grep aosp-caf | head -1 | awk '{print $2}' | sed -e 's/https:\/\//ssh:\/\/git@/') HEAD:n-mr1;
-cd -;
+cd $project
+git push $(git remote -v | grep aosp-caf | head -1 | awk '{print $2}' | sed -e 's/https:\/\//ssh:\/\/git@/') HEAD:n-mr1
+cd -
 done
 
 cd ${DIR}

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 AOSIP_PATH=$PWD
-bash ~/kronicbot/send_tg_nomd.sh -1001055786180 "Merging in ${TAG}";
-bash ~/kronicbot/send_tg.sh -1001055786180 "Check progress [here]($BUILD_URL)!";
+bash ~/kronicbot/send_tg_nomd.sh -1001055786180 "Merging in ${TAG}"
+bash ~/kronicbot/send_tg.sh -1001055786180 "Check progress [here]($BUILD_URL)!"
 git config --global user.name "Akhil's Lazy Buildbot"
 git config --global user.email "jenkins@akhilnarang.me"
 git config --global user.signingkey 219187E8
@@ -20,7 +20,7 @@ external/json-c external/libncurses external/libnetfilter_conntrack system/qcom 
 external/libnfnetlink external/libnfc-nxp external/nano external/ntfs-3g vendor/qcom/opensource/cryptfs_hw \
 vendor/qcom/opensource/dataservices vendor/qcom/opensource/interfaces vendor/qcom/opensource/rcs-service packages/apps/MusicFX"
 
-AOSP="https://android.googlesource.com";
+AOSP="https://android.googlesource.com"
 
 for filess in failed success notaosp; do
     rm $filess 2> /dev/null
@@ -28,54 +28,54 @@ for filess in failed success notaosp; do
 done
 
 . build/envsetup.sh
-repo sync --detach --quiet;
+repo sync --detach --quiet
 
 # AOSiP manifest is setup with repo path first, then repo name, so the path attribute is after 2 spaces, and the path itself within "" in it
 for repos in $(grep 'remote="aosip"' ${AOSIP_PATH}/.repo/manifests/snippets/aosip.xml  | awk '{print $2}' | awk -F '"' '{print $2}' | grep -v caf); do
     echo -e ""
     if [[ "${do_not_merge}" =~ "${repos}" ]]; then
-        echo -e "${repos} is not to be merged";
+        echo -e "${repos} is not to be merged"
     else
         echo "$blu Merging $repos $end"
         echo -e ""
-        cd $repos;
+        cd $repos
         if [[ "$repos" == "build/make" ]]; then
-            repos="build";
+            repos="build"
         fi
-        git fetch aosip $SRC;
-        git branch -D $SRC;
-        git checkout -b $SRC aosip/$SRC;
-        git remote rm aosp 2> /dev/null;
-        git remote add aosp "${AOSP}/platform/$repos";
-        git fetch aosp --quiet --tags;
+        git fetch aosip $SRC
+        git branch -D $SRC
+        git checkout -b $SRC aosip/$SRC
+        git remote rm aosp 2> /dev/null
+        git remote add aosp "${AOSP}/platform/$repos"
+        git fetch aosp --quiet --tags
         if [[ $? -ne 0 ]]; then
             echo "$repos" >> ${AOSIP_PATH}/notaosp
         else
-            git merge ${TAG} --no-edit;
+            git merge ${TAG} --no-edit
             if [[ $? -ne 0 ]]; then
                 echo "$repos" >> ${AOSIP_PATH}/failed
                 echo "$red $repos failed :( $end"
             else
                 if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/${SRC})" ]]; then
                     echo "$repos" >> ${AOSIP_PATH}/success
-                    git commit --signoff --date="$(date)" --amend --no-edit;
-                    echo "$grn $repos succeeded $end";
-                    echo "Pushing!";
-                    gerrit; git push gerrit $SRC;
+                    git commit --signoff --date="$(date)" --amend --no-edit
+                    echo "$grn $repos succeeded $end"
+                    echo "Pushing!"
+                    gerrit; git push gerrit $SRC
                 else
-                    echo "$repos - unchanged";
+                    echo "$repos - unchanged"
                 fi
             fi
         fi
         echo -e ""
-        cd ${AOSIP_PATH};
+        cd ${AOSIP_PATH}
     fi
 done
 
 FAILED=$(cat $AOSIP_PATH/failed)
-bash ~/kronicbot/send_tg.sh "-1001055786180" "Failed repos:";
-bash ~/kronicbot/send_tg.sh "-1001055786180" $FAILED;
+bash ~/kronicbot/send_tg.sh "-1001055786180" "Failed repos:"
+bash ~/kronicbot/send_tg.sh "-1001055786180" $FAILED
 
-git config --global user.name "Akhil Narang";
-git config --global user.email "akhilnarang.1999@gmail.com";
+git config --global user.name "Akhil Narang"
+git config --global user.email "akhilnarang.1999@gmail.com"
 git config --global user.signingkey 944082E8
