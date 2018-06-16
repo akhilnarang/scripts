@@ -32,7 +32,7 @@ export KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http
 export DEFCONFIG="${DEVICE}_defconfig";
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
-export DONWLOAD_BASE_URL_1="https://downloads.akhilnarang.me/kernel/${DEVICE}/Test/";
+export DOWNLOAD_BASE_URL_1="https://downloads.akhilnarang.me/kernel/${DEVICE}/Test/";
 export DOWNLOAD_BASE_URL_2="https://mirror.akhilnarang.me/kernel/${DEVICE}/Test/";
 
 if [[ -z "${JOBS}" ]]; then
