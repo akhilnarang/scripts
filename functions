@@ -197,7 +197,7 @@ function sendTG() {
         ;;
         *)
             echo -e "Invalid bot, must be one of ts|kronic|rr!";
-            exit 1;
+            return;
         ;;
     esac
 
@@ -208,7 +208,25 @@ function sendTG() {
         "derp")
             CHAT_ID="-1001313293729";
         ;;
+        *)
+            echo -e "Invalid chat, must be one of me|derp!";
+            return;
+        ;;
     esac
 
-    curl -s "https://api.telegram.org/bot${BOT_API_KEY}?/sendMessage" --data "text=${@}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null;
+    case ${parse_mode} in
+        "markdown"|"Markdown"|"md")
+            export parse_mode="Markdown";
+        ;;
+        "Html"|"html"|"HTML")
+            export parse_mode="HTML";
+        ;;
+        *)
+            echo -e "Invalid parse mode, must be one of Markdown|HTML!";
+            return;
+        ;;
+    esac
+
+    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${@}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null;
+    echo;
 }
