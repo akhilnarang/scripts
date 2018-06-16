@@ -104,6 +104,7 @@ fi # Modules check
 cd - || exit;
 cd "${ANYKERNEL}" || exit;
 zip -r9 "${FINAL_ZIP}" *;
+md5sum ${FINAL_ZIP} | sed -e "s|${ZIP_DIR}||" > ${FINAL_ZIP}.md5sum;
 cd - || exit;
 
 if [ -f "$FINAL_ZIP" ];
