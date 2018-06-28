@@ -208,6 +208,9 @@ function sendTG() {
         "derp")
             CHAT_ID="-1001313293729"
         ;;
+        "whyred")
+            CHAT_ID="-1001183842368"
+        ;;
         *)
             echo -e "Invalid chat, must be one of me|derp!"
             return
