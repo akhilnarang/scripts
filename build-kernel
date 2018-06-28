@@ -12,15 +12,11 @@ if [[ -z ${KERNELDIR} ]]; then
 fi
 
 export DEVICE=whyred
-#if [[ -z ${DEVICE} ]]; then
-#    export DEVICE="whyred"
-#fi
 
 # These won't change
 export SRCDIR="${KERNELDIR}/${DEVICE}"
 export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
-export MODULES_DIR="${ANYKERNEL}/modules/vendor/lib/modules"
 export ARCH="arm64"
 export CCACHE="$(command -v ccache)"
 export CLANG_DIR="${HOME}/clang-build/build"
@@ -72,7 +68,7 @@ ${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && \
 		exit 1)
 
 START=$(date +"%s")
-sendTG kronic derp md "Building!"
+[[ "$@" =~ "upload" ]] && sendTG kronic derp md "Building!"
 if [[ "$@" =~ "quiet" ]]; then
     ${MAKE} -j"${JOBS}" CC="$(command -v ccache) ${CC}" CLANG_TRIPLE="${CLANG_TRIPLE}" |& ag -ia "error:|warning:"
 else
@@ -82,10 +78,12 @@ exitCode="$?"
 END=$(date +"%s")
 DIFF=$((END - START))
 echo -e "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
+[[ "$@" =~ "upload" ]] && sendTG kronic derp md "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
+
 
 if [[ ! -f "${IMAGE}" ]]; then
     echo -e "Build failed :P"
-    sendTG kronic derp md "Build failed!"
+    [[ "$@" =~ "upload" ]] && sendTG kronic derp md "Build failed!"
     exit 1
 else
     echo -e "Build Succesful!"
@@ -94,13 +92,6 @@ fi
 echo -e "Copying kernel image"
 cp -v "${IMAGE}" "${ANYKERNEL}/"
 
-grep -q "=m" ${OUTDIR}/.config
-if [[ "$?" -eq 0 ]]; then
-    find ${OUTDIR} -name "*.ko" -exec cp -v {} ${MODULES_DIR} \
-    for module in $(ls ${MODULES_DIR/*.ko}); do
-  		${CROSS_COMPILE}strip --strip-unneeded "${MODULES_DIR}/${module}"
-  	done
-fi # Modules check
 cd - || exit
 cd "${ANYKERNEL}" || exit
 zip -r9 "${FINAL_ZIP}" *
