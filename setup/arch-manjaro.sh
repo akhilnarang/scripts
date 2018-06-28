@@ -7,7 +7,7 @@ echo Installing Dependencies!
 # Update
 sudo pacman -Syyu
 # Install pacaur
-sudo pacman -S base-devel git wget
+sudo pacman -S base-devel git wget multilib-devel
 # Import PGP signatures for ncurses5-compat-libs and lib32-ncurses5-compat-libs
 gpg --recv-keys 702353E0F7E48EDB
 # Install aosp-devel
