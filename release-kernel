@@ -32,5 +32,5 @@ wget "https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
 wget "https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
 cd -
 hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum"
-rm "/tmp/${RELEASE_ZIPNAME}*" -v
+rm "/tmp/${RELEASE_ZIPNAME}" "/tmp/${RELEASE_ZIPNAME}.md5sum"
 sendTG kronic me md "${TAG} released!"
