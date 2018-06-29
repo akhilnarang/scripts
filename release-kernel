@@ -18,7 +18,7 @@ CHANGELOG="${2}"
 
 sendTG kronic derp md "Releasing Derp v$DERPVERSION"
 
-ssh "${DOWNLOAD_HOST}" cp -v "${NAME}" /var/www/downloads.akhilnarang.me/"${KERNEL_PATH}"/Stable/"${RELEASE_ZIPNAME}"; cd /var/www/downloads.akhilnarang.me/"${KERNEL_PATH}"/Stable; md5sum "${RELEASE_ZIPNAME}" > "${RELEASE_ZIPNAME}".md5sum;
+ssh "${DOWNLOAD_HOST}" "cp -v ${NAME} /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum";
 ssh "${DOWNLOAD_HOST}" ./bin/mirrorsync
 sendTG kronic derp md "Derp v$DERPVERSION is up, grab it [here](https://${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
 sendTG kronic derp md "Changelog:"
