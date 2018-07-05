@@ -5,5 +5,5 @@ cd /tmp/make-${1} || exit 1
 ./configure
 bash ./build.sh
 sudo install ./make /usr/local/bin/make
-rm -rf ${PWD}
 cd -
+rm -rf /tmp/make-${1}{,.tar.gz}
