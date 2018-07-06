@@ -8,14 +8,14 @@ echo Installing Dependencies!
 sudo pacman -Syyu
 # Install pacaur
 sudo pacman -S base-devel git wget multilib-devel
-# Import PGP signatures for ncurses5-compat-libs and lib32-ncurses5-compat-libs
-gpg --recv-keys 702353E0F7E48EDB
-# Install aosp-devel
-git clone https://aur.archlinux.org/aosp-devel
-cd aosp-devel
-makepkg -si
-cd -
-rm -rf aosp-devel
+# Install ncurses5-compat-libs, lib32-ncurses5-compat-libs, aosp-devel
+for p in ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel; do
+    git clone https://aur.archlinux.org/$p
+    cd $p
+    makepkg -si --skippgpcheck
+    cd -
+    rm -rf $p
+done
 
 echo "All Done :'D"
 echo "Don't forget to run these commands before building, or make sure the python in your PATH is python2 and not python3"
