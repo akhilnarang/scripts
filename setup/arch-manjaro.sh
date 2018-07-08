@@ -16,6 +16,12 @@ cd aosp-devel
 makepkg -si
 cd -
 rm -rf aosp-devel
+# Install lineageos-devel
+git clone https://aur.archlinux.org/lineageos-devel
+cd lineageos-devel
+makepkg -si
+cd -
+rm -rf lineageos-devel
 
 echo "All Done :'D"
 echo "Don't forget to run these commands before building, or make sure the python in your PATH is python2 and not python3"
