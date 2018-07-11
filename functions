@@ -68,7 +68,7 @@ function venv() {
             ;sys.stdout.write(t)")
     if [[ "${PYV}" == "3" ]]; then
         if [[ "$(command -v 'virtualenv2')" ]]; then
-            virtualenv2 /tmp/venv
+            [[ -d "/tmp/venv" ]] || virtualenv2 /tmp/venv
             source /tmp/venv/bin/activate
         else
             echo "Please install 'virtualenv2', or make 'python' point to \
