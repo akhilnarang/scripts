@@ -97,11 +97,11 @@ function transfer() {
 
 # Calls venv(), runs the given command, and then calls rmvenv()
 function run_virtualenv() {
-	venv
+    venv
 
     "$@"
 
-    rmvenv
+    deactivate
 }
 
 # Repo sync with various flags I'm lazy to type each time
