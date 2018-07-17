@@ -101,7 +101,7 @@ function run_virtualenv() {
 
     "$@"
 
-    deactivate
+    [[ -d "/tmp/venv" ]] && deactivate
 }
 
 # Repo sync with various flags I'm lazy to type each time
