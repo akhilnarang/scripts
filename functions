@@ -55,9 +55,8 @@ function repopick_stuff() {
 	export oldifs=$IFS
 	export IFS="|"
 	for f in ${REPOPICK_LIST}; do
-	    echo $f
-	    repopick $f
-	    [[ $? -ne 0 ]] && exit 1
+	    echo "Picking: $f"
+	    eval repopick $f || return
 	done
 	export IFS=$oldifs
 }
