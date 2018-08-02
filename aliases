@@ -10,13 +10,13 @@ if [[ "$(command -v hub)" ]]; then
 fi
 
 # SSH aliases
-alias rr='ssh akhil@rr.akhilnarang.me'
-alias aosip='ssh akhil@aosiprom.com'
-alias kronic='ssh kronic@aosiprom.com'
-alias jenkins='ssh ubuntu@jenkins.akhilnarang.me'
-alias bot='ssh bot@bot.akhilnarang.me'
-alias downloads='ssh akhil@downloads.akhilnarang.me'
-alias mirror='ssh akhil@mirror.akhilnarang.me'
+alias rr='mosh akhil@rr.akhilnarang.me'
+alias aosip='mosh akhil@aosiprom.com'
+alias kronic='mosh kronic@aosiprom.com'
+alias jenkins='mosh ubuntu@jenkins.akhilnarang.me'
+alias bot='mosh bot@bot.akhilnarang.me'
+alias downloads='mosh akhil@downloads.akhilnarang.me'
+alias mirror='mosh akhil@mirror.akhilnarang.me'
 
 # Miscellaneous aliases
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
