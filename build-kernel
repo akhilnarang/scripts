@@ -19,8 +19,8 @@ export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
 export ARCH="arm64"
 export CCACHE="$(command -v ccache)"
-export CLANG_DIR="${HOME}/clang-build/build"
-export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu"
+[[ -z ${CLANG_DIR} ]] && export CLANG_DIR="${HOME}/clang-build/build"
+[[ -z ${GCC_DIR} ]] && export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu"
 export CROSS_COMPILE="${GCC_DIR}/bin/aarch64-linux-gnu-"
 export CLANG_TRIPLE="aarch64-linux-gnu-"
 export CC="${CLANG_DIR}/bin/clang"
@@ -37,7 +37,7 @@ if [[ -z "${JOBS}" ]]; then
 fi
 
 if [[ ! -d "${ANYKERNEL}" ]]; then
-    git clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}"
+    hub clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}"
 fi
 
 export MAKE="make O=${OUTDIR}"
