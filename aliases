@@ -13,10 +13,13 @@ fi
 alias rr='mosh akhil@gerrit.resurrectionremix.com'
 alias aosip='mosh akhil@aosiprom.com'
 alias kronic='mosh kronic@aosiprom.com'
-alias jenkins='mosh ubuntu@jenkins.akhilnarang.me'
+alias jenkins='ssh ubuntu@aws.akhilnarang.me'
 alias bot='mosh bot@bot.akhilnarang.me'
 alias downloads='mosh akhil@downloads.akhilnarang.me'
 alias mirror='mosh akhil@mirror.akhilnarang.me'
+alias thog='mosh akhil@thog.akhilnarang.me'
+alias segfault='mosh akhil@segfault.akhilnarang.me'
+alias contabo='mosh akhil@olddroid.de'
 
 # Miscellaneous aliases
 alias setperf='echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
