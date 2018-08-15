@@ -105,7 +105,7 @@ function run_virtualenv() {
 
 # Repo sync with various flags I'm lazy to type each time
 function syncc() {
-    time run_virtualenv repo sync --force-broken --force-sync --no-clone-bundle\
+    time repo sync --force-broken --force-sync --no-clone-bundle \
              --current-branch --no-tags "$@"
 }
 
