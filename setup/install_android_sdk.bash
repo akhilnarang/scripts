@@ -12,4 +12,4 @@ echo 'export ANDROID_HOME=~/Android/Sdk' >> ~/.bashrc
 source ~/.bashrc
 yes | "${ANDROID_HOME}"/tools/bin/sdkmanager --licenses
 
-source "${SCRIPT_DIR}"/setup_android_sdk_packages.sh "${SCRIPT_DIR}"
+source "${SCRIPT_DIR}"/setup_android_sdk_packages.bash "${SCRIPT_DIR}"
