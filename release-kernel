@@ -18,7 +18,7 @@ RELEASE_ZIPNAME="${TAG}.zip"
 CHANGELOG="${2}"
 
 sendDerp "Releasing Derp v$DERPVERSION"
-sendDerp "Derp v$DERPVERSION is up, grab it [here](https://${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
+sendDerp "Derp v$DERPVERSION is up, grab it [here](${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
 ssh "${SERVER_IP}" "cp -v ${NAME} /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum";
 ssh "${SERVER_IP}" ./bin/mirrorsync
 sendDerp "Changelog:
@@ -30,9 +30,10 @@ cd "${KERNELDIR}"/whyred
 git tag -as "${TAG}"
 git p origin "${TAG}"
 cd /tmp
-wget "https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
-wget "https://${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
+wget "${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
+wget "${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
 cd -
 hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum"
 rm "/tmp/${RELEASE_ZIPNAME}" "/tmp/${RELEASE_ZIPNAME}.md5sum"
 sendTG kronic me md "${TAG} released!"
+git push git@github.com:AOSIP-Devices/kernel_xiaomi_sdm660 --force
