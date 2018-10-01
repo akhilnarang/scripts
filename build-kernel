@@ -33,6 +33,7 @@ function tg() {
 export SRCDIR="${KERNELDIR}/${DEVICE}"
 export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
+export MODULES_DIR="${ANYKERNEL}/modules/system/lib/modules"
 export ARCH="arm64"
 CCACHE="$(command -v ccache)"
 if [[ "${CLANG}" == "true" ]]; then
