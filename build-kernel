@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Kernel build script
 
+# shellcheck disable=SC1090
+# SC1090: Can't follow non-constant source. Use a directive to specify location.
 source "${HOME}/scripts/functions"
 
 if [[ -z ${KERNELDIR} ]]; then
@@ -11,36 +13,67 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1
 fi
 
-export DEVICE=whyred
+{ [[ "$(pwd)" =~ "whyred" ]] || [[ "$*" =~ "whyred" ]] ;} && DEVICE=whyred
+[[ -z "${DEVICE}" ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]] ;} && DEVICE=beryllium
+[[ -z "${DEVICE}" ]] && DEVICE=beryllium
+
+function tg() {
+    case "${DEVICE}" in
+        "whyred")
+            sendDerpWhyred "${@:?}"
+        ;;
+        "beryllium")
+            sendDerpBeryllium "${@:?}"
+        ;;
+    esac
+}
+
 
 # These won't change
 export SRCDIR="${KERNELDIR}/${DEVICE}"
 export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
 export ARCH="arm64"
-export CCACHE="$(command -v ccache)"
-[[ -z ${CLANG_DIR} ]] && export CLANG_DIR="${HOME}/clang-build/build"
+CCACHE="$(command -v ccache)"
+if [[ "${CLANG}" == "true" ]]; then
+    [[ -z ${CLANG_DIR} ]] && export CLANG_DIR="${HOME}/clang-build/build"
+    export CLANG_TRIPLE="aarch64-linux-gnu-"
+    export CC="${CLANG_DIR}/bin/clang"
+    KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+fi
 [[ -z ${GCC_DIR} ]] && export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu"
 export CROSS_COMPILE="${GCC_DIR}/bin/aarch64-linux-gnu-"
-export CLANG_TRIPLE="aarch64-linux-gnu-"
-export CC="${CLANG_DIR}/bin/clang"
-export KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export DEFCONFIG="${DEVICE}_defconfig"
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb"
 export DOWNLOAD_BASE_URL_1="https://downloads.akhilnarang.me/kernel/${DEVICE}/Test/"
 export DOWNLOAD_BASE_URL_2="https://mirror.akhilnarang.me/kernel/${DEVICE}/Test/"
-
 if [[ -z "${JOBS}" ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)"
-    export JOBS
 fi
+export DEVICE CCACHE KBUILD_COMPILER_STRING JOBS
+
+function make_wrapper() {
+    if [[ "${CLANG}" == "true" ]]; then
+        time make -j"${JOBS}" \
+        O="${OUTDIR}" \
+        ARCH="${ARCH}" \
+        CC="${CCACHE} ${CC}" \
+        CLANG_TRIPLE="${CLANG_TRIPLE}" \
+        CROSS_COMPILE="${CROSS_COMPILE}" \
+        "${@}"
+    else
+        time make -j"${JOBS}" \
+        O="${OUTDIR}" \
+        ARCH="${ARCH}" \
+        CROSS_COMPILE="${CCACHE} ${CROSS_COMPILE}" \
+        "${@}"
+    fi
+}
 
 if [[ ! -d "${ANYKERNEL}" ]]; then
-    hub clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}"
+    hub clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}" || exit 1
 fi
-
-export MAKE="make O=${OUTDIR}"
 
 if [[ -z "${NAME}" ]]; then
     export NAME="derp"
@@ -56,34 +89,34 @@ export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 cd "${SRCDIR}" || exit
 rm -fv "${IMAGE}"
 
-if [[ "$@" =~ "mrproper" ]]; then
-    ${MAKE} mrproper
+if [[ "$*" =~ "mrproper" ]]; then
+    make_wrapper mrproper
 fi
 
-if [[ "$@" =~ "clean" ]]; then
-    ${MAKE} clean
+if [[ "$*" =~ "clean" ]]; then
+    make_wrapper clean
 fi
 
-${MAKE} $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && \
+make_wrapper $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" && \
 		exit 1)
 
 START=$(date +"%s")
-[[ "$@" =~ "upload" ]] && sendTG kronic derp md "Building!"
-if [[ "$@" =~ "quiet" ]]; then
-    ${MAKE} -j"${JOBS}" CC="$(command -v ccache) ${CC}" CLANG_TRIPLE="${CLANG_TRIPLE}" |& ag -ia "error:|warning:"
+[[ "$*" =~ "upload" ]] && tg "Building!"
+if [[ "$*" =~ "quiet" ]]; then
+    make_wrapper |& ag -ia "error:|warning:"
 else
-    ${MAKE} -j"${JOBS}" CC="$(command -v ccache) ${CC}" CLANG_TRIPLE="${CLANG_TRIPLE}"
+    make_wrapper
 fi
 exitCode="$?"
 END=$(date +"%s")
 DIFF=$((END - START))
 echo -e "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
-[[ "$@" =~ "upload" ]] && sendTG kronic derp md "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
+[[ "$*" =~ "upload" ]] && tg "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
 
 
 if [[ ! -f "${IMAGE}" ]]; then
     echo -e "Build failed :P"
-    [[ "$@" =~ "upload" ]] && sendTG kronic derp md "Build failed!"
+    [[ "$*" =~ "upload" ]] && tg "Build failed!"
     exit 1
 else
     echo -e "Build Succesful!"
@@ -92,24 +125,39 @@ fi
 echo -e "Copying kernel image"
 cp -v "${IMAGE}" "${ANYKERNEL}/"
 
+echo -e "Copying kernel module(s) if present"
+
+# Grab modules too if they are present
+MODULES="$(find "${OUTDIR}" -name '*.ko')"
+if [[ -n ${MODULES} ]]; then
+    for MOD in ${MODULES}; do
+        "${CC}"strip --strip-unneeded "${MOD}"
+        "${OUTDIR}"/scripts/sign-file sha512 \
+                                          "${OUTDIR}/certs/signing_key.pem" \
+                                          "${OUTDIR}/certs/signing_key.x509" \
+                                          "${MOD}"
+        cp "${MOD}" "${MODULES_DIR}"
+    done
+fi
+
 cd - || exit
 cd "${ANYKERNEL}" || exit
-zip -r9 "${FINAL_ZIP}" *
-md5sum ${FINAL_ZIP} | sed -e "s|${ZIP_DIR}||" > ${FINAL_ZIP}.md5sum
+zip -r9 "${FINAL_ZIP}" ./* -x ".git/*" "README.md" ".gitignore" "*.zip"
+md5sum "${FINAL_ZIP}" | sed -e "s|${ZIP_DIR}||" > "${FINAL_ZIP}.md5sum"
 cd - || exit
 
 if [ -f "$FINAL_ZIP" ]
 then
 echo -e "$NAME zip can be found at $FINAL_ZIP"
-if [[ "$@" =~ "transfer" ]]; then
+if [[ "$*" =~ "transfer" ]]; then
     echo -e "Uploading ${ZIPNAME} to https://transfer.sh/"
     transfer "${FINAL_ZIP}"
 fi
-if [[ "$@" =~ "upload" ]]; then
+if [[ "$*" =~ "upload" ]]; then
     echo -e "Uploading ${ZIPNAME}"
-    rsync -av --progress --delete ${ZIP_DIR}/* akhil@178.63.101.252:/var/www/downloads.akhilnarang.me/kernel/${DEVICE}/Test/
-    rsync -av --progress --delete ${ZIP_DIR}/* akhil@148.251.45.243:/var/www/mirror.akhilnarang.me/kernel/${DEVICE}/Test/
-    sendTG kronic derp md "Download ${ZIPNAME} from [Main](${DOWNLOAD_BASE_URL_1}) | [Mirror](${DOWNLOAD_BASE_URL_2})"
+    rsync -av --progress --delete "${ZIP_DIR}"/* akhil@178.63.101.252:/var/www/downloads.akhilnarang.me/kernel/${DEVICE}/Test/
+    rsync -av --progress --delete "${ZIP_DIR}"/* akhil@148.251.45.243:/var/www/mirror.akhilnarang.me/kernel/${DEVICE}/Test/
+    tg "Download ${ZIPNAME/\.zip/} from [Main](${DOWNLOAD_BASE_URL_1}/${ZIPNAME}) | [Mirror](${DOWNLOAD_BASE_URL_2}/${ZIPNAME})"
 fi
 else
 echo -e "Zip Creation Failed =("
