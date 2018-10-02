@@ -16,8 +16,8 @@ packages/apps/CalendarWidget hardware/qcom/fm  external/ant-wireless/ant_native 
 external/ant-wireless/ant_service external/ant-wireless/antradio-library  external/bash \
 external/brctl external/chromium-webview external/connectivity external/busybox external/htop \
 external/fuse external/exfat external/ebtables external/ffmpeg external/gson vendor/codeaurora/telephony \
-external/json-c external/libncurses external/libnetfilter_conntrack system/qcom \
-external/libnfnetlink external/libnfc-nxp external/nano external/ntfs-3g vendor/qcom/opensource/cryptfs_hw \
+external/json-c external/libncurses external/libnetfilter_conntrack prebuilts/build-tools prebuilts/clang/host/linux-x86 \
+system/qcom external/libnfnetlink external/libnfc-nxp external/nano external/ntfs-3g vendor/qcom/opensource/cryptfs_hw \
 vendor/qcom/opensource/dataservices vendor/qcom/opensource/interfaces vendor/qcom/opensource/rcs-service packages/apps/MusicFX"
 
 AOSP="https://android.googlesource.com"
