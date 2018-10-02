@@ -133,10 +133,6 @@ MODULES="$(find "${OUTDIR}" -name '*.ko')"
 if [[ -n ${MODULES} ]]; then
     for MOD in ${MODULES}; do
         "${CROSS_COMPILE}"strip --strip-unneeded "${MOD}"
-        "${OUTDIR}"/scripts/sign-file sha512 \
-                                          "${OUTDIR}/certs/signing_key.pem" \
-                                          "${OUTDIR}/certs/signing_key.x509" \
-                                          "${MOD}"
         cp -v "${MOD}" "${MODULES_DIR}"
     done
 fi
