@@ -1,7 +1,7 @@
 
 ## To setup build environment
 
-Firsly, install `git`, using whatever package manager has.
+Firstly, install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) , using whatever package manager has.
 
 Then, run these commands
 
@@ -18,7 +18,6 @@ If running Arch Linux, please enable multilib before running the script :)
 Please run the correct script depending on the distro you have installed!
 
 Enjoy!
-
 
 ### Brief explanation of stuff in here
 
