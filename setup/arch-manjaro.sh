@@ -9,12 +9,12 @@ sudo pacman -Syyu
 # Install pacaur
 sudo pacman -S base-devel git wget multilib-devel cmake svn clang
 # Install ncurses5-compat-libs, lib32-ncurses5-compat-libs, aosp-devel, xml2, and lineageos-devel
-for p in ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel xml2 lineageos-devel; do
-    git clone https://aur.archlinux.org/$p
-    cd $p
+for package in ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel xml2 lineageos-devel; do
+    git clone https://aur.archlinux.org/"${package}"
+    cd "${package}" || continue
     makepkg -si --skippgpcheck
-    cd -
-    rm -rf $p
+    cd - || break
+    rm -rf "${package}"
 done
 
 echo "All Done :'D"

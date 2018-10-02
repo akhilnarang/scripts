@@ -11,11 +11,11 @@ UBUNTU_14_PACKAGES="git-core libesd0-dev libwxgtk2.8-dev curl schedtool binutils
 UBUNTU_16_PACKAGES="libesd0-dev"
 PACKAGES=""
 
-LSB_RELEASE=$(lsb_release -d)
+LSB_RELEASE="$(lsb_release -d)"
 
-if [[ ${LSB_RELEASE} =~ "Mint 18" || ${LSB_RELEASE} =~ "Ubuntu 16" ]]; then
+if [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
     PACKAGES="${UBUNTU_16_PACKAGES}"
-elif [[ ${LSB_RELEASE} =~ "Ubuntu 14" ]]; then
+elif [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
     PACKAGES="${UBUNTU_14_PACKAGES}"
 fi
 
@@ -39,8 +39,8 @@ fi
 if [[ "$(command -v make)" ]]; then
     makeversion="$(make -v | head -1 | awk '{print $3}')"
     if [[ "${makeversion}" != "${LATEST_MAKE_VERSION}" ]]; then
-        echo "Installing make "${LATEST_MAKE_VERSION}" instead of ${makeversion}"
-        bash ./setup/make.sh ${LATEST_MAKE_VERSION}
+        echo "Installing make ${LATEST_MAKE_VERSION} instead of ${makeversion}"
+        bash ./setup/make.sh "${LATEST_MAKE_VERSION}"
     fi
 fi
 

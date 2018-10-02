@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 sudo dnf install autoconf213 bison bzip2 ccache curl flex gawk gcc-c++ git glibc-devel \
 glibc-static libstdc++-static libX11-devel make mesa-libGL-devel ncurses-devel patch zlib-devel \
 ncurses-devel.i686 readline-devel.i686 zlib-devel.i686 libX11-devel.i686 mesa-libGL-devel.i686 \
