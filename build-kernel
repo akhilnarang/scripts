@@ -32,6 +32,11 @@ function tg() {
 # These won't change
 export SRCDIR="${KERNELDIR}/${DEVICE}"
 export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
+sudo umount -f obj
+sudo rm -rf obj
+mkdir obj
+sudo mount -t tmpfs -o size=6g tmpfs obj
+sudo chown akhil obj/ -R
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
 export MODULES_DIR="${ANYKERNEL}/modules/system/lib/modules"
 export ARCH="arm64"
