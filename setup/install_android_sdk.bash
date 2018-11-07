@@ -9,7 +9,7 @@ fi
 # Script to setup the Android SDK on a Linux System
 CUR_DIR="$(cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd)"
 CUR_DIR="${CUR_DIR/setup/}"
-TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip"
+TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
 ZIP_NAME=$(printf '%s\n' "${TOOLS_URL##*/}")
 mkdir -p ~/Android/Sdk/; cd ~/Android/Sdk || exit 1
 if axel -a -n 10 "${TOOLS_URL}"; then
