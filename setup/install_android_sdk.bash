@@ -17,6 +17,10 @@ if axel -a -n 10 "${TOOLS_URL}"; then
 else
     exit 1
 fi
+# Create repositories.cfg if not present
+if [ ! -f ~/.android/repositories.cfg ] ; then
+    touch ~/.android/repositories.cfg
+fi
 rm "${ZIP_NAME}"
 printf '\nexport ANDROID_HOME=~/Android/Sdk' >> ~/.bashrc
 source ~/.bashrc
