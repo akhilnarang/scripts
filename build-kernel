@@ -134,12 +134,16 @@ cp -v "${IMAGE}" "${ANYKERNEL}/"
 echo -e "Copying kernel module(s) if present"
 
 # Grab modules too if they are present
-MODULES="$(find "${OUTDIR}" -name '*.ko')"
-if [[ -n ${MODULES} ]]; then
-    for MOD in ${MODULES}; do
-        "${CROSS_COMPILE}"strip --strip-unneeded "${MOD}"
-        cp -v "${MOD}" "${MODULES_DIR}"
-    done
+#MODULES="$(find "${OUTDIR}" -name '*.ko')"
+#if [[ -n ${MODULES} ]]; then
+#    for MOD in ${MODULES}; do
+#        "${CROSS_COMPILE}"strip --strip-unneeded "${MOD}"
+#        cp -v "${MOD}" "${MODULES_DIR}"
+#    done
+#fi
+if [[ "${DEVICE}" == "beryllium" ]]; then
+    "${CROSS_COMPILE}"strip --strip-unneeded "${OUTDIR}"/drivers/staging/qcacld-3.0/wlan.ko
+    cp -v "${OUTDIR}"/drivers/staging/qcacld-3.0/wlan.ko "${MODULES_DIR}"/qca_cld3_wlan.ko
 fi
 
 cd - || exit
