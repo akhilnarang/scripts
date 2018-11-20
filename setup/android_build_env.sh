@@ -20,6 +20,8 @@ elif [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
 fi
 
 sudo apt update -y
+# Purge problematic packages found in things like Mint 19
+sudo apt purge -y openjdk-11-jre openjdk-11-jdk
 sudo apt install -y python gnupg flex bison gperf libsdl1.2-dev squashfs-tools build-essential zip libncurses5-dev zlib1g-dev openjdk-8-jre openjdk-8-jdk \
 pngcrush schedtool libxml2 libxml2-utils xsltproc lzop libc6-dev g++-multilib lib32z1-dev lib32ncurses5-dev gcc-multilib liblz4-* pngquant \
 ncurses-dev texinfo gcc gperf patch libtool automake g++ gawk subversion expat libexpat1-dev python-all-dev bc libcloog-isl-dev libcap-dev \
