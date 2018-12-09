@@ -266,12 +266,17 @@ function sendAOSiP() {
 
 # Given a gdrive URL, captures the file id from it and downloads it using the gdrive CLI
 function gdrivedl {
-    local URL GDRIVE FILE_ID; URL="${1}"
-    GDRIVE="$(command -v gdrive)"
+    local URL GDRIVE FILE_ID;
+    URL="${1}";
+    GDRIVE="$(command -v gdrive)";
     if [ -z "${GDRIVE}" ]; then
-        echo "gdrive is not in \$PATH"
-        return 1
-    fi
-    FILE_ID="$(echo "${URL:?}" | sed -r 's/(.*)&export.*/\1/' | sed -r 's/https.*id=(.*)/\1/')"
-    "${GDRIVE}" download "${FILE_ID:?}"
+        echo "gdrive is not in \$PATH";
+        return 1;
+    fi;
+    if [[ "${URL:?}" =~ folders ]]; then
+        FILE_ID="$(echo "${URL}" | sed -r 's/https.*folders\/(.*)\?usp=sharing/\1/')"
+    else
+        FILE_ID="$(echo "${URL:?}" | sed -r 's/(.*)&export.*/\1/' | sed -r 's/https.*id=(.*)/\1/')";
+    fi;
+    gdrive download --recursive "${FILE_ID:?}"
 }
