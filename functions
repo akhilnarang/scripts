@@ -274,7 +274,7 @@ function gdrivedl {
         return 1;
     fi;
     if [[ "${URL:?}" =~ folders ]]; then
-        FILE_ID="$(echo "${URL}" | sed -r 's/https.*folders\/(.*)\?usp=sharing/\1/')"
+        FILE_ID="$(echo "${URL}" | sed -r -e 's/https.*folders\/(.*)/\1/' -e 's/(.*)\?usp=sharing/\1/')"
     else
         FILE_ID="$(echo "${URL:?}" | sed -r 's/(.*)&export.*/\1/' | sed -r 's/https.*id=(.*)/\1/')";
     fi;
