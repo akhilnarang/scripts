@@ -1,7 +1,7 @@
 
 ## To setup build environment
 
-Firstly, install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) , using whatever package manager has.
+Firstly, install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) , using the package manager in your distro.
 
 Then, run these commands
 
