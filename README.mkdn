@@ -1,14 +1,14 @@
 
 ## To setup build environment
 
-Firsly, install `git`, using whatever package manager has.
+Firstly, install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) , using the package manager in your distro.
 
 Then, run these commands
 
 ```bash
-git clone https://github.com/akhilnarang/scripts
-cd scripts
-bash setup/<name of script>
+$ git clone https://github.com/akhilnarang/scripts
+$ cd scripts
+$ bash setup/<name of script>
 ```
 
 `android_build_env.sh` is for Ubuntu/Linux Mint/other distributions using the `apt` package manager.
@@ -19,9 +19,7 @@ Please run the correct script depending on the distro you have installed!
 
 Enjoy!
 
-
 ### Brief explanation of stuff in here
-
 
 build-rom -> has a bunch of random build scripts I use to build ROMs.
 
