@@ -222,8 +222,7 @@ function sendTG() {
             CHAT_ID="-1001055786180"
         ;;
         *)
-            echo -e "Invalid chat, must be one of me|derp|whyred|aosip!"
-            return
+            CHAT_ID=${chat}
         ;;
     esac
 
