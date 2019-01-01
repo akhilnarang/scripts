@@ -28,7 +28,7 @@ function tg() {
 
 SERVER_IP="178.63.101.252"
 DOWNLOAD_HOST="https://downloads.akhilnarang.me"
-MIRROR_HOST="https://mirror.akhilnarang.me"
+#MIRROR_HOST="https://mirror.akhilnarang.me"
 KERNEL_PATH="kernel/${DEVICE}"
 NAME=$(ssh "${SERVER_IP}" ls /var/www/downloads.akhilnarang.me/"${KERNEL_PATH}"/Test/*.zip | tail -1)
 DERPVERSION="${1:?}"
@@ -37,9 +37,9 @@ RELEASE_ZIPNAME="${TAG}.zip"
 CHANGELOG="${2}"
 
 tg "Releasing Derp v$DERPVERSION"
-tg "Derp v$DERPVERSION is up, grab it [here](${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
+tg "Derp v$DERPVERSION is up, grab it [here](${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})" # or [here](${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
 ssh "${SERVER_IP}" "cp -v ${NAME} /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum";
-ssh "${SERVER_IP}" ./bin/mirrorsync
+#ssh "${SERVER_IP}" ./bin/mirrorsync
 tg "Changelog:
 \`\`\`
 ${CHANGELOG}
@@ -49,8 +49,8 @@ cd "${KERNELDIR}/${DEVICE}" || exit 1
 git tag -as "${TAG}"
 git p origin "${TAG}"
 cd /tmp || exit 1
-wget "${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
-wget "${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
+wget "${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
+wget "${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
 cd - || exit 1
 hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum"
 rm "/tmp/${RELEASE_ZIPNAME}" "/tmp/${RELEASE_ZIPNAME}.md5sum"

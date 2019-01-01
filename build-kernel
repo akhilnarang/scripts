@@ -43,6 +43,7 @@ if [[ "${CLANG}" == "true" ]]; then
 fi
 [[ -z ${GCC_DIR} ]] && export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu"
 export CROSS_COMPILE="$(find ${GCC_DIR}/bin -name aarch64-*-gcc | head -1 | sed 's/gcc$//')"
+export CROSS_COMPILE_ARM32="${HOME}/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
 export DEFCONFIG="${DEVICE}_defconfig"
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb"
@@ -61,12 +62,14 @@ function make_wrapper() {
         CC="${CCACHE} ${CC}" \
         CLANG_TRIPLE="${CLANG_TRIPLE}" \
         CROSS_COMPILE="${CROSS_COMPILE}" \
+        CROSS_COMPILE_ARM32="${CROSS_COMPILE_ARM32}" \
         "${@}"
     else
         time make -j"${JOBS}" \
         O="${OUTDIR}" \
         ARCH="${ARCH}" \
         CROSS_COMPILE="${CCACHE} ${CROSS_COMPILE}" \
+        CROSS_COMPILE_ARM32="${CCACHE} ${CROSS_COMPILE_ARM32}" \
         "${@}"
     fi
 }
