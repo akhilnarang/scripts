@@ -42,7 +42,7 @@ if [[ "${CLANG}" == "true" ]]; then
     KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 fi
 [[ -z ${GCC_DIR} ]] && export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu"
-export CROSS_COMPILE="$(find ${GCC_DIR}/bin -name aarch64-*-gcc | head -1 | sed 's/gcc$//')"
+export CROSS_COMPILE="$(find ${GCC_DIR}/bin -name aarch64-*-gcc | tail -1 | sed 's/gcc$//')"
 export CROSS_COMPILE_ARM32="${HOME}/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
 export DEFCONFIG="${DEVICE}_defconfig"
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
@@ -144,7 +144,7 @@ fi
 if [[ "$*" =~ "upload" ]]; then
     echo -e "Uploading ${ZIPNAME}"
     rsync -av --progress --delete "${ZIP_DIR}"/* akhil@178.63.101.252:/var/www/downloads.akhilnarang.me/kernel/${DEVICE}/Test/
-    rsync -av --progress --delete "${ZIP_DIR}"/* akhil@148.251.45.243:/var/www/mirror.akhilnarang.me/kernel/${DEVICE}/Test/
+    #rsync -av --progress --delete "${ZIP_DIR}"/* akhil@148.251.45.243:/var/www/mirror.akhilnarang.me/kernel/${DEVICE}/Test/
     tg "Download ${ZIPNAME/\.zip/} from [Main](${DOWNLOAD_BASE_URL_1}/${ZIPNAME}) | [Mirror](${DOWNLOAD_BASE_URL_2}/${ZIPNAME})"
 fi
 else
