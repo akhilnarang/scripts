@@ -15,7 +15,7 @@ export DIR=$PWD
 cd ${AOSIP_SOURCE_DIR}
 . build/envsetup.sh
 
-PROJECTS="$(grep aosip .repo/manifests/snippets/aosip.xml | awk '{print $2}' | awk -F'"' '{print $2}')"
+PROJECTS="$(grep aosip .repo/manifests/snippets/aosip.xml | grep project | awk '{print $2}' | awk -F'"' '{print $2}')"
 
 
 for project in ${PROJECTS}; do
