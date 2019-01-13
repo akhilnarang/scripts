@@ -10,15 +10,13 @@ if [[ "$(command -v hub)" ]]; then
 fi
 
 # SSH aliases
-alias rr='mosh akhil@gerrit.resurrectionremix.com'
-alias aosip='mosh akhil@aosiprom.com'
-alias kronic='mosh kronic@aosiprom.com'
-alias jenkins='ssh ubuntu@aws.akhilnarang.me'
+alias rr='mosh akhil@resurrectionremix.com'
+alias aosip='mosh akhil@illusion.aosiprom.com'
+alias gerrit='mosh akhil@review.aosiprom.com'
+alias kronic='mosh kronic@packet.aosiprom.com'
+alias jenkins='mosh jenkins@packet.aosiprom.com'
 alias bot='mosh bot@bot.akhilnarang.me'
-alias downloads='mosh akhil@downloads.akhilnarang.me'
-alias mirror='mosh akhil@mirror.akhilnarang.me'
-alias thog='mosh akhil@thog.akhilnarang.me'
-alias segfault='mosh akhil@segfault.akhilnarang.me'
+alias downloads='mosh akhil@lab.dirtyrom.com'
 alias contabo='mosh akhil@olddroid.de'
 
 # Miscellaneous aliases
