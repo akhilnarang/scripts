@@ -141,7 +141,7 @@ function gitalias() {
     git config --global alias.ca 'commit --amend'
     git config --global alias.cn 'commit --no-edit'
     git config --global alias.gerrit 'push gerrit HEAD:refs/for/pie'
-    git config --global alias.add-change-id "!EDITOR='sed -i -re s/^pick/e/' sh -c 'git rebase -i $1 && while test -f .git/rebase-merge/interactive; do git commit --amend --no-edit && git rebase --continue; done' -"
+    git config --global alias.add-change-id "!EDITOR='sed -i -re s/^pick/e/' sh -c 'git rebase -i \$1 && while test -f .git/rebase-merge/interactive; do git commit --amend --no-edit && git rebase --continue; done' -"
 }
 
 # Function to display uptime of a system. All credits to the original author.
