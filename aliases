@@ -32,15 +32,6 @@ if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
     source "${ADCSCRIPT}/android_development_shell_tools.rc"
 fi
 
-# Some PATH changes and stuff only for my laptop
-if [[ "$(hostname)" == "randomness" || "$(hostname)" == "akhil-Lenovo-Y50-70" ]]; then
-    # Extend the default PATH a bit
-    export PATH=${HOME}/bin:${HOME}/android-studio/bin:${HOME}/pidcat:${HOME}/Android/Sdk/platform-tools:${HOME}/adb-sync:$PATH
-
-    # Set a custom path for the Android SDK
-    export ANDROID_HOME=${HOME}/Android/Sdk
-fi
-
 # Set default editor to nano
 export EDITOR="nano"
 
