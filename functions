@@ -272,10 +272,6 @@ function gdrivedl {
         echo "gdrive is not in \$PATH";
         return 1;
     fi;
-    if [[ "${URL:?}" =~ folders ]]; then
-        FILE_ID="$(echo "${URL}" | sed -r -e 's/https.*folders\/(.*)/\1/' -e 's/(.*)\?usp=sharing/\1/')"
-    else
-        FILE_ID="$(echo "${URL:?}" | sed -r 's/(.*)&export.*/\1/' | sed -r 's/https.*id=(.*)/\1/')";
-    fi;
+    FILE_ID="$(grep -Poi '(id=|folders/)\K[a-z0-9_-]*' <<< "${URL:?}")";
     gdrive download --recursive "${FILE_ID:?}"
 }
