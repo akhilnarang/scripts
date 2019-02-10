@@ -263,19 +263,15 @@ function sendAOSiP() {
     sendTG kronic aosip md "${@}";
 }
 
-# Given a gdrive URL, captures the file id from it and downloads it using the gdrive CLI
+# Download a file given the Google Drive URL
 function gdrivedl {
-    local URL GDRIVE FILE_ID;
-    URL="${1}";
-    GDRIVE="$(command -v gdrive)";
-    if [ -z "${GDRIVE}" ]; then
-        echo "gdrive is not in \$PATH";
-        return 1;
-    fi;
+    local CONFIRM FILE_ID URL; URL="${1}"; shift
     if [[ "${URL:?}" =~ folders ]]; then
         FILE_ID="$(echo "${URL}" | sed -r -e 's/https.*folders\/(.*)/\1/' -e 's/(.*)\?usp=sharing/\1/')"
     else
-        FILE_ID="$(echo "${URL:?}" | sed -r 's/(.*)&export.*/\1/' | sed -r 's/https.*id=(.*)/\1/')";
-    fi;
-    gdrive download --recursive "${FILE_ID:?}"
+        FILE_ID="$(echo "${URL:?}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
+    fi
+    CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$FILE_ID" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
+    aria2c --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$FILE_ID"
+    rm -rf /tmp/cookies.txt
 }
