@@ -10,9 +10,8 @@ if [[ "$(command -v hub)" ]]; then
 fi
 
 # SSH aliases
-alias rr='mosh akhil@resurrectionremix.com'
+alias rr='mosh akhil@ssh.resurrectionremix.com'
 alias aosip='mosh akhil@illusion.aosiprom.com'
-alias gerrit='mosh akhil@review.aosiprom.com'
 alias kronic='mosh kronic@packet.aosiprom.com'
 alias jenkins='mosh jenkins@packet.aosiprom.com'
 alias bot='mosh bot@bot.akhilnarang.me'
