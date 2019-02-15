@@ -32,7 +32,7 @@ eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
 ccache -M 200G
-time m -j kronic || sendAOSiP "Build failed!"
+time m -j kronic || sendAOSiP "[Build failed!](${BUILD_URL})"
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 sendAOSiP "Build done, check ${BUILD_URL} for details!"
