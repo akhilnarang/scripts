@@ -284,14 +284,18 @@ function gdrivedl {
 
 # Upload to GDrive
 function gdriveul {
-    local FILE MD5 ZIP_SIZE GDRIVE_UPLOAD_URL GDRIVE_UPLOAD_ID UPLOAD_INFO
+    local FILE MD5 ZIP_SIZE GDRIVE_UPLOAD_URL GDRIVE_UPLOAD_ID UPLOAD_INFO PARENT
     FILE="${1}"
     [ -f "${FILE:?}" ] || { echo "Specified file doesn't exist"; return ; }
+    PARENT="${2}"
+    if [[ ! -z "${PARENT}" ]]; then
+        PARENT="-p ${PARENT}"
+    fi
     ZIP_SIZE="$(du -h "${FILE}" | awk '{print $1}')"
     MD5="$(md5sum "${FILE}" | awk '{print $1}')"
     while [ -z "${GDRIVE_UPLOAD_URL}" ]
     do
-        GDRIVE_UPLOAD_URL="$(gdrive upload --share "${FILE}"  | awk '/https/ {print $7}')"
+        GDRIVE_UPLOAD_URL="$(eval gdrive upload --share "${FILE}" "${PARENT}" | awk '/https/ {print $7}')"
     done
     GDRIVE_UPLOAD_ID="$(echo "${GDRIVE_UPLOAD_URL}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
     UPLOAD_INFO="
