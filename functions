@@ -183,11 +183,12 @@ function onLogin() {
 
 # Sends messages to Telegram to a specified chat via the desired bot
 function sendTG() {
-    local bot chat parse_mode
+    local bot chat parse_mode msg
     bot="${BOT:-kronic}"
-    chat="${2:-me}"
+    chat="${1:-me}"
     parse_mode="${PARSE_MODE:-md}"
     shift
+    msg=${*:?}
     case "${bot}" in
         "ts") BOT_API_KEY="$(cat ~/.tskey)" ;;
         "kronic") BOT_API_KEY="$(cat ~/.kronickey)" ;;
@@ -199,7 +200,6 @@ function sendTG() {
         "me") CHAT_ID="92027269" ;;
         "derpwhyred") CHAT_ID="-1001313293729" ;;
         "derpberyllium") CHAT_ID="-1001297323361" ;;
-        "whyred") CHAT_ID="-1001183842368" ;;
         "aosip") CHAT_ID="-1001055786180" ;;
         *) CHAT_ID="${chat}" ;;
     esac
@@ -209,34 +209,28 @@ function sendTG() {
         "html") parse_mode="HTML" ;;
         *) echo -e "Invalid parse mode, must be one of Markdown|HTML!"; return ;;
     esac
-
-    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${*}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null
+    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1> /dev/null
     echo
 }
 
 # Sends a message to my whyred kernel chat
 function sendDerpWhyred() {
-    sendTG "${@}" derpwhyred
+    sendTG derpwhyred "${@}"
 }
 
 # Sends a message to my beryllium kernel chat
 function sendDerpBeryllium() {
-    sendTG "${@}" derpberyllium
-}
-
-# Sends a message to whyred testing group
-function sendWhyred() {
-    sendTG "${@}" whyred
+    sendTG derpberyllium "${@}"
 }
 
 # Sends a message to AOSiP Testers group
 function sendAOSiP() {
-    sendTG "${@}" aosip
+    sendTG aosip "${@}"
 }
 
 # Sends me a message on telegram
 function tgm() {
-    sendTG "${@}"
+    sendTG me "${@}"
 }
 
 
