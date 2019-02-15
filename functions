@@ -260,8 +260,14 @@ function sendWhyred() {
 
 # Sends a message to AOSiP Testers group
 function sendAOSiP() {
-    sendTG kronic aosip md "${@}";
+    sendTG kronic aosip md "${@}"
 }
+
+# Sends me a message on telegram
+function tgm() {
+    sendTG kronic me md "${@}"
+}
+
 
 # Download a file given the Google Drive URL
 function gdrivedl {
@@ -274,4 +280,26 @@ function gdrivedl {
     CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$FILE_ID" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
     aria2c --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$FILE_ID"
     rm -rf /tmp/cookies.txt
+}
+
+# Upload to GDrive
+function gdriveul {
+    local FILE MD5 ZIP_SIZE GDRIVE_UPLOAD_URL GDRIVE_UPLOAD_ID UPLOAD_INFO
+    FILE="${1}"
+    [ -f "${FILE:?}" ] || { echo "Specified file doesn't exist"; return ; }
+    ZIP_SIZE="$(du -h "${FILE}" | awk '{print $1}')"
+    MD5="$(md5sum "${FILE}" | awk '{print $1}')"
+    while [ -z "${GDRIVE_UPLOAD_URL}" ]
+    do
+        GDRIVE_UPLOAD_URL="$(gdrive upload --share "${FILE}"  | awk '/https/ {print $7}')"
+    done
+    GDRIVE_UPLOAD_ID="$(echo "${GDRIVE_UPLOAD_URL}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
+    UPLOAD_INFO="
+File: [$(basename "${FILE}")](${GDRIVE_UPLOAD_URL})
+Size: ${ZIP_SIZE}
+MD5: \`${MD5}\`
+GDrive ID: \`${GDRIVE_UPLOAD_ID}\`
+"
+    tgm "${UPLOAD_INFO}"
+    echo "Get the file with ${GDRIVE_UPLOAD_ID}"
 }
