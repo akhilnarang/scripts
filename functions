@@ -198,7 +198,7 @@ function sendTG() {
 
     case "${chat}" in
         "me") CHAT_ID="92027269" ;;
-        "derpwhyred") CHAT_ID="-1001313293729" ;;
+        "derpwhyred") CHAT_ID="-1001177280453" ;;
         "derpberyllium") CHAT_ID="-1001297323361" ;;
         "aosip") CHAT_ID="-1001055786180" ;;
         *) CHAT_ID="${chat}" ;;
