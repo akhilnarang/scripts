@@ -7,26 +7,30 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.2.1"
-UBUNTU_14_PACKAGES="git-core libesd0-dev libwxgtk2.8-dev curl schedtool binutils-static figlet libesd0-dev"
+UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
+UBUNTU_18_PACKAGES="curl"
 PACKAGES=""
 
 LSB_RELEASE="$(lsb_release -d)"
 
-if [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
-    PACKAGES="${UBUNTU_16_PACKAGES}"
-elif [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
     PACKAGES="${UBUNTU_14_PACKAGES}"
+elif [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
+    PACKAGES="${UBUNTU_16_PACKAGES}"
+elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" ]]; then
+    PACKAGES="${UBUNTU_18_PACKAGES}"
 fi
 
 sudo apt update -y
-sudo apt install -y python gnupg flex bison gperf libsdl1.2-dev squashfs-tools build-essential zip unzip libncurses5-dev zlib1g-dev openjdk-8-jre openjdk-8-jdk \
-pngcrush schedtool libxml2 libxml2-utils xsltproc lzop libc6-dev g++-multilib lib32z1-dev lib32ncurses5-dev gcc-multilib liblz4-* pngquant \
-ncurses-dev texinfo gcc gperf patch libtool automake g++ gawk subversion expat libexpat1-dev python-all-dev bc libcloog-isl-dev libcap-dev \
-autoconf libgmp-dev pkg-config libmpc-dev libmpfr-dev lzma* liblzma* w3m adb fastboot maven ncftp htop imagemagick \
-libssl-dev clang cmake axel re2c "${PACKAGES}"
+sudo apt install -y adb autoconf automake axel bc bison build-essential clang cmake expat fastboot flex \
+g++ g++-multilib gawk gcc gcc-multilib gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev \
+libc6-dev libcap-dev libcloog-isl-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
+libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
+openjdk-8-jdk openjdk-8-jre patch pkg-config pngcrush pngquant python python-all-dev re2c schedtool \
+squashfs-tools subversion texinfo unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
 # Purge problematic packages found in things like Mint 19
-sudo apt purge -y openjdk-11-jre openjdk-11
+sudo apt purge -y openjdk-11-*
 
 if [[ ! "$(command -v adb)" == "" ]]; then
     echo -e "Setting up udev rules for adb!"
