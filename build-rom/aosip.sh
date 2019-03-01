@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2018 Akhil Narang
+# Copyright (C) 2018-2019 Akhil Narang
 # SPDX-License-Identifier: GPL-3.0-only
 # AOSiP Build Script
-# shellcheck disable=SC1090,SC1091
+# shellcheck disable=SC1090,SC1091,SC2076
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
+# SC2076: Don't quote right-hand side of =~, it'll match literally rather than as a regex.
 
 set -e
 source ~/scripts/functions
@@ -14,12 +15,10 @@ export PATH=~/bin:$PATH
 sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on ${node:?}, check progress [here](${BUILD_URL})!"
 if [[ "${SYNC}" == "yes" ]]; then
 	repo init -u https://github.com/AOSiP/platform_manifest.git -b pie --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
-	set +e;
-	rm -rfv .repo/local_manifests/
-	set -e;
 	time repo sync -j32 --current-branch --no-tags --no-clone-bundle --force-sync
 fi
 set +e
+rm -fv .repo/local_manifests/*
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 set -e
