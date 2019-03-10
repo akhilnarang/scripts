@@ -30,6 +30,13 @@ libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzo
 patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
 unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
 
+# In Ubuntu 18.10, libncurses5 package is not available, so we need to hack our way by symlinking required library
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" ]]; then
+  if [[ -e /lib/x86_64-linux-gnu/libncurses.so.6 && ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]]; then
+    sudo ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
+  fi
+fi
+
 if [[ ! "$(command -v adb)" == "" ]]; then
     echo -e "Setting up udev rules for adb!"
     sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
