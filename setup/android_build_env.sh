@@ -56,3 +56,6 @@ sudo chmod a+x /usr/local/bin/repo
 
 bash ./setup/ccache.sh
 bash ./setup/ninja.sh
+
+# Chown ccache folder to current user
+sudo chown -R $(whoami) ~/.ccache
