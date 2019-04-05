@@ -24,23 +24,8 @@ alias setsave='echo "powersave" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/
 alias path='echo ${PATH}'
 alias stopjack='jack-admin stop-server'
 
-# https://github.com/AdrianDC/android_development_shell_tools
-# Has some useful stuff :)
-ADCSCRIPT="${HOME}/android_development_shell_tools"
-if [[ -f "${ADCSCRIPT}/android_development_shell_tools.rc" ]]; then
-    source "${ADCSCRIPT}/android_development_shell_tools.rc"
-fi
-
 # Set default editor to nano
 export EDITOR="nano"
 
 # Set timezone
 export TZ="Asia/Kolkata"
-
-# Colors
-green='\e[0;32m'
-cyan='\e[0;36m'
-red='\e[0;31m'
-lightgray='\e[0;37m'
-
-

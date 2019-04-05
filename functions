@@ -5,58 +5,28 @@
 
 # Script defining various functions used in the scripts across this repository
 
+# shellcheck disable=SC1090,SC1091
+# SC1090: Can't follow non-constant source. Use a directive to specify location.
+# SC1091: Not following: /tmp/venv/bin/activate: openBinaryFile: does not exist (No such file or directory)
+
 source ~/scripts/aliases
 
 # Builds a package from the Arch User Repository
 function aur() {
-	git clone https://aur.archlinux.org/$1
-	cd $1
-	makepkg -si $2
-	cd -
-	rm -rf $1
-}
-
-# FORMATS THE TIME
-function format_time() {
-    MINS=$(((${1}-${2})/60))
-    SECS=$(((${1}-${2})%60))
-    if [[ ${MINS} -ge 60 ]]; then
-        HOURS=$((${MINS}/60))
-        MINS=$((${MINS}%60))
-    fi
-
-    if [[ ${HOURS} -eq 1 ]]; then
-        TIME_STRING+="1 HOUR, "
-    elif [[ ${HOURS} -ge 2 ]]; then
-        TIME_STRING+="${HOURS} HOURS, "
-    fi
-
-    if [[ ${MINS} -eq 1 ]]; then
-        TIME_STRING+="1 MINUTE"
-    else
-        TIME_STRING+="${MINS} MINUTES"
-    fi
-
-    if [[ ${SECS} -eq 1 && -n ${HOURS} ]]; then
-        TIME_STRING+=", AND 1 SECOND"
-    elif [[ ${SECS} -eq 1 && -z ${HOURS} ]]; then
-        TIME_STRING+=" AND 1 SECOND"
-    elif [[ ${SECS} -ne 1 && -n ${HOURS} ]]; then
-        TIME_STRING+=", AND ${SECS} SECONDS"
-    elif [[ ${SECS} -ne 1 && -z ${HOURS} ]]; then
-        TIME_STRING+=" AND ${SECS} SECONDS"
-    fi
-
-    echo ${TIME_STRING}
+	git clone https://aur.archlinux.org/"${1}"
+	cd "${1}" || return
+	makepkg -si "${2}"
+	cd - || return
+	rm -rf "${1}"
 }
 
 # Repopicks a | delimited set of commits
 function repopick_stuff() {
 	export oldifs=$IFS
 	export IFS="|"
-	for f in ${REPOPICK_LIST}; do
+	for f in ${REPOPICK_LIST:?}; do
 	    echo "Picking: $f"
-	    eval repopick $f || return
+	    eval repopick "${f}" || return
 	done
 	export IFS=$oldifs
 }
@@ -86,10 +56,10 @@ function rmvenv() {
 
 # Uploads a given file to transfer.sh
 function transfer() {
-    file="$1"
+    file="${1}"
     zipname=$(echo "${file}" | awk -F '/' '{print $NF}')
     destination="$2"
-    url=$(curl -# -T "${file}" https://transfer.sh/${destination})
+    url=$(curl -# -T "${file}" https://transfer.sh/"${destination}")
     printf '\n'
     echo -e "Download $zipname at $url"
 }
@@ -151,6 +121,12 @@ function upinfo() {
 
 # Function run on login to display some stuff and set my custom PS1
 function onLogin() {
+    # Colors
+    green='\e[0;32m'
+    cyan='\e[0;36m'
+    red='\e[0;31m'
+    lightgray='\e[0;37m'
+
     export GIT_PS1_SHOWDIRTYSTATE=1
     export GIT_PS1_SHOWSTASHSTATE=1
     export GIT_PS1_SHOWUNTRACKEDFILES=1
@@ -253,7 +229,7 @@ function gdriveul {
     FILE="${1}"
     [ -f "${FILE:?}" ] || { echo "Specified file doesn't exist"; return ; }
     PARENT="${2}"
-    if [[ ! -z "${PARENT}" ]]; then
+    if [[ -n "${PARENT}" ]]; then
         PARENT="-p ${PARENT}"
     fi
     ZIP_SIZE="$(du -h "${FILE}" | awk '{print $1}')"
