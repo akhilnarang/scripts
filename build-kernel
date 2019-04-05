@@ -35,15 +35,15 @@ export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
 export ARCH="arm64"
 CCACHE="$(command -v ccache)"
-if [[ "${CLANG}" == "true" ]]; then
-    [[ -z ${CLANG_DIR} ]] && export CLANG_DIR="${HOME}/clang-build/build"
+if [[ "${USE_GCC}" != "true" ]]; then
+    [[ -z ${CLANG_DIR} ]] && export CLANG_DIR="/usr"
     export CLANG_TRIPLE="aarch64-linux-gnu-"
     export CC="${CLANG_DIR}/bin/clang"
     KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 fi
-[[ -z ${GCC_DIR} ]] && export GCC_DIR="${HOME}/build-tools-gcc/aarch64-linux-gnu"
-export CROSS_COMPILE="$(find ${GCC_DIR}/bin -name aarch64-*-gcc | tail -1 | sed 's/gcc$//')"
-export CROSS_COMPILE_ARM32="${HOME}/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
+[[ -z ${GCC_DIR} ]] && export GCC_DIR="/usr"
+CROSS_COMPILE="$(find ${GCC_DIR}/bin -name "aarch64-*-gcc" | tail -1 | sed 's/gcc$//')"
+export CROSS_COMPILE_ARM32="${KERNELDIR}/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
 export DEFCONFIG="${DEVICE}_defconfig"
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb"
@@ -51,10 +51,17 @@ export DOWNLOAD_BASE_URL="https://downloads.akhilnarang.me/kernel/${DEVICE}/Test
 if [[ -z "${JOBS}" ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)"
 fi
-export DEVICE CCACHE KBUILD_COMPILER_STRING JOBS
+export DEVICE CCACHE KBUILD_COMPILER_STRING JOBS CROSS_COMPILE
 
 function make_wrapper() {
-    if [[ "${CLANG}" == "true" ]]; then
+    if [[ "${USE_GCC}" == "true" ]]; then
+        time make -j"${JOBS}" \
+        O="${OUTDIR}" \
+        ARCH="${ARCH}" \
+        CROSS_COMPILE="${CCACHE} ${CROSS_COMPILE}" \
+        CROSS_COMPILE_ARM32="${CCACHE} ${CROSS_COMPILE_ARM32}" \
+        "${@}"
+    else
         time make -j"${JOBS}" \
         O="${OUTDIR}" \
         ARCH="${ARCH}" \
@@ -62,13 +69,6 @@ function make_wrapper() {
         CLANG_TRIPLE="${CLANG_TRIPLE}" \
         CROSS_COMPILE="${CROSS_COMPILE}" \
         CROSS_COMPILE_ARM32="${CROSS_COMPILE_ARM32}" \
-        "${@}"
-    else
-        time make -j"${JOBS}" \
-        O="${OUTDIR}" \
-        ARCH="${ARCH}" \
-        CROSS_COMPILE="${CCACHE} ${CROSS_COMPILE}" \
-        CROSS_COMPILE_ARM32="${CCACHE} ${CROSS_COMPILE_ARM32}" \
         "${@}"
     fi
 }
