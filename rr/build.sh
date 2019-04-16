@@ -33,6 +33,7 @@ scp "${ZIP}" acar@ssh.packet.resurrectionremix.com:ua/.hidden/"${DEVICE}"/
 scp "${DEVICE}".json acar@ssh.packet.resurrectionremix.com:ua/.hidden/"${DEVICE}"/
 cd - || exit
 scp CHANGELOG.mkdn acar@ssh.packet.resurrectionremix.com:ua/.hidden/"${DEVICE}/${ZIP/.zip/-changelog.txt}"
-sendTG "Build is done. It's private. Test it and let us know if we can publish it."
+DEVICE_C="$(echo "$DEVICE" | tr a-z A-Z)"
+sendTG "$DEVICE_C build is done. It's private. Test it and let us know if we can publish it."
 sendTG "[$ZIP](https://rr.umutcanacar.me/.hidden/$DEVICE/$ZIP)"
 sendTG "[Changelog](https://rr.umutcanacar.me/.hidden/$DEVICE/${ZIP/.zip/-changelog.txt})"
