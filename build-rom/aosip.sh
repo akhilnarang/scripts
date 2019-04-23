@@ -42,5 +42,6 @@ sendAOSiP "${END_MESSAGE}";
 rsync -av --progress $OUT/A* akhil@build.aosip.dev:/var/www/html/
 url="https://build.aosip.dev/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
+[[ $QUIET == "no" ]] && sendAOSiP $(python3 ./scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
 [[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "CI" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=TOKEN&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 
