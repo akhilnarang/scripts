@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2018-2019 Akhil Narang
+# Copyright (C) 2018-19 Akhil Narang
 # SPDX-License-Identifier: GPL-3.0-only
 # AOSiP Build Script
-# shellcheck disable=SC1090,SC1091,SC2076
+# shellcheck disable=SC1090,SC1091
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
-# SC2076: Don't quote right-hand side of =~, it'll match literally rather than as a regex.
 
 set -e
 source ~/scripts/functions
-sendAOSiP "${START_MESSAGE}";
+export TZ=UTC
+[[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}";
 export PATH=~/bin:$PATH
-sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on ${node:?}, check progress [here](${BUILD_URL})!"
+[[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on ${NODE_NAME:?}, check progress [here](${BUILD_URL})!"
+rm -fv .repo/local_manifests/*
 if [[ "${SYNC}" == "yes" ]]; then
 	repo init -u https://github.com/AOSiP/platform_manifest.git -b pie --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
-	time repo sync -j32 --current-branch --no-tags --no-clone-bundle --force-sync
+	repo forall -j$(nproc) -c "git reset --hard m/pie && git clean -fdx"
+	time repo sync -j$(nproc) --current-branch --no-tags --no-clone-bundle --force-sync
 fi
 set +e
-rm -fv .repo/local_manifests/*
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 set -e
@@ -26,23 +27,20 @@ case "${CLEAN}" in
   "clean"|"deviceclean"|"installclean") m -j "${CLEAN}" ;;
   *) rm -rf "${OUT}"/A*
 esac
+set +e
 repopick_stuff
+set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
-ccache -M 200G
-time m -j kronic || sendAOSiP "[Build failed!](${BUILD_URL})"
+ccache -M 500G
+time m -j kronic || ([[ $QUIET == "no" ]] && sendAOSiP "[Build failed!](${BUILD_URL})")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
-sendAOSiP "Build done, check ${BUILD_URL} for details!"
-while [[ ! "$url" =~ "https://drive.google.com" ]]; do
-	url="$(gdrive upload -p 1hhyKQ9yqLg0bIn-QmkPhpMrrc7OuHuNC "${OUT}"/"${ZIP}" --share | tail -1 | awk '{ print $NF }')"
-done
-MD5="$(md5sum "${OUT}"/"${ZIP}" | awk '{print $1}')"
-SIZE="$(du -sh "${OUT}"/"${ZIP}" | awk '{print $1}')"
-sendAOSiP "
-[$ZIP]($url)
-Size: $SIZE
-MD5: \`$MD5\`
-"
+[[ $QUIET == "no" ]] && sendAOSiP "Build done, check ${BUILD_URL} for details!"
 sendAOSiP "${END_MESSAGE}";
+rsync -av --progress $OUT/A* akhil@build.aosip.dev:/var/www/html/
+url="https://build.aosip.dev/$ZIP"
+[[ $QUIET == "no" ]] && sendAOSiP $url
+[[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "CI" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=TOKEN&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
+
