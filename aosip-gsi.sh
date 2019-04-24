@@ -7,6 +7,8 @@
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
 
+export PARSE_MODE="html"
+
 set -e
 source ~/scripts/functions
 export TZ=UTC
