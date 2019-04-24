@@ -6,15 +6,16 @@ import sys
 import requests
 
 DOGBIN = 'https://del.dog'
-API = os.path.join(DOGBIN, 'documents')
+DOGBIN_API = os.path.join(DOGBIN, 'documents')
+GERRIT = 'https://review.aosiprom.com'
+GERRIT_API = os.path.join(GERRIT, 'changes/?q=')
 
 
 def query_changes(query):
-    changes = os.popen(f'ssh -p29418 review.aosiprom.com gerrit query "{query}" --format=JSON')
-    changes = changes.read().split('\n')[:-2]
+    changes = requests.get(GERRIT_API+query).text[5:]
     ret = ""
-    for line in changes:
-        ret += json.loads(line)['subject'] + '\n'
+    for line in json.loads(changes):
+        ret += line['subject'] + '\n'
     return ret
 
 def main():
@@ -40,7 +41,7 @@ def main():
                 else:
                     commits += query_changes(j)
 
-    print(f"{DOGBIN}/{json.loads(requests.post(API, commits).content.decode())['key']}")
+    print(f"{DOGBIN}/{json.loads(requests.post(DOGBIN_API, commits).content.decode())['key']}")
 
 if __name__ == '__main__':
     main()
