@@ -41,7 +41,7 @@ ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && sendAOSiP "Build done, check ${BUILD_URL} for details!"
 sendAOSiP "${END_MESSAGE}";
 cp -v $OUT/A* /var/www/html/
-~/api/generation_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
+~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
 rsync -av --progress /var/www/html/ akhil@build.aosip.dev:/var/www/html
 url="https://build.aosip.dev/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
