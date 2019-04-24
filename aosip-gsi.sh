@@ -14,6 +14,7 @@ export PATH=~/bin:$PATH
 rm -fv .repo/local_manifests/*
 wget https://raw.githubusercontent.com/AOSiP-Devices/device_phh_treble/pie/gsi.xml -O .repo/local_manifests/gsi.xml
 repo init -u https://github.com/AOSiP/platform_manifest.git -b pie --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
+repo forall -j$(nproc) -c "git reset --hard m/pie && git clean -fdx"
 time repo sync -j$(nproc) --current-branch --no-tags --no-clone-bundle --force-sync
 . build/envsetup.sh
 export AOSIP_BUILDTYPE=GSI
