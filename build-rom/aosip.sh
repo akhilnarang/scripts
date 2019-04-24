@@ -22,6 +22,7 @@ fi
 set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
+export OVERRIDE_OTA_CHANNEL="https://build.aosip.dev/${DEVICE}-${AOSIP_BUILDTYPE}.json"
 set -e
 case "${CLEAN}" in
   "clean"|"deviceclean"|"installclean") m -j "${CLEAN}" ;;
@@ -39,9 +40,11 @@ set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && sendAOSiP "Build done, check ${BUILD_URL} for details!"
 sendAOSiP "${END_MESSAGE}";
-rsync -av --progress $OUT/A* akhil@build.aosip.dev:/var/www/html/
+cp -v $OUT/A* /var/www/html/
+~/api/generation_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
+rsync -av --progress /var/www/html/ akhil@build.aosip.dev:/var/www/html
 url="https://build.aosip.dev/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
-[[ $QUIET == "no" ]] && sendAOSiP $(python3 ./scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
-[[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "CI" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=TOKEN&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
+[[ $QUIET == "no" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
+[[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 
