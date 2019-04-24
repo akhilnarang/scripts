@@ -22,7 +22,9 @@ fi
 set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
-export OVERRIDE_OTA_CHANNEL="https://build.aosip.dev/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+if [[ "${AOSIP_BUILDTYPE}" != "Official" ]] && [[ "${AOSIP_BUILDTYPE}" != "Beta" ]]; then
+	export OVERRIDE_OTA_CHANNEL="https://build.aosip.dev/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+fi
 set -e
 case "${CLEAN}" in
   "clean"|"deviceclean"|"installclean") m -j "${CLEAN}" ;;
