@@ -14,7 +14,7 @@ source ~/scripts/functions
 export TZ=UTC
 [[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}";
 export PATH=~/bin:$PATH
-[[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on ${NODE_NAME:?}, check progress <a href=${BUILD_URL}>here</a>!"
+[[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $(hostname), check progress <a href='${BUILD_URL}'>here</a>!"
 rm -fv .repo/local_manifests/*
 if [[ "${SYNC}" == "yes" ]]; then
 	repo init -u https://github.com/AOSiP/platform_manifest.git -b pie --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
