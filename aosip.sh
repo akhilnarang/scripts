@@ -7,12 +7,14 @@
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
 
+export PARSE_MODE="html"
+
 set -e
 source ~/scripts/functions
 export TZ=UTC
 [[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}";
 export PATH=~/bin:$PATH
-[[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on ${NODE_NAME:?}, check progress [here](${BUILD_URL})!"
+[[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on ${NODE_NAME:?}, check progress <a href=${BUILD_URL}>here</a>!"
 rm -fv .repo/local_manifests/*
 if [[ "${SYNC}" == "yes" ]]; then
 	repo init -u https://github.com/AOSiP/platform_manifest.git -b pie --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
@@ -37,7 +39,7 @@ eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
 ccache -M 500G
-time m -j kronic || ([[ $QUIET == "no" ]] && sendAOSiP "[Build failed!](${BUILD_URL})")
+time m -j kronic || ([[ $QUIET == "no" ]] && sendAOSiP "<a href=${BUILD_URL}>Build failed!</a>")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && sendAOSiP "Build done, check ${BUILD_URL} for details!"
