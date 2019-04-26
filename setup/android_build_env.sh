@@ -25,12 +25,10 @@ fi
 sudo apt update -y
 sudo apt install -y adb autoconf automake axel bc bison build-essential clang cmake expat fastboot flex \
 g++ g++-multilib gawk gcc gcc-multilib gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 \
-libc6-dev libcap-dev libcloog-isl-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
+libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
 libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
-openjdk-8-jdk openjdk-8-jre patch pkg-config pngcrush pngquant python python-all-dev re2c schedtool \
-squashfs-tools subversion texinfo unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
-# Purge problematic packages found in things like Mint 19
-sudo apt purge -y openjdk-11-*
+patch pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
+unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
 
 if [[ ! "$(command -v adb)" == "" ]]; then
     echo -e "Setting up udev rules for adb!"
