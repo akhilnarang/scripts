@@ -25,7 +25,7 @@ set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ "${AOSIP_BUILDTYPE}" != "Official" ]] && [[ "${AOSIP_BUILDTYPE}" != "Beta" ]]; then
-	export OVERRIDE_OTA_CHANNEL="https://build.aosip.dev/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+	export OVERRIDE_OTA_CHANNEL="https://${PRIMARY_HOST:?}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
 fi
 set -e
 case "${CLEAN}" in
@@ -47,10 +47,12 @@ sendAOSiP "${END_MESSAGE}";
 cp -v $OUT/A* /var/www/html/
 ~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
 rsync -av --progress /var/www/html/ akhil@build.aosip.dev:/var/www/html
-url="https://build.aosip.dev/$ZIP"
+url="https://${PRIMARY_HOST}/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
 url="https://$(hostname)/$ZIP"
-[[ $QUIET == "no" ]] && sendAOSiP $url
+[[ $QUIET == "no" ]] && [[ "$(hostname)" != "${PRIMARY_HOST}" ]] && sendAOSiP $url
 [ $QUIET == "no" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
+GDRIVE_URL=$(gdrive upload -p 1hhyKQ9yqLg0bIn-QmkPhpMrrc7OuHuNC --share "${FILE}"  | awk '/https/ {print $7}')
+[[ $QUIET == "no" ]] && sendAOSiP "<a href='${GDRIVE_URL}'>$ZIP</a>"
 [[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 
