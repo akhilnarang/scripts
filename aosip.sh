@@ -51,7 +51,7 @@ url="https://${PRIMARY_HOST}/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
 url="https://$(hostname)/$ZIP"
 [[ $QUIET == "no" ]] && [[ "$(hostname)" != "${PRIMARY_HOST}" ]] && sendAOSiP $url
-[ $QUIET == "no" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
+[[ $QUIET == "no" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
 GDRIVE_URL=$(gdrive upload -p 1hhyKQ9yqLg0bIn-QmkPhpMrrc7OuHuNC --share "${FILE}"  | awk '/https/ {print $7}')
 [[ $QUIET == "no" ]] && sendAOSiP "<a href='${GDRIVE_URL}'>$ZIP</a>"
 [[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
