@@ -25,17 +25,17 @@ source ~/.bashrc
 repo sync --force-sync -j64
 . build/envsetup.sh
 if ! breakfast "${DEVICE}"; then
-	sendTG "Lunching ${DEVICE} failed on $NODE_NAME"
+	sendTG "Lunching [$DEVICE]($BUILD_URL) failed on $NODE_NAME"
     exit 1
 fi
 repopick_stuff
-export USE_CCACHE=1 
+export USE_CCACHE=1
 ccache -M 200G
 mka "${CLOBBER:?}"
 rm -rfv "${OUT}/{RR*,system,vendor}"
 sendTG "Starting build for [$DEVICE]($BUILD_URL) on $NODE_NAME"
 if ! mka bacon; then
-    sendTG "${DEVICE} Build failed on $NODE_NAME"
+    sendTG "[$DEVICE]($BUILD_URL) Build failed on $NODE_NAME"
     exit 1
 fi
 cout
@@ -47,6 +47,6 @@ scp "${DEVICE}".json "jenkins@ssh.packet.resurrectionremix.com:/home/acar/ua/.hi
 cd - || exit
 scp CHANGELOG.mkdn "jenkins@ssh.packet.resurrectionremix.com:/home/acar/ua/.hidden/${DEVICE}/${ZIP/.zip/-changelog.txt}"
 DEVICE_C="$(echo "$DEVICE" | tr a-z A-Z)"
-sendTG "$DEVICE_C build is done. It's private. Test it and let us know if we can publish it."
+sendTG "$DEVICE_C build is done on $NODE_NAME. It's private. Test it then publish it."
 sendTG "[$ZIP](https://rr.umutcanacar.me/.hidden/$DEVICE/$ZIP)"
 sendTG "[Changelog](https://rr.umutcanacar.me/.hidden/$DEVICE/${ZIP/.zip/-changelog.txt})"
