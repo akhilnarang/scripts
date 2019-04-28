@@ -25,17 +25,17 @@ source ~/.bashrc
 repo sync --force-sync -j64
 . build/envsetup.sh
 if ! breakfast "${DEVICE}"; then
-	sendTG "Lunching ${DEVICE} failed on $NODE_NAME"
+	sendTG "Lunching [$DEVICE]($BUILD_URL) failed on $NODE_NAME"
     exit 1
 fi
 repopick_stuff
-export USE_CCACHE=1 
+export USE_CCACHE=1
 ccache -M 200G
 mka "${CLOBBER:?}"
 rm -rfv "${OUT}/{RR*,system,vendor}"
 sendTG "Starting build for [$DEVICE]($BUILD_URL) on $NODE_NAME"
 if ! mka bacon; then
-    sendTG "${DEVICE} Build failed on $NODE_NAME"
+    sendTG "[$DEVICE]($BUILD_URL) Build failed on $NODE_NAME"
     exit 1
 fi
 cout
