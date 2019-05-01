@@ -46,13 +46,13 @@ ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 sendAOSiP "${END_MESSAGE}";
 cp -v $OUT/A* /var/www/html/
 ~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
-rsync -av --progress /var/www/html/ akhil@build.aosip.dev:/var/www/html
+rsync -av --progress /var/www/html/ kronic@build.aosip.dev:/var/www/html
 url="https://${PRIMARY_HOST}/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
 url="https://$(hostname)/$ZIP"
 [[ $QUIET == "no" ]] && [[ "$(hostname)" != "${PRIMARY_HOST}" ]] && sendAOSiP $url
 [[ $QUIET == "no" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
 GDRIVE_URL=$(gdrive upload -p 1hhyKQ9yqLg0bIn-QmkPhpMrrc7OuHuNC --share "${ZIP}"  | awk '/https/ {print $7}')
-[[ $QUIET == "no" ]] && sendAOSiP "<a href='${GDRIVE_URL}'>$ZIP</a>"
+[[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[$ZIP](${GDRIVE_URL})"
 [[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 
