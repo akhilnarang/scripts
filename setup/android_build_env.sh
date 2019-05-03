@@ -27,7 +27,7 @@ sudo apt install -y adb autoconf automake axel bc bison build-essential clang cm
 g++ g++-multilib gawk gcc gcc-multilib gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 \
 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
 libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
-patch pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
+patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
 unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
 
 if [[ ! "$(command -v adb)" == "" ]]; then
