@@ -34,6 +34,7 @@ case "${CLEAN}" in
 esac
 set +e
 repopick_stuff
+[[ "${DEVICE}" == "fajita" ]] && repopick -t fod
 set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
