@@ -48,7 +48,7 @@ sendAOSiP "${END_MESSAGE}";
 cp -v $OUT/A* /var/www/html/
 ~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
 for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
-	scp $f kronic@${PRIMARY_HOST}:/var/www/html/
+	scp /var/www/html/$f kronic@${PRIMARY_HOST}:/var/www/html/
 done
 url="https://${PRIMARY_HOST}/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
