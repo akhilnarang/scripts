@@ -47,7 +47,9 @@ ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 sendAOSiP "${END_MESSAGE}";
 cp -v $OUT/A* /var/www/html/
 ~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
-rsync -av --progress /var/www/html/ kronic@build.aosip.dev:/var/www/html
+for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
+	scp $f kronic@${PRIMARY_HOST}:/var/www/html/
+done
 url="https://${PRIMARY_HOST}/$ZIP"
 [[ $QUIET == "no" ]] && sendAOSiP $url
 url="https://$(hostname)/$ZIP"
