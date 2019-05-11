@@ -9,11 +9,11 @@ import os
 import json
 
 commits = {}
-query = 'status:open topic:translations'
+query = 'topic:dnm-gsi'
 gerrit = 'review.aosiprom.com'
-action = ''
-code_review = '+2'
-verified = '+1'
+action = '--abandon'
+code_review = '-2'
+verified = '-1'
 
 print('Fetching data')
 data = os.popen(f'ssh -p29418 {gerrit} gerrit query {query} --patch-sets --format=JSON').read()

@@ -40,7 +40,7 @@ eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
 ccache -M 500G
-time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed](${BUILD_URL})"
+time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed](${BUILD_URL})")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && sendAOSiP "Build done, check ${BUILD_URL} for details!"
