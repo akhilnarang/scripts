@@ -30,7 +30,7 @@ def main():
         if i.split(' ')[0] == '-t':
             for j in i.split(' '):
                 if j not in ('', '-t', 'sysserv-pie'):
-                    commits += query_changes(f'status:open {j}')
+                    commits += query_changes(f'status:open topic:{j}')
         else:
             for j in i.strip().split(' '):
                 if '-' in j:
