@@ -37,9 +37,9 @@ def main():
                     commitrange = j.split('-')
                     changes = range(int(commitrange[0]), int(commitrange[1]))
                     for change in changes:
-                        commits += query_changes(change)
+                        commits += query_changes(str(change))
                 else:
-                    commits += query_changes(j)
+                    commits += query_changes(str(j))
 
     print(f"{DOGBIN}/{json.loads(requests.post(DOGBIN_API, commits).content.decode())['key']}")
 
