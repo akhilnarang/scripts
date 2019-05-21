@@ -10,5 +10,5 @@ GITHUB_API_TOKEN=""
 ORG="AOSiP"
 
 for r in ${REPOS}; do
-    curl -s -X POST -H "Authorization: token ${GITHUB_API_TOKEN}" -d '{ "name": "'"$r"'" }' "https://api.github.com/repos/${ORG}/$r"
+    curl -s -X POST -H "Authorization: token ${GITHUB_API_TOKEN}" -d '{ "name": "'"$r"'" }' "https://api.github.com/orgs/${ORG}/repos"
 done
