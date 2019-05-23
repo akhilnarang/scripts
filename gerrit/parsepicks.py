@@ -20,7 +20,7 @@ def query_changes(query):
 
 def main():
     if len(sys.argv) != 2:
-        print('Please provide the changes included in the build as a parameter!')
+        print('No picks included')
         exit(1)
 
     picks = sys.argv[1].split('|')
