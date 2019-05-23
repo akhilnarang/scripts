@@ -43,9 +43,9 @@ ccache -M 500G
 time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed for ${DEVICE}](${BUILD_URL})")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
-[[ $QUIET == "no" ]] && sendAOSiP "Build done for ${DEVICE}, check [jenkins](${BUILD_URL}) for details!"
+[[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "Build done for ${DEVICE}, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}";
-[[ $QUIET == "no" ]] && sendAOSiP "$(~/scripts/message_testers.py {$DEVICE})";
+[[ $QUIET == "no" ]] && sendAOSiP "$(~/scripts/message_testers.py ${DEVICE})";
 cp -v $OUT/A* /var/www/html/
 ~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
 for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
