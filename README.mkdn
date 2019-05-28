@@ -14,7 +14,6 @@ $ bash setup/<name of script>
 `android_build_env.sh` is for Ubuntu/Linux Mint/other distributions using the `apt` package manager.
 The rest are named as per the distro.
 
-If running Arch Linux, please enable multilib before running the script :)
 Please run the correct script depending on the distro you have installed!
 
 Enjoy!
