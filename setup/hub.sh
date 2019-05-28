@@ -32,7 +32,7 @@ function install_hub {
     HUB="$(command -v hub)"
     HUB_ARCH=linux-amd64
     if [ -z "${HUB}" ]; then
-        wget "$(get_release_assets github/hub | grep ${HUB_ARCH})" -O=hub.tgz
+        aria2c "$(get_release_assets github/hub | grep ${HUB_ARCH})" -o hub.tgz || wget "$(get_release_assets github/hub | grep ${HUB_ARCH})" -O hub.tgz
         mkdir -p hub
         tar -xf hub.tgz -C hub
         sudo ./hub/*/install --prefix=/usr/local/
