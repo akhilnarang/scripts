@@ -3,6 +3,8 @@
 # Script to setup an android build environment on Arch Linux and derivative distributions
 
 clear
+# Uncomment the multilib repo, incase it was commented out
+sudo sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 echo Installing Dependencies!
 # Update
 sudo pacman -Syyu
