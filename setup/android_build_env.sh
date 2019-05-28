@@ -7,6 +7,8 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.2.1"
+LATEST_CCACHE_VERSION="3.4.2+226_gc4613eb"
+LATEST_NINJA_VERSION="1.8.2"
 UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
@@ -30,6 +32,13 @@ libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzo
 patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
 unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
 
+# In Ubuntu 18.10, libncurses5 package is not available, so we need to hack our way by symlinking required library
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" ]]; then
+  if [[ -e /lib/x86_64-linux-gnu/libncurses.so.6 && ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]]; then
+    sudo ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
+  fi
+fi
+
 if [[ ! "$(command -v adb)" == "" ]]; then
     echo -e "Setting up udev rules for adb!"
     sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
@@ -52,5 +61,22 @@ echo "Installing repo"
 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
 sudo chmod a+x /usr/local/bin/repo
 
-bash ./setup/ccache.sh
-bash ./setup/ninja.sh
+if [[ "$(command -v ccache)" ]]; then
+    ccacheversion="$(ccache -V | head -1 | awk '{print $3}')"
+    if [[ "${ccacheversion}" != "${LATEST_CCACHE_VERSION}" ]]; then
+        echo "Installing ccache ${LATEST_CCACHE_VERSION} instead of ${ccacheversion}"
+        bash ./setup/ccache.sh
+    fi
+else
+    bash ./setup/ccache.sh
+fi
+
+if [[ "$(command -v ninja)" ]]; then
+    ninjaversion="$(ninja --version)"
+    if [[ "${ninjaversion}" != "${LATEST_NINJA_VERSION}" ]]; then
+        echo "Installing ninja ${LATEST_NINJA_VERSION} instead of ${ninjaversion}"
+        bash ./setup/ninja.sh
+    fi
+else
+    bash ./setup/ninja.sh
+fi
