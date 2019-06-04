@@ -45,7 +45,7 @@ set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}";
-[[ $QUIET == "no" ]] && sendAOSiP "$(~/scripts/message_testers.py ${DEVICE})";
+[[ $QUIET == "no" ]] && [[ $AOSIP_BUILDTYPE != "Official" ]] && [[ $AOSIP_BUILDTYPE != "Beta" ]] && sendAOSiP "$(~/scripts/message_testers.py ${DEVICE})";
 cp -v $OUT/A* /var/www/html/
 ~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
 for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
