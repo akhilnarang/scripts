@@ -37,13 +37,16 @@ case ${SYSTEMTYPE} in
 esac
 NAME="AOSiP-9.0-GSI-${ARCH}_${type}-$(date +%Y%m%d).img"
 cp -v $OUT/system.img /var/www/html/$NAME
-rsync -av --progress /var/www/html/ kronic@build.aosip.dev:/var/www/html
-if [[ "${RELEASE}" == "yes" ]]; then
-    rsync -av --progress $OUT/system.img kronic@aosip.dev:/mnt/builds/GSI/$NAME
-fi
 sendAOSiP "${ARCH}_${type} GSI build done on $(hostname)!"
-sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
-url="https://build.aosip.dev/$NAME"
-sendAOSiP $url
 url="https://$(hostname)/$NAME"
 sendAOSiP $url
+if [[ "${RELEASE}" == "yes" ]]; then
+    rsync -av --progress $OUT/system.img kronic@aosip.dev:/mnt/builds/GSI/$NAME
+    url="https://get.aosip.dev/GSI/$NAME"
+    sendAOSiP $url
+else
+    sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
+    rsync -av --progress $OUT/system.img kronic@build.aosip.dev:/var/www/html/
+    url="https://build.aosip.dev/$NAME"
+    sendAOSiP $url
+fi
