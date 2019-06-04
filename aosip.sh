@@ -47,16 +47,22 @@ ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}";
 [[ $QUIET == "no" ]] && [[ $AOSIP_BUILDTYPE != "Official" ]] && [[ $AOSIP_BUILDTYPE != "Beta" ]] && sendAOSiP "$(~/scripts/message_testers.py ${DEVICE})";
 cp -v $OUT/A* /var/www/html/
-~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
-for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
-	scp /var/www/html/$f kronic@${PRIMARY_HOST}:/var/www/html/
-done
-url="https://${PRIMARY_HOST}/$ZIP"
-[[ $QUIET == "no" ]] && sendAOSiP $url
-url="https://$(hostname)/$ZIP"
-[[ $QUIET == "no" ]] && [[ "$(hostname)" != "${PRIMARY_HOST}" ]] && sendAOSiP $url
-[[ $QUIET == "no" ]] && [[ -n "$REPOPICK_LIST" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
+case $AOSIP_BUILDTYPE in
+"Official"|"Beta")
+	url="https://$(hostname)/$ZIP"
+	curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
+;;
+*)
+	~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
+	for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
+		scp /var/www/html/$f kronic@${PRIMARY_HOST}:/var/www/html/
+	done
+	url="https://${PRIMARY_HOST}/$ZIP"
+	[[ $QUIET == "no" ]] && sendAOSiP $url
+	url="https://$(hostname)/$ZIP"
+	[[ $QUIET == "no" ]] && [[ "$(hostname)" != "${PRIMARY_HOST}" ]] && sendAOSiP $url
+	[[ $QUIET == "no" ]] && [[ -n "$REPOPICK_LIST" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
+;;
+esac
 GDRIVE_URL=$(gdrive upload -p 1hhyKQ9yqLg0bIn-QmkPhpMrrc7OuHuNC --share "${OUT}/${ZIP}"  | awk '/https/ {print $7}')
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[$ZIP](${GDRIVE_URL})"
-[[ "${AOSIP_BUILDTYPE}" == "Official" ]] || [[ "${AOSIP_BUILDTYPE}" == "Beta" ]] && curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
-
