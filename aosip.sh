@@ -40,6 +40,7 @@ eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
 ccache -M 500G
+([[ $AOSIP_BUILDTYPE == "Official" ]] || [[ $AOSIP_BUILDTYPE == "Beta" ]]) && unset USE_CCACHE
 time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed for ${DEVICE}](${BUILD_URL})")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
