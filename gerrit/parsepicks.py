@@ -27,7 +27,7 @@ def main():
     commits = ""
 
     for i in picks:
-        if i.split(' ')[0] == '-t':
+        if i.strip().split(' ')[0] == '-t':
             for j in i.split(' '):
                 if j not in ('', '-t', 'sysserv-pie'):
                     commits += query_changes(f'status:open topic:{j}')
