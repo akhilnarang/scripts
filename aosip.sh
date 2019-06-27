@@ -25,7 +25,7 @@ set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ "${AOSIP_BUILDTYPE}" != "Official" ]] && [[ "${AOSIP_BUILDTYPE}" != "Beta" ]]; then
-	export OVERRIDE_OTA_CHANNEL="https://${PRIMARY_HOST:?}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+	export OVERRIDE_OTA_CHANNEL="https://illusion.aosip.dev/${DEVICE}-${AOSIP_BUILDTYPE}.json"
 fi
 set -e
 case "${CLEAN}" in
@@ -40,7 +40,7 @@ eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
 ccache -M 500G
-[[ "$(hostname)" != "${PRIMARY_HOST}" ]] && unset USE_CCACHE
+[[ "$(hostname)" != "Illusion" ]] && unset USE_CCACHE
 time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed for ${DEVICE}](${BUILD_URL})")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
@@ -55,14 +55,14 @@ case $AOSIP_BUILDTYPE in
 ;;
 *)
 	~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
-	if [[ "$(hostname | cut -d. -f1)" != "${PRIMARY_HOST/.*/}" ]]; then
+	if [[ "$(hostname)" != "Illusion" ]]; then
 		for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
-			scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/www/html/$f kronic@${PRIMARY_HOST}:/var/www/html/
+			scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/www/html/$f akhil@illusion.aosip.dev:/var/www/html/
 		done
 		url="https://$(hostname)/$ZIP"
 		[[ $QUIET == "no" ]] && sendAOSiP $url
 	fi
-	url="https://${PRIMARY_HOST}/$ZIP"
+	url="https://illusion.aosip.dev/$ZIP"
 	[[ $QUIET == "no" ]] && sendAOSiP $url
 	[[ $QUIET == "no" ]] && [[ -n "$REPOPICK_LIST" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
 ;;
