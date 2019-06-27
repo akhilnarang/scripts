@@ -55,13 +55,16 @@ case $AOSIP_BUILDTYPE in
 ;;
 *)
 	~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
-	for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
-		scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/www/html/$f kronic@${PRIMARY_HOST}:/var/www/html/
-	done
+	if [[ "$(hostname)" != "${PRIMARY_HOST}" ]]; then
+		for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
+			scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/www/html/$f kronic@${PRIMARY_HOST}:/var/www/html/
+		done
+		url="https://$(hostname)/$ZIP"
+		[[ $QUIET == "no" ]] && sendAOSiP $url
+	fi
+	[[ "${PRIMARY_HOST}" =~ "aosip.dev" ]] || PRIMARY_HOST = "${PRIMARY_HOST}" + ".aosip.dev"
 	url="https://${PRIMARY_HOST}/$ZIP"
 	[[ $QUIET == "no" ]] && sendAOSiP $url
-	url="https://$(hostname)/$ZIP"
-	[[ $QUIET == "no" ]] && [[ "$(hostname)" != "${PRIMARY_HOST}" ]] && sendAOSiP $url
 	[[ $QUIET == "no" ]] && [[ -n "$REPOPICK_LIST" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
 ;;
 esac
