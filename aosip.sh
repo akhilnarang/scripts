@@ -39,7 +39,7 @@ set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
-ccache -M 500G
+ccache -M 250G
 [[ "$(hostname)" != "Illusion" ]] && unset USE_CCACHE
 time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed for ${DEVICE}](${BUILD_URL})")
 set +e;
