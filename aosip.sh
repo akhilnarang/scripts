@@ -50,7 +50,7 @@ ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 cp -v $OUT/A* /var/www/html/
 case $AOSIP_BUILDTYPE in
 "Official"|"Beta")
-	url="https://$(hostname)/$ZIP"
+	url="https://illusion.aosip.dev/$ZIP"
 	curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 ;;
 *)
