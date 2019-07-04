@@ -34,7 +34,14 @@ case "${CLEAN}" in
 esac
 set +e
 repopick_stuff
-[[ "${DEVICE}" == "fajita" ]] && repopick -t fod
+case $DEVICE in
+"cheeseburger"|"dumpling") repopick -t opcam
+;;
+"fajita") repopick -t fod
+;;
+"guacamola") repopick -t guac fod-hal camera-motor
+;;
+esac
 set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
