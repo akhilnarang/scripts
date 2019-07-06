@@ -4,7 +4,7 @@ source ~/.bashrc
 aria2c ${URL:?} || wget ${URL}
 FILE=${URL##*/}
 UNZIP_DIR=${FILE/.zip/}
-unzip -q ${FILE} -d ${UNZIP_DIR} || unzip -q *.zip -d ${UNZIP_DIR}
+7z e ${FILE} -o${UNZIP_DIR} || 7z e *.zip -o${UNZIP_DIR}
 cd ${UNZIP_DIR} || exit
 rm -f ../${FILE}
 for p in system vendor cust odm oem; do
