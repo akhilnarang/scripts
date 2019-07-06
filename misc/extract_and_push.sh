@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 source ~/.bashrc
-[[ -z "$ORG" ]] && ORG="$ORG"
+[[ -z "$ORG" ]] && ORG="AndroidDumps"
 aria2c ${URL:?} || wget ${URL}
 FILE=${URL##*/}
 UNZIP_DIR=${FILE/.zip/}
