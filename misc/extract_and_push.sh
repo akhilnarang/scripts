@@ -7,7 +7,7 @@ function sendTG() {
 }
 
 [[ -z "$ORG" ]] && ORG="AndroidDumps"
-sendTG "Starting build on <a href=$BUILD_URL>jenkins</a>"
+sendTG "Starting build on <a href=\"$BUILD_URL\">jenkins</a>"
 aria2c ${URL:?} || wget ${URL}
 sendTG "Downloaded"
 FILE=${URL##*/}
@@ -98,4 +98,4 @@ git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
 git add system/ ;
 git commit -asm "Add system for ${description}" ;
 git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;)
-sendTG "Pushed <a href=https://github.com/$ORG/$repo>$description</a>"
+sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
