@@ -36,7 +36,6 @@ set +e
 [[ -d "jenkins" ]] && git -C jenkins pl || git clone git@github.com:AOSiP-Devices/jenkins
 [[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/${DEVICE})"
 repopick_stuff
-esac
 set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
