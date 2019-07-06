@@ -54,10 +54,18 @@ for p in system vendor cust odm oem; do
     sudo chmod -R u+rwX $p\_/
 done
 mkdir modem_
-sudo mount -t vfat -o loop firmware-update/NON-HLOS.bin modem_/ || sudo mount -t vfat -o loop firmware-update/modem.img modem_/ ||
-sudo mount -t vfat -o loop NON-HLOS.bin modem_/ || sudo mount -t vfat -o loop modem.img modem_/ #extract modem
-git clone -q https://github.com/xiaolu/mkbootimg_tools
-./mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null #extract boot
+for modem in {firmware-update/,}{modem.img,NON-HLOS.bin}; do
+    sudo mount -t vfat -o loop $modem modem_/ && break
+done
+
+if [[ ! -d "${HOME}/https://github.com/PabloCastellano/extract-dtb" ]]; then
+    cd
+    git clone https://github.com/PabloCastellano/extract-dtb
+    cd -
+fi
+python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null # Extract boot
+python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null # Extract dtbo
+./mkbo
 echo 'boot extracted'
 rm -rf mkbootimg_tools
 for p in system vendor modem cust odm oem; do
