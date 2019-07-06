@@ -3,7 +3,7 @@
 [[ -z "${API_KEY}" ]] && echo "API_KEY not defined, exiting!" && exit 1
 
 function sendTG() {
-    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
+    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML"
 }
 
 [[ -z "$ORG" ]] && ORG="AndroidDumps"
