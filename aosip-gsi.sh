@@ -41,7 +41,7 @@ sendAOSiP "${ARCH}_${type} GSI build done on $(hostname)!"
 url="https://$(hostname)/$NAME"
 sendAOSiP $url
 if [[ "${RELEASE}" == "yes" ]]; then
-    rsync -av --progress $OUT/system.img akhil@illusion.aosip.dev:/mnt/builds/GSI/$NAME
+    rsync -av --progress $OUT/system.img kronic@illusion.aosip.dev:/mnt/builds/GSI/$NAME
     url="https://get.aosip.dev/GSI/$NAME"
     sendAOSiP $url
 else
