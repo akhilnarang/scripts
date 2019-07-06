@@ -23,25 +23,25 @@ else
     else
         7z e * -o${UNZIP_DIR}
     fi
-fi
-cd ${UNZIP_DIR} || exit
-rm -f ../*.zip
 
-files=$(ls *.zip)
-if [[ -f "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]]; then
-    unzip ${files}
-fi
-
-
-if [[ -f "payload.bin" ]]; then
-    sendTG "payload detected"
-    if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
-        cd
-        git clone https://github.com/cyxx/extract_android_ota_payload
-        cd -
+    cd ${UNZIP_DIR} || exit
+    files=$(ls *.zip)
+    if [[ -f "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]]; then
+        unzip ${files}
     fi
-    python2 ~/extract_android_ota_payload/extract_android_ota_payload.py payload.bin
+
+    if [[ -f "payload.bin" ]]; then
+        sendTG "payload detected"
+        if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
+            cd
+            git clone https://github.com/cyxx/extract_android_ota_payload
+            cd -
+        fi
+        python2 ~/extract_android_ota_payload/extract_android_ota_payload.py payload.bin
+    fi
 fi
+
+rm -fv $OLDPWD/*.zip
 
 for p in system vendor cust odm oem; do
     brotli -d $p.new.dat.br &>/dev/null ; #extract br
