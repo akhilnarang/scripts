@@ -58,7 +58,7 @@ for modem in {firmware-update/,}{modem.img,NON-HLOS.bin}; do
     sudo mount -t vfat -o loop $modem modem_/ && break
 done
 
-if [[ ! -d "${HOME}/https://github.com/PabloCastellano/extract-dtb" ]]; then
+if [[ ! -d "${HOME}/extract-dtb" ]]; then
     cd
     git clone https://github.com/PabloCastellano/extract-dtb
     cd -
