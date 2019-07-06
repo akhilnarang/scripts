@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
-source ~/.bashrc
+
+[[ -z "${API_KEY}" ]] && echo "API_KEY not defined, exiting!" && exit 1
+
+function sendTG() {
+    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
+}
+
 [[ -z "$ORG" ]] && ORG="AndroidDumps"
+sendTG "Starting build on <a href=$BUILD_URL>jenkins</a>"
 aria2c ${URL:?} || wget ${URL}
+sendTG "Downloaded"
 FILE=${URL##*/}
 UNZIP_DIR=${FILE/.zip/}
 if [[ -f "${FILE}" ]]; then
@@ -13,6 +21,7 @@ cd ${UNZIP_DIR} || exit
 rm -f ../*.zip
 
 if [[ -f "payload.bin" ]]; then
+    sendTG "payload detected"
     if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
         cd
         git clone https://github.com/cyxx/extract_android_ota_payload
@@ -73,6 +82,7 @@ git add --all
 git reset META-INF/ file_contexts.bin
 git commit -asm "Add $description" -S
 curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos"
+sendTG "Pushing"
 git push ssh://git@github.com/$ORG/$repo HEAD:refs/heads/$branch ||
 
 (git update-ref -d HEAD ; git reset system/ vendor/ ;
@@ -88,3 +98,4 @@ git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
 git add system/ ;
 git commit -asm "Add system for ${description}" ;
 git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;)
+sendTG "Pushed <a href=https://github.com/$ORG/$repo>$description</a>"
