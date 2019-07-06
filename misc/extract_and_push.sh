@@ -13,7 +13,7 @@ for p in system vendor cust odm oem; do
     sdat2img $p.{transfer.list,new.dat,img} &>/dev/null #convert sdat to img
     mkdir $p\_ || rm -rf $p/*
     echo $p 'extracted'
-    sudo mount -t ext4 -o loop $p.img $p\_ &>/dev/null #mount imgs
+    sudo mount -t ext4 -o loop $p.img $p\_ &>/dev/null || (mv $p.img temp.img && simg2img temp.img $p.img && rm temp.img && sudo mount -t ext4 -o loop $p.img $p\_ &>/dev/null)
     sudo chown $(whoami) $p\_/ -R
     sudo chmod -R u+rwX $p\_/
 done
