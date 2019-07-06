@@ -11,6 +11,16 @@ else
 fi
 cd ${UNZIP_DIR} || exit
 rm -f ../*.zip
+
+if [[ -f "payload.bin" ]]; then
+    if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
+        cd
+        git clone https://github.com/cyxx/extract_android_ota_payload
+        cd -
+    fi
+    python2 ~/extract_android_ota_payload/extract_android_ota_payload.py payload.bin
+fi
+
 for p in system vendor cust odm oem; do
     brotli -d $p.new.dat.br &>/dev/null ; #extract br
     cat $p.new.dat.{0..999} 2>/dev/null >> $p.new.dat #merge split Vivo(?) sdat
