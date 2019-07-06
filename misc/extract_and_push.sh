@@ -65,9 +65,7 @@ if [[ ! -d "${HOME}/https://github.com/PabloCastellano/extract-dtb" ]]; then
 fi
 python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null # Extract boot
 python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null # Extract dtbo
-./mkbo
 echo 'boot extracted'
-rm -rf mkbootimg_tools
 for p in system vendor modem cust odm oem; do
         sudo cp -r $p\_ $p/ #copy images
         echo $p 'copied'
@@ -79,6 +77,7 @@ sudo chown $(whoami) * -R ; chmod -R u+rwX * #ensure final permissions
 find system/ -type f -exec echo {} >> allfiles.txt \;
 find vendor/ -type f -exec echo {} >> allfiles.txt \;
 find bootimg/ -type f -exec echo {} >> allfiles.txt \;
+find dtbo/ -type f -exec echo {} >> allfiles.txt \;
 find modem/ -type f -exec echo {} >> allfiles.txt \;
 find cust/ -type f -exec echo {} >> allfiles.txt \;
 find odm/ -type f -exec echo {} >> allfiles.txt \;
