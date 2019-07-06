@@ -27,10 +27,9 @@ fi
 cd ${UNZIP_DIR} || exit
 rm -f ../*.zip
 
-files=$(ls)
-if [[ -d "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]]; then
-    cd ${files}
-    unzip *.zip
+files=$(ls *.zip)
+if [[ -f "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]]; then
+    unzip ${files}
 fi
 
 
