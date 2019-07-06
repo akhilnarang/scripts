@@ -7,18 +7,32 @@ function sendTG() {
 }
 
 [[ -z "$ORG" ]] && ORG="AndroidDumps"
-sendTG "Starting build on <a href=\"$BUILD_URL\">jenkins</a>"
+sendTG "Starting dump on <a href=\"$BUILD_URL\">jenkins</a>"
 aria2c ${URL:?} || wget ${URL}
 sendTG "Downloaded"
 FILE=${URL##*/}
-UNZIP_DIR=${FILE/.zip/}
-if [[ -f "${FILE}" ]]; then
-    7z e ${FILE} -o${UNZIP_DIR}
+EXTENSION=${URL##*.}
+UNZIP_DIR=${FILE/.$EXTENSION/}
+
+if [[ "${EXTENSION}" == "tgz" ]]; then
+    tar xf ${FILE}
+    cd */images
 else
-    7z e *.zip -o${UNZIP_DIR}
+    if [[ -f "${FILE}" ]]; then
+        7z e ${FILE} -o${UNZIP_DIR}
+    else
+        7z e * -o${UNZIP_DIR}
+    fi
 fi
 cd ${UNZIP_DIR} || exit
 rm -f ../*.zip
+
+files=$(ls)
+if [[ -d "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]]; then
+    cd ${files}
+    unzip *.zip
+fi
+
 
 if [[ -f "payload.bin" ]]; then
     sendTG "payload detected"
