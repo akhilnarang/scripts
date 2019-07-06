@@ -4,9 +4,13 @@ source ~/.bashrc
 aria2c ${URL:?} || wget ${URL}
 FILE=${URL##*/}
 UNZIP_DIR=${FILE/.zip/}
-7z e ${FILE} -o${UNZIP_DIR} || 7z e *.zip -o${UNZIP_DIR}
+if [[ -f "${FILE}" ]]; then
+    7z e ${FILE} -o${UNZIP_DIR}
+else
+    7z e *.zip -o${UNZIP_DIR}
+fi
 cd ${UNZIP_DIR} || exit
-rm -f ../${FILE}
+rm -f ../*.zip
 for p in system vendor cust odm oem; do
     brotli -d $p.new.dat.br &>/dev/null ; #extract br
     cat $p.new.dat.{0..999} 2>/dev/null >> $p.new.dat #merge split Vivo(?) sdat
