@@ -7,8 +7,8 @@ function sendTG() {
 }
 
 [[ -z "$ORG" ]] && ORG="AndroidDumps"
-sendTG "Starting dump on <a href=\"$BUILD_URL\">jenkins</a>"
-aria2c ${URL:?} || wget ${URL} || exit 1
+sendTG "Starting <a href=\"${URL:?}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
+aria2c ${URL} || wget ${URL} || exit 1
 sendTG "Downloaded"
 FILE=${URL##*/}
 EXTENSION=${URL##*.}
