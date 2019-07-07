@@ -8,7 +8,7 @@ function sendTG() {
 
 [[ -z "$ORG" ]] && ORG="AndroidDumps"
 sendTG "Starting dump on <a href=\"$BUILD_URL\">jenkins</a>"
-aria2c ${URL:?} || wget ${URL}
+aria2c ${URL:?} || wget ${URL} || exit 1
 sendTG "Downloaded"
 FILE=${URL##*/}
 EXTENSION=${URL##*.}
@@ -24,7 +24,7 @@ else
         7z e * -o${UNZIP_DIR}
     fi
 
-    cd ${UNZIP_DIR} || exit
+    cd ${UNZIP_DIR} || exit 1
     files=$(ls *.zip)
     if [[ -f "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]] && [[ "${files}" != "compatibility.zip" ]]; then
         unzip ${files}
@@ -100,13 +100,13 @@ git config user.signingKey "76954A7A24F0F2E30B3DB2354D5819B432B2123C"
 git checkout -b $branch
 find -size +97M -printf '%P\n' -o -name *sensetime* -printf '%P\n' -o -name *.lic -printf '%P\n' > .gitignore
 git add --all
-git reset META-INF/ file_contexts.bin
-git commit -asm "Add $description" -S
-curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos"
+git commit -asm "Add $description" -S || exit 1
+curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
 sendTG "Pushing"
 git push ssh://git@github.com/$ORG/$repo HEAD:refs/heads/$branch ||
 
-(git update-ref -d HEAD ; git reset system/ vendor/ ;
+(sendTG "Pushing failed, splitting commits and trying";
+git update-ref -d HEAD ; git reset system/ vendor/ ;
 git checkout -b $branch ;
 git commit -asm "Add extras for ${description}" ;
 git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
@@ -118,5 +118,5 @@ git commit -asm "Add apps for ${description}" ;
 git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
 git add system/ ;
 git commit -asm "Add system for ${description}" ;
-git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;)
+git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;) || (sendTG "Pushing failed" && exit 1)
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
