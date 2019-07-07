@@ -86,11 +86,11 @@ sort allfiles.txt > all_files.txt
 rm allfiles.txt
 rm *.dat *.list *.br system.img vendor.img 2>/dev/null #remove all compressed files
 
-fingerprint=$(grep -oP "(?<=^ro.build.fingerprint=).*" -hs system/build.prop system/system/build.prop)
-[[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build.prop)
+fingerprint=$(grep -oP "(?<=^ro.*build.fingerprint=).*" -hs {system,system/system,vendor}/build.prop)
 brand=$(echo $fingerprint | cut -d / -f1  | tr '[:upper:]' '[:lower:]')
 codename=$(echo $fingerprint | cut -d / -f3 | cut -d : -f1  | tr '[:upper:]' '[:lower:]')
-description=$(grep -oP "(?<=^ro.build.description=).*" -hs system/build.prop system/system/build.prop)
+[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.*product.device=).*" -hs {system,system/system,vendor}/build.prop)
+description=$(grep -oP "(?<=^ro.*build.description=).*" -hs {system,system/system,vendor}/build.prop)
 branch=$(echo $description | tr ' ' '-')
 repo=$(echo $brand\_$codename\_dump)
 git init
