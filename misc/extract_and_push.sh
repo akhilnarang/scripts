@@ -87,6 +87,7 @@ rm allfiles.txt
 rm *.dat *.list *.br system.img vendor.img 2>/dev/null #remove all compressed files
 
 fingerprint=$(grep -oP "(?<=^ro.build.fingerprint=).*" -hs system/build.prop system/system/build.prop)
+[[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build.prop)
 brand=$(echo $fingerprint | cut -d / -f1  | tr '[:upper:]' '[:lower:]')
 codename=$(echo $fingerprint | cut -d / -f3 | cut -d : -f1  | tr '[:upper:]' '[:lower:]')
 description=$(grep -oP "(?<=^ro.build.description=).*" -hs system/build.prop system/system/build.prop)
