@@ -25,6 +25,10 @@ else
     fi
 
     cd ${UNZIP_DIR} || exit 1
+    files=$(ls)
+    if [[ -d "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]]; then
+        cd ${files}
+    fi
     files=$(ls *.zip)
     if [[ -f "${files}" ]] && [[ $(echo ${files} | wc -l) -eq 1 ]] && [[ "${files}" != "compatibility.zip" ]]; then
         unzip ${files}
