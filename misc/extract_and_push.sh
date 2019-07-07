@@ -19,9 +19,9 @@ if [[ "${EXTENSION}" == "tgz" ]]; then
     cd */images
 else
     if [[ -f "${FILE}" ]]; then
-        7z e ${FILE} -o${UNZIP_DIR}
+        7z x ${FILE} -o${UNZIP_DIR}
     else
-        7z e * -o${UNZIP_DIR}
+        7z x * -o${UNZIP_DIR}
     fi
 
     cd ${UNZIP_DIR} || exit 1
