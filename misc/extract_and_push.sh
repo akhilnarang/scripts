@@ -90,13 +90,14 @@ fingerprint=$(grep -oP "(?<=^ro.build.fingerprint=).*" -hs {system,system/system
 [[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build.prop)
 [[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.system.build.fingerprint=).*" -hs {system,system/system}/build.prop)
 brand=$(echo $fingerprint | cut -d / -f1  | tr '[:upper:]' '[:lower:]')
-codename=$(echo $fingerprint | cut -d / -f3 | cut -d : -f1  | tr '[:upper:]' '[:lower:]')
-[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.product.device=).*" -hs {system,system/system,vendor}/build.prop)
+codename=$(grep -oP "(?<=^ro.product.device=).*" -hs {system,system/system,vendor}/build.prop)
 [[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.vendor.product.device=).*" -hs vendor/build.prop)
 [[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.system.product.device=).*" -hs {system,system/system}/build.prop)
+[[ -z "${codename}" ]] && codename=$(echo $fingerprint | cut -d / -f3 | cut -d : -f1  | tr '[:upper:]' '[:lower:]')
 description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system,vendor}/build.prop)
 [[ -z "${description}" ]] && description=$(grep -oP "(?<=^ro.vendor.build.description=).*" -hs vendor/build.prop)
 [[ -z "${description}" ]] && description=$(grep -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build.prop)
+[[ -z "${description}" ]] && description="$brand $codename"
 branch=$(echo $description | tr ' ' '-')
 repo=$(echo $brand\_$codename\_dump)
 git init
