@@ -68,7 +68,7 @@ if [[ ! -d "${HOME}/extract-dtb" ]]; then
     cd -
 fi
 python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null # Extract boot
-python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null # Extract dtbo
+(python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo || python3 ~/extract-dtb/extract-dtb.py ./firmware-update/dtbo.img -o ./dtbo) > /dev/null # Extract dtbo
 echo 'boot extracted'
 for p in system vendor modem cust odm oem; do
         sudo cp -r $p\_ $p/ #copy images
