@@ -53,4 +53,4 @@ function install_hub {
     fi
 }
 
-install_hub
+[[ $(command -v jq) ]] && install_hub || echo "Please install jq"
