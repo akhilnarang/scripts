@@ -149,6 +149,7 @@ if [[ "$*" =~ "upload" ]]; then
     "TheLab")
         rsync -av --progress --delete "${ZIP_DIR}"/* /var/www/downloads.akhilnarang.me/kernel/${DEVICE}/Test/
     ;;
+    esac
     mirrorsync
     tg "Download ${ZIPNAME/\.zip/} from [here](${DOWNLOAD_BASE_URL}/${ZIPNAME})"
 fi
