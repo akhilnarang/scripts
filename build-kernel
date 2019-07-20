@@ -20,10 +20,10 @@ fi
 function tg() {
     case "${DEVICE}" in
         "whyred")
-            sendDerpWhyred "${@:?}"
+            sendKernelWhyred "${@:?}"
         ;;
         "beryllium")
-            sendDerpBeryllium "${@:?}"
+            sendKernelBeryllium "${@:?}"
         ;;
     esac
 }
@@ -78,7 +78,7 @@ if [[ ! -d "${ANYKERNEL}" ]]; then
 fi
 
 if [[ -z "${NAME}" ]]; then
-    export NAME="derp"
+    export NAME="Illusion"
 fi
 NAME="${NAME}-${DEVICE}-$(date +%Y%m%d-%H%M)"
 export NAME

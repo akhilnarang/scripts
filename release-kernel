@@ -18,40 +18,40 @@ source ~/scripts/functions
 function tg() {
     case "${DEVICE}" in
         "whyred")
-            sendDerpWhyred "${@:?}"
+            sendKernelWhyred "${@:?}"
         ;;
         "beryllium")
-            sendDerpBeryllium "${@:?}"
+            sendKernelBeryllium "${@:?}"
         ;;
     esac
 }
 
-SERVER_IP="178.63.101.252"
+SERVER="ssh.packet.resurrectionremix.com"
 DOWNLOAD_HOST="https://downloads.akhilnarang.me"
-#MIRROR_HOST="https://mirror.akhilnarang.me"
+MIRROR_HOST="https://mirror.akhilnarang.me"
 KERNEL_PATH="kernel/${DEVICE}"
-NAME=$(ssh "${SERVER_IP}" ls /var/www/downloads.akhilnarang.me/"${KERNEL_PATH}"/Test/*.zip | tail -1)
-DERPVERSION="${1:?}"
-TAG="Derp-v${DERPVERSION}"
+NAME=$(ssh "${SERVER}" ls mirror/"${KERNEL_PATH}"/Test/*.zip | tail -1)
+ILLUSIONVERSION="${1:?}"
+TAG="Illusion-v${ILLUSIONVERSION}"
 RELEASE_ZIPNAME="${TAG}.zip"
 CHANGELOG="${2}"
 
-tg "Releasing Derp v$DERPVERSION"
-tg "Derp v$DERPVERSION is up, grab it [here](${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})" # or [here](${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
-ssh "${SERVER_IP}" "cp -v ${NAME} /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd /var/www/downloads.akhilnarang.me/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum";
-#ssh "${SERVER_IP}" ./bin/mirrorsync
+tg "Releasing Illusion v$ILLUSIONVERSION"
+tg "Illusion v$ILLUSIONVERSION is up, grab it [here](${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
+ssh "${SERVER}" "cp -v ${NAME} mirror/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd mirror/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum";
+ssh "${SERVER}" ./bin/mirrorsync
 tg "Changelog:
 \`\`\`
 ${CHANGELOG}
 \`\`\`"
 
 cd "${KERNELDIR}/${DEVICE}" || exit 1
-git tag -as "${TAG}"
+git tag -as "${TAG}" -m "${CHANGELOG}"
 git p origin "${TAG}"
 cd /tmp || exit 1
 wget "${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
 wget "${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
 cd - || exit 1
-hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum"
+hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum" -m "${CHANGELOG}"
 rm "/tmp/${RELEASE_ZIPNAME}" "/tmp/${RELEASE_ZIPNAME}.md5sum"
-sendTG "${TAG} released!"
+tg "${TAG} released!"
