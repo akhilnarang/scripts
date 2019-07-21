@@ -35,7 +35,10 @@ def main():
             for j in i.strip().split(' '):
                 if '-' in j:
                     commitrange = j.split('-')
-                    changes = range(int(commitrange[0]), int(commitrange[1]))
+                    try:
+                        changes = range(int(commitrange[0]), int(commitrange[1]))
+                    except ValueError:
+                        continue
                     for change in changes:
                         commits += query_changes(str(change))
                 else:
