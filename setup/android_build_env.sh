@@ -12,6 +12,7 @@ LATEST_NINJA_VERSION="1.8.2"
 UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
+DEBIAN_10_PACKAGES="curl rsync"
 PACKAGES=""
 
 LSB_RELEASE="$(lsb_release -d)"
@@ -22,6 +23,8 @@ elif [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; the
     PACKAGES="${UBUNTU_16_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" ]]; then
     PACKAGES="${UBUNTU_18_PACKAGES}"
+elif [[ "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
+    PACKAGES="${DEBIAN_10_PACKAGES}"
 fi
 
 sudo apt update -y
@@ -32,8 +35,8 @@ libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzo
 patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
 unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
 
-# In Ubuntu 18.10, libncurses5 package is not available, so we need to hack our way by symlinking required library
-if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" ]]; then
+# In Ubuntu 18.10 and Debian Buster libncurses5 package is not available, so we need to hack our way by symlinking required library
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" || "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
   if [[ -e /lib/x86_64-linux-gnu/libncurses.so.6 && ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]]; then
     sudo ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
   fi
