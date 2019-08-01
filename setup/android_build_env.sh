@@ -15,7 +15,7 @@ UBUNTU_18_PACKAGES="curl"
 DEBIAN_10_PACKAGES="curl rsync"
 PACKAGES=""
 
-LSB_RELEASE="$(lsb_release -d)"
+LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
 if [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
     PACKAGES="${UBUNTU_14_PACKAGES}"
