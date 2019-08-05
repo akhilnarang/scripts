@@ -53,7 +53,7 @@ if [[ "$(hostname)" == "Illusion" ]]; then
 	~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
 else
 	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OUT/A* akhil@illusion.aosip.dev:/var/www/html/
-	~/api/generate_json.py $OUT/A*.zip /tmp/${DEVICE}-${AOSIP_BUILDTYPE}.json
+	~/api/generate_json.py $OUT/A*.zip > /tmp/${DEVICE}-${AOSIP_BUILDTYPE}.json
 	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/${DEVICE}-${AOSIP_BUILDTYPE}.json akhil@illusion.aosip.dev:/var/www/html/
 fi
 case $AOSIP_BUILDTYPE in
