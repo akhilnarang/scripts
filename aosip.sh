@@ -47,26 +47,20 @@ ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}";
 [[ $QUIET == "no" ]] && [[ $AOSIP_BUILDTYPE != "Official" ]] && [[ $AOSIP_BUILDTYPE != "Beta" ]] && sendAOSiP "$(./jenkins/message_testers.py ${DEVICE})";
-cp -v $OUT/A* /var/www/html/
+url="https://illusion.aosip.dev/$ZIP"
+if [[ "$(hostname)" == "Illusion" ]]; then
+	cp -v $OUT/A* /var/www/html/
+	~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
+else
+	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $OUT/A* akhil@illusion.aosip.dev:/var/www/html/
+	~/api/generate_json.py $OUT/A*.zip /tmp/${DEVICE}-${AOSIP_BUILDTYPE}.json
+	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/${DEVICE}-${AOSIP_BUILDTYPE}.json akhil@illusion.aosip.dev:/var/www/html/
+fi
 case $AOSIP_BUILDTYPE in
 "Official"|"Beta")
-	if [[ "$(hostname)" == "Illusion" ]]; then
-		url="https://illusion.aosip.dev/$ZIP"
-	else
-		url="$(hostname)/$ZIP"
-	fi
 	curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 ;;
 *)
-	~/api/generate_json.py $OUT/A*.zip > /var/www/html/${DEVICE}-${AOSIP_BUILDTYPE}.json
-	if [[ "$(hostname)" != "Illusion" ]]; then
-		for f in ${DEVICE}-${AOSIP_BUILDTYPE}.json $ZIP; do
-			scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/www/html/$f akhil@illusion.aosip.dev:/var/www/html/
-		done
-		url="https://$(hostname)/$ZIP"
-		[[ $QUIET == "no" ]] && sendAOSiP $url
-	fi
-	url="https://illusion.aosip.dev/$ZIP"
 	[[ $QUIET == "no" ]] && sendAOSiP $url
 	[[ $QUIET == "no" ]] && [[ -n "$REPOPICK_LIST" ]] && sendAOSiP $(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")
 ;;
