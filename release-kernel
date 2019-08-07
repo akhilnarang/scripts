@@ -52,6 +52,6 @@ cd /tmp || exit 1
 wget "${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}"
 wget "${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}.md5sum"
 cd - || exit 1
-hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum" -m "${CHANGELOG}"
+hub release create "${TAG}" -a "/tmp/${RELEASE_ZIPNAME}" -a "/tmp/${RELEASE_ZIPNAME}.md5sum" -m "Illusion v${1} release"
 rm "/tmp/${RELEASE_ZIPNAME}" "/tmp/${RELEASE_ZIPNAME}.md5sum"
 tg "${TAG} released!"
