@@ -29,8 +29,6 @@ if ! breakfast "${DEVICE}"; then
     exit 1
 fi
 repopick_stuff
-export USE_CCACHE=1
-ccache -M 200G
 mka "${CLOBBER:?}"
 rm -rfv "${OUT}/{RR*,system,vendor}"
 sendTG "Starting build for [$DEVICE]($BUILD_URL) on $NODE_NAME"
