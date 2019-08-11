@@ -14,7 +14,14 @@ FILE=${URL##*/}
 EXTENSION=${URL##*.}
 UNZIP_DIR=${FILE/.$EXTENSION/}
 
-[[ -f "${FILE}" ]] || FILE="$(ls *)"
+if [[ ! -f "${FILE}" ]]; then
+    if [[ "$(ls | wc -l)" != 1 ]]; then
+        sendTG "Can't seem to find downloaded file!"
+        exit 1
+    else
+        FILE="$(ls *)"
+    fi
+fi
 
 PARTITIONS="system vendor cust odm oem factory product modem xrom systemex"
 
