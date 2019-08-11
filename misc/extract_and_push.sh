@@ -14,6 +14,8 @@ FILE=${URL##*/}
 EXTENSION=${URL##*.}
 UNZIP_DIR=${FILE/.$EXTENSION/}
 
+[[ -f "${FILE}" ]] || FILE="$(ls *)"
+
 PARTITIONS="system vendor cust odm oem factory product modem xrom systemex"
 
  if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
