@@ -43,7 +43,7 @@ else
     git -C ~/Firmware_extractor pl --recurse-submodules
 fi
 
-bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || ( sendTG "Extraction failed!" && exit 1 )
+bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || ( sendTG "Extraction failed!"; exit 1 )
 
 python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
 mkdir bootdts dtbodts
