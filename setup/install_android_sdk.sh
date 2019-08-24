@@ -26,5 +26,8 @@ printf '\nexport ANDROID_HOME=~/Android/Sdk' >> ~/.bashrc
 source ~/.bashrc
 yes | "${ANDROID_HOME}"/tools/bin/sdkmanager --licenses
 
-source "${CUR_DIR}"/setup/setup_android_sdk_packages.bash "${CUR_DIR}/setup"
+while read -r p; do
+    "${ANDROID_HOME}"/tools/bin/sdkmanager "${p}"
+done < "${CUR_DIR}/setup"/android-sdk-minimal.txt
+
 cd "${CUR_DIR}"
