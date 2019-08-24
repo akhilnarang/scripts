@@ -26,25 +26,32 @@ fi
 PARTITIONS="system vendor cust odm oem factory product modem xrom systemex"
 
  if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
-    git clone https://github.com/cyxx/extract_android_ota_payload ~/extract_android_ota_payload
+    git clone -q https://github.com/cyxx/extract_android_ota_payload ~/extract_android_ota_payload
 else
     git -C ~/extract_android_ota_payload pl
 fi
 
 if [[ ! -d "${HOME}/extract-dtb" ]]; then
-    git clone https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
+    git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
 else
     git -C ~/extract-dtb pl
 fi
 
 if [[ ! -d "${HOME}/Firmware_extractor" ]]; then
-    git clone https://github.com/AndroidDumps/Firmware_extractor --recurse-submodules ~/Firmware_extractor
+    git clone -q https://github.com/AndroidDumps/Firmware_extractor --recurse-submodules ~/Firmware_extractor
 else
     git -C ~/Firmware_extractor pl --recurse-submodules
 fi
 
+if [[ ! -d "${HOME}/mkbootimg_tools" ]]; then
+    git clone -q https://github.com/xiaolu/mkbootimg_tools ~/mkbootimg_tools
+else
+    git -C ~/mkbootimg_tools pl
+fi
+
 bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || ( sendTG "Extraction failed!"; exit 1 )
 
+~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
 python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
 mkdir bootdts dtbodts
 find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null
