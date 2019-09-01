@@ -75,8 +75,7 @@ function run_virtualenv() {
 
 # Repo sync with various flags I'm lazy to type each time
 function syncc() {
-    time repo sync --force-broken --force-sync --no-clone-bundle \
-             --current-branch --no-tags "$@"
+    time repo sync --force-sync --no-clone-bundle --current-branch --no-tags "$@"
 }
 
 # Some git aliases for an easier workflow
