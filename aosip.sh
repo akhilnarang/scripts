@@ -17,8 +17,8 @@ export PATH=~/bin:$PATH
 [[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $(hostname), check progress <a href='${BUILD_URL}'>here</a>!"
 rm -fv .repo/local_manifests/*
 if [[ "${SYNC}" == "yes" ]]; then
-	repo init -u https://github.com/AOSiP/platform_manifest.git -b pie --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
-	repo forall -j$(nproc) -c "git reset --hard m/pie && git clean -fdx"
+	repo init -u https://github.com/AOSiP/platform_manifest.git -b "${BRANCH}" --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify;
+	repo forall -j$(nproc) -c "git reset --hard m/${BRANCH} && git clean -fdx"
 	time repo sync -j$(nproc) --current-branch --no-tags --no-clone-bundle --force-sync
 fi
 set +e
@@ -41,7 +41,7 @@ eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
 ccache -M 500G
-time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[Build failed for ${DEVICE}](${BUILD_URL})")
+time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} build failed for ${DEVICE}](${BUILD_URL})")
 set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
