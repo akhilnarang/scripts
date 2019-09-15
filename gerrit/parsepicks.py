@@ -30,7 +30,7 @@ def main():
         if i.strip().split(' ')[0] == '-t':
             for j in i.split(' '):
                 if j not in ('', '-t', 'sysserv-pie'):
-                    commits += query_changes(f'status:open topic:{j}')
+                    commits += query_changes('status:open topic:{}'.format(j))
         else:
             for j in i.strip().split(' '):
                 if '-' in j:
@@ -44,7 +44,7 @@ def main():
                 else:
                     commits += query_changes(str(j))
 
-    print(f"{DOGBIN}/{json.loads(requests.post(DOGBIN_API, commits).content.decode())['key']}")
+    print("{}/{}".format(DOGBIN, json.loads(requests.post(DOGBIN_API, commits).content.decode())['key']))
 
 if __name__ == '__main__':
     main()
