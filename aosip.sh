@@ -21,7 +21,7 @@ if [[ "${SYNC}" == "yes" ]]; then
 	repo forall -j$(nproc) -c "git reset --hard m/${BRANCH} && git clean -fdx"
 	time repo sync -j$(nproc) --current-branch --no-tags --no-clone-bundle --force-sync
 	if [[ -n "${LOCAL_MANIFEST}" ]]; then
-		curl --create-dirs -s -L "${LOCAL_MANIFEST}" -O .repo/local_manifests/aosip_manifest.xml
+		curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
 	fi
 fi
 set +e
