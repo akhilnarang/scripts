@@ -43,6 +43,7 @@ set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
 export CCACHE_DIR="${HOME}/.ccache"
+export CCACHE_EXEC="$(which ccache)"
 ccache -M 500G
 time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} build failed for ${DEVICE}](${BUILD_URL})")
 set +e;
