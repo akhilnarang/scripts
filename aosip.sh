@@ -50,7 +50,7 @@ set +e;
 ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}";
-[[ $QUIET == "no" ]] && [[ $AOSIP_BUILDTYPE != "Official" ]] && [[ $AOSIP_BUILDTYPE != "Beta" ]] && sendAOSiP "$(./jenkins/message_testers.py ${DEVICE})";
+[[ $QUIET == "no" ]] && [[ $AOSIP_BUILDTYPE != "Official" ]] && [[ $AOSIP_BUILDTYPE != "Beta" ]] && [[ $AOSIP_BUILDTYPE != "Alpha" ]] && sendAOSiP "$(./jenkins/message_testers.py ${DEVICE})";
 url="https://illusion.aosip.dev/$ZIP"
 if [[ "$(hostname)" == "Illusion" ]]; then
 	cp -v $OUT/A* /var/www/html/
@@ -61,7 +61,7 @@ else
 	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/${DEVICE}-${AOSIP_BUILDTYPE}.json akhil@illusion.aosip.dev:/var/www/html/
 fi
 case $AOSIP_BUILDTYPE in
-"Official"|"Beta")
+"Official"|"Beta"|"Alpha")
 	curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
 ;;
 *)
