@@ -19,8 +19,7 @@ GERRIT_PROJECT_NAMES="$(ssh -p${GERRIT_PORT} ${GERRIT_HOST} gerrit ls-projects)"
 SUBMIT_TYPE="REBASE_IF_NECESSARY"
 
 # Do it!
-for PROJECT_NAME in ${GERRIT_PROJECT_NAMES}
-do
+for PROJECT_NAME in ${GERRIT_PROJECT_NAMES}; do
     echo "Changing ${PROJECT_NAME} submit type to ${SUBMIT_TYPE}"
-    ssh -p${GERRIT_PORT} ${GERRIT_HOST} gerrit set-project ${PROJECT_NAME} -t ${SUBMIT_TYPE}
+    ssh -p${GERRIT_PORT} ${GERRIT_HOST} gerrit set-project "${PROJECT_NAME}" -t ${SUBMIT_TYPE}
 done
