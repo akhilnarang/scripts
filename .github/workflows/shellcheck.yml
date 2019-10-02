@@ -1,0 +1,10 @@
+on: [push, pull_request]
+name: ShellCheck scripts
+jobs:
+  shellCheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run shellcheck.
+      run: while read -r script; do shellcheck --exclude=SC1090,SC1091 $script; done < files
