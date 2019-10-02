@@ -16,28 +16,26 @@ echo "
 </tr>
 </thead>
 <tbody>
-" >> ${file}
+" >>${file}
 count=1
-for f in $(ls)
-do
-  if [ -f "${f}" ]
-  then
-  filename=${f}
-  filesize=$(du -sh ${f} | awk '{print $1}')
-  filemd5=$(md5sum ${f} | cut -d ' ' -f 1)
-  echo "
+for f in ./*; do
+  if [ -f "${f}" ]; then
+    filename=${f}
+    filesize=$(du -sh "${f}" | awk '{print $1}')
+    filemd5=$(md5sum "${f}" | cut -d ' ' -f 1)
+    echo "
   <tr>
   <td>${count}</td>
   <td><a href=\"${filename}\">${filename}</a>
   <td>${filemd5}</td>
   <td>${filesize}</td>
   </tr>
-  " >> ${file}
-  count=$(($count + 1))
+  " >>${file}
+    count=$(("$count" + 1))
   fi
 done
 echo "
 </tbody>
 </table>
-" >> ${file}
+" >>${file}
 echo "Done :)"
