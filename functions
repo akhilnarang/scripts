@@ -13,22 +13,22 @@ source ~/scripts/aliases
 
 # Builds a package from the Arch User Repository
 function aur() {
-	git clone https://aur.archlinux.org/"${1}"
-	cd "${1}" || return
-	makepkg -si "${2}"
-	cd - || return
-	rm -rf "${1}"
+    git clone https://aur.archlinux.org/"${1}"
+    cd "${1}" || return
+    makepkg -si "${2}"
+    cd - || return
+    rm -rf "${1}"
 }
 
 # Repopicks a | delimited set of commits
 function repopick_stuff() {
-	export oldifs=$IFS
-	export IFS="|"
-	for f in ${REPOPICK_LIST}; do
-	    echo "Picking: $f"
-	    eval repopick "${f}"
-	done
-	export IFS=$oldifs
+    export oldifs=$IFS
+    export IFS="|"
+    for f in ${REPOPICK_LIST}; do
+        echo "Picking: $f"
+        eval repopick "${f}"
+    done
+    export IFS=$oldifs
 }
 
 # Creates a virtualenv if required and activates it
@@ -115,7 +115,8 @@ function gitalias() {
 
 # Function to display uptime of a system. All credits to the original author.
 function upinfo() {
-    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \\t ";uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
+    echo -ne "${green}$(hostname) ${red}uptime is ${cyan} \\t "
+    uptime | awk /'up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11}'
 }
 
 # Function run on login to display some stuff and set my custom PS1
@@ -142,7 +143,8 @@ function onLogin() {
     clear
     HOST=$(hostname)
     if [[ ${#HOST} -lt 14 ]]; then
-        echo -e "${lightgray}";figlet -c "$(hostname)"
+        echo -e "${lightgray}"
+        figlet -c "$(hostname)"
     fi
     echo ""
     echo -ne "${red}Today is:\\t\\t${cyan} $(date)"
@@ -165,26 +167,32 @@ function sendTG() {
     shift
     msg=${*:?}
     case "${bot}" in
-        "ts") BOT_API_KEY="$(cat ~/.tskey)" ;;
-        "kronic") BOT_API_KEY="$(cat ~/.kronickey)" ;;
-        "rr") BOT_API_KEY="$(cat ~/.rrkey)" ;;
-        *) echo -e "Invalid bot, must be one of ts|kronic|rr!"; return ;;
+    "ts") BOT_API_KEY="$(cat ~/.tskey)" ;;
+    "kronic") BOT_API_KEY="$(cat ~/.kronickey)" ;;
+    "rr") BOT_API_KEY="$(cat ~/.rrkey)" ;;
+    *)
+        echo -e "Invalid bot, must be one of ts|kronic|rr!"
+        return
+        ;;
     esac
 
     case "${chat}" in
-        "me") CHAT_ID="92027269" ;;
-        "kernelwhyred") CHAT_ID="-1001313293729" ;;
-        "kernelberyllium") CHAT_ID="-1001297323361" ;;
-        "aosip") CHAT_ID="-1001055786180" ;;
-        *) CHAT_ID="${chat}" ;;
+    "me") CHAT_ID="92027269" ;;
+    "kernelwhyred") CHAT_ID="-1001313293729" ;;
+    "kernelberyllium") CHAT_ID="-1001297323361" ;;
+    "aosip") CHAT_ID="-1001055786180" ;;
+    *) CHAT_ID="${chat}" ;;
     esac
 
     case "${parse_mode}" in
-        "md") parse_mode="Markdown" ;;
-        "html") parse_mode="HTML" ;;
-        *) echo -e "Invalid parse mode, must be one of Markdown|HTML!"; return ;;
+    "md") parse_mode="Markdown" ;;
+    "html") parse_mode="HTML" ;;
+    *)
+        echo -e "Invalid parse mode, must be one of Markdown|HTML!"
+        return
+        ;;
     esac
-    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1> /dev/null
+    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null
     echo
 }
 
@@ -208,10 +216,11 @@ function tgm() {
     sendTG me "${@}"
 }
 
-
 # Download a file given the Google Drive URL
-function gdrivedl {
-    local CONFIRM FILE_ID URL; URL="${1}"; shift
+function gdrivedl() {
+    local CONFIRM FILE_ID URL
+    URL="${1}"
+    shift
     if [[ "${URL:?}" =~ folders ]]; then
         FILE_ID="$(echo "${URL}" | sed -r -e 's/https.*folders\/(.*)/\1/' -e 's/(.*)\?usp=sharing/\1/')"
     else
@@ -223,18 +232,20 @@ function gdrivedl {
 }
 
 # Upload to GDrive
-function gdriveul {
+function gdriveul() {
     local FILE MD5 ZIP_SIZE GDRIVE_UPLOAD_URL GDRIVE_UPLOAD_ID UPLOAD_INFO PARENT
     FILE="${1}"
-    [ -f "${FILE:?}" ] || { echo "Specified file doesn't exist"; return ; }
+    [ -f "${FILE:?}" ] || {
+        echo "Specified file doesn't exist"
+        return
+    }
     PARENT="${2}"
     if [[ -n "${PARENT}" ]]; then
         PARENT="-p ${PARENT}"
     fi
     ZIP_SIZE="$(du -h "${FILE}" | awk '{print $1}')"
     MD5="$(md5sum "${FILE}" | awk '{print $1}')"
-    while [ -z "${GDRIVE_UPLOAD_URL}" ]
-    do
+    while [ -z "${GDRIVE_UPLOAD_URL}" ]; do
         GDRIVE_UPLOAD_URL="$(eval gdrive upload --share "${FILE}" "${PARENT}" | awk '/https/ {print $7}')"
     done
     GDRIVE_UPLOAD_ID="$(echo "${GDRIVE_UPLOAD_URL}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
