@@ -60,7 +60,7 @@ find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {
 
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
-        mkdir "$p" || rm -rf "$p"/*
+        mkdir "$p" || rm -rf "${p:?}"/*
         7z x "$p".img -y -o"$p"/
         rm "$p".img
     fi
@@ -78,8 +78,8 @@ fi
 sort -u -o ./board-info.txt ./board-info.txt
 
 # Fix permissions
-chown $(whoami) * -R
-chmod -R u+rwX *
+chown "$(whoami)" ./* -R
+chmod -R u+rwX ./*
 
 # Generate all_files.txt
 find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
@@ -121,47 +121,47 @@ description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system
 branch=$(echo "$description" | tr ' ' '-')
 repo=$(echo "$brand"\_"$codename"\_dump | tr '[:upper:]' '[:lower:]')
 
-printf "\nflavor: $flavor\nrelease: $release\nid: $id\nincremental: $incremental\ntags: $tags\nfingerprint: $fingerprint\nbrand: $brand\ncodename: $codename\ndescription: $description\nbranch: $branch\nrepo: $repo\n"
+printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo"
 
 git init
 git config user.name "Akhil's Lazy Buildbot"
 git config user.email "jenkins@akhilnarang.me"
 git config user.signingKey "76954A7A24F0F2E30B3DB2354D5819B432B2123C"
-git checkout -b $branch
-find -size +97M -printf '%P\n' -o -name *sensetime* -printf '%P\n' -o -name *.lic -printf '%P\n' > .gitignore
+git checkout -b "$branch"
+find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
 git add --all
 git commit -asm "Add $description" -S || exit 1
 curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
 sendTG "Pushing"
-git push ssh://git@github.com/$ORG/$repo HEAD:refs/heads/$branch ||
+git push ssh://git@github.com/$ORG/"$repo" HEAD:refs/heads/"$branch" ||
 
 (sendTG "Pushing failed, splitting commits and trying";
 git update-ref -d HEAD ; git reset system/ vendor/ ;
-git checkout -b $branch ;
+git checkout -b "$branch" ;
 git commit -asm "Add extras for ${description}" ;
-git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
+git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch" ;
 git add vendor/ ;
 git commit -asm "Add vendor for ${description}" ;
-git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
+git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch" ;
 git add system/system/app/ system/system/priv-app/ || git add system/app/ system/priv-app/ ;
 git commit -asm "Add apps for ${description}" ;
-git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;
+git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch" ;
 git add system/ ;
 git commit -asm "Add system for ${description}" ;
-git push ssh://git@github.com/$ORG/${repo,,}.git $branch ;) || (sendTG "Pushing failed" && exit 1)
+git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch" ;) || (sendTG "Pushing failed" && exit 1)
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
 
 commit_head=$(git log -1 --format=%H)
 commit_link="https://github.com/$ORG/$repo/commit/$commit_head"
 echo -e "Sending telegram notification"
 (
-printf "<b>Brand: $brand</b>"
-printf "\n<b>Device: $codename</b>"
-printf "\n<b>Version:</b> $release"
-printf "\n<b>Fingerprint:</b> $fingerprint"
+printf "<b>Brand: %s</b>" "$brand"
+printf "\n<b>Device: %s</b>" "$codename"
+printf "\n<b>Version:</b> %s" "$release"
+printf "\n<b>Fingerprint:</b> %s" "$fingerprint"
 printf "\n<b>GitHub:</b>"
-printf "\n<a href=\"$commit_link\">Commit</a>"
-printf "\n<a href=\"https://github.com/$ORG/$repo/tree/$branch/\">$codename</a>"
+printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
+printf "\n<a href=\"https://github.com/%s/%s/tree/%s/\">$codename</a>" "$ORG" "$repo" "$branch"
 ) >> tg.html
 TEXT=$(cat tg.html)
 curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" > /dev/null
