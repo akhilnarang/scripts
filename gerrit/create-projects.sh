@@ -22,8 +22,7 @@ GERRIT_PROJECT_PREFIX="AOSIP/"
 GERRIT_PROJECT_NAMES="$(grep 'aosip' ~/nougat-mr2/.repo/manifests/snippets/aosip.xml | awk '{print $3}' | awk -F'"' '{print $2}' | uniq)"
 
 # Push everything!
-for PROJECT_NAME in ${GERRIT_PROJECT_NAMES}
-do
+for PROJECT_NAME in ${GERRIT_PROJECT_NAMES}; do
     echo "Creating ${GERRIT_PROJECT_PREFIX}${PROJECT_NAME}"
-    ssh -p${GERRIT_PORT} ${GERRIT_HOST} gerrit create-project ${GERRIT_PROJECT_PREFIX}${PROJECT_NAME}
+    ssh -p${GERRIT_PORT} ${GERRIT_HOST} gerrit create-project ${GERRIT_PROJECT_PREFIX}"${PROJECT_NAME}"
 done
