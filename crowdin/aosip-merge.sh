@@ -7,6 +7,7 @@
 GERRIT_HOST="review.aosiprom.com"
 QUERY="topic:translations status:open"
 PORT="29418"
+# shellcheck disable=SC2029
 COMMITS=$(ssh -p${PORT} ${GERRIT_HOST} gerrit query "${QUERY}" | grep number |
 	cut -d: -f2)
 for COMMIT in ${COMMITS}; do
