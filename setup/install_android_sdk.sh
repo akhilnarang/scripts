@@ -30,4 +30,4 @@ while read -r p; do
     "${ANDROID_HOME}"/tools/bin/sdkmanager "${p}"
 done < "${CUR_DIR}/setup"/android-sdk-minimal.txt
 
-cd "${CUR_DIR}"
+cd "${CUR_DIR}" || exit
