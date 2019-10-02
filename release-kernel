@@ -11,17 +11,17 @@
 
 source ~/scripts/functions
 
-{ [[ "$(pwd)" =~ "whyred" ]] || [[ "$*" =~ "whyred" ]] ;} && DEVICE=whyred
-[[ -z "${DEVICE}" ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]] ;} && DEVICE=beryllium
+{ [[ "$(pwd)" =~ "whyred" ]] || [[ "$*" =~ "whyred" ]]; } && DEVICE=whyred
+[[ -z "${DEVICE}" ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]]; } && DEVICE=beryllium
 [[ -z "${DEVICE}" ]] && DEVICE=beryllium
 
 function tg() {
     case "${DEVICE}" in
-        "whyred")
-            sendKernelWhyred "${@:?}"
+    "whyred")
+        sendKernelWhyred "${@:?}"
         ;;
-        "beryllium")
-            sendKernelBeryllium "${@:?}"
+    "beryllium")
+        sendKernelBeryllium "${@:?}"
         ;;
     esac
 }
@@ -38,7 +38,7 @@ CHANGELOG="${2}"
 
 tg "Releasing Illusion v$ILLUSIONVERSION"
 tg "Illusion v$ILLUSIONVERSION is up, grab it [here](${DOWNLOAD_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}) or [here](${MIRROR_HOST}/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME})"
-ssh "${SERVER}" "cp -v ${NAME} mirror/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd mirror/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum";
+ssh "${SERVER}" "cp -v ${NAME} mirror/${KERNEL_PATH}/Stable/${RELEASE_ZIPNAME}; cd mirror/${KERNEL_PATH}/Stable; md5sum ${RELEASE_ZIPNAME} > ${RELEASE_ZIPNAME}.md5sum"
 ssh "${SERVER}" ./bin/mirrorsync
 tg "Changelog:
 \`\`\`
