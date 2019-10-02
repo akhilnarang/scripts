@@ -12,15 +12,15 @@ fi
 export AOSP-CAF_SOURCE_DIR="${HOME}/caf"
 export DIR=$PWD
 
-cd ${AOSP-CAF_SOURCE_DIR}
+cd "${AOSP-CAF_SOURCE_DIR}" || exit 1
 
 PROJECTS="$(grep aosp-caf .repo/manifests/manifests/caf.xml | awk '{print $3}' | awk -F'"' '{print $2}')"
 
 
 for project in ${PROJECTS}; do
-cd $project
-git push $(git remote -v | grep aosp-caf | head -1 | awk '{print $2}' | sed -e 's/https:\/\//ssh:\/\/git@/') HEAD:n-mr1
-cd -
+cd "$project" || continue
+git push "$(git remote -v | grep aosp-caf | head -1 | awk '{print $2}' | sed -e 's/https:\/\//ssh:\/\/git@/')" HEAD:n-mr1
+cd - || exit 1
 done
 
-cd ${DIR}
+cd "${DIR}" || exit 1
