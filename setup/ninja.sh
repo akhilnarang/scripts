@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cd /tmp || exit 1
-git clone git://github.com/akhilnarang/ninja.git
+git clone git://github.com/msfjarvis/ninja.git
 cd ninja || exit 1
 ./configure.py --bootstrap
 sudo install ./ninja /usr/local/bin/ninja
