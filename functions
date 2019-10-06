@@ -178,7 +178,6 @@ function sendTG() {
 
     case "${chat}" in
     "me") CHAT_ID="92027269" ;;
-    "kernelwhyred") CHAT_ID="-1001313293729" ;;
     "kernelberyllium") CHAT_ID="-1001297323361" ;;
     "aosip") CHAT_ID="-1001055786180" ;;
     *) CHAT_ID="${chat}" ;;
@@ -194,11 +193,6 @@ function sendTG() {
     esac
     curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null
     echo
-}
-
-# Sends a message to my whyred kernel chat
-function sendKernelWhyred() {
-    sendTG kernelwhyred "${@}"
 }
 
 # Sends a message to my beryllium kernel chat

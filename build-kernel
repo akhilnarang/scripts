@@ -13,15 +13,11 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1
 fi
 
-{ [[ "$(pwd)" =~ "whyred" ]] || [[ "$*" =~ "whyred" ]]; } && DEVICE=whyred
 [[ -z "${DEVICE}" ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]]; } && DEVICE=beryllium
 [[ -z "${DEVICE}" ]] && DEVICE=beryllium
 
 function tg() {
     case "${DEVICE}" in
-    "whyred")
-        sendKernelWhyred "${@:?}"
-        ;;
     "beryllium")
         sendKernelBeryllium "${@:?}"
         ;;

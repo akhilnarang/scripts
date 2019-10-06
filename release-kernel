@@ -11,15 +11,11 @@
 
 source ~/scripts/functions
 
-{ [[ "$(pwd)" =~ "whyred" ]] || [[ "$*" =~ "whyred" ]]; } && DEVICE=whyred
 [[ -z "${DEVICE}" ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]]; } && DEVICE=beryllium
 [[ -z "${DEVICE}" ]] && DEVICE=beryllium
 
 function tg() {
     case "${DEVICE}" in
-    "whyred")
-        sendKernelWhyred "${@:?}"
-        ;;
     "beryllium")
         sendKernelBeryllium "${@:?}"
         ;;
