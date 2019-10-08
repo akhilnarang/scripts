@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 AOSIP_PATH=$PWD
-TAG="pie-gsi"
-SRC="pie"
+TAG="android-10.0.0_r${1:?}"
+SRC="ten"
 
 do_not_merge="vendor/aosip manifest updater packages/apps/OmniSwitch packages/apps/OmniStyle \
 packages/apps/OwlsNest external/google packages/apps/Launcher3 hardware/qcom/power \
@@ -20,11 +20,10 @@ vendor/qcom/opensource/dataservices vendor/qcom/opensource/interfaces vendor/qco
 AOSP="https://android.googlesource.com"
 
 for filess in failed success notaosp; do
-    rm $filess 2> /dev/null
+    rm $filess 2>/dev/null
     touch $filess
 done
 
-. build/envsetup.sh || exit 1
 repo sync --detach --quiet
 
 # AOSiP manifest is setup with repo path first, then repo name, so the path attribute is after 2 spaces, and the path itself within "" in it
@@ -40,33 +39,30 @@ while read -r repos; do
         if [[ "$repos" == "build/make" ]]; then
             repos="build"
         fi
-        git fetch aosip $SRC
         git branch -D $SRC
-        git checkout -b $SRC aosip/$SRC
-        git remote rm aosp 2> /dev/null
+        git checkout -b $SRC m/ten
+        git remote rm aosp 2>/dev/null
         git remote add aosp "${AOSP}/platform/$repos"
-        if ! git fetch aosp "${TAG}"; then
-            echo "$repos" >> "${AOSIP_PATH}"/notaosp
+        if ! git fetch aosp --quiet --tags; then
+            echo "$repos" >>"${AOSIP_PATH}"/notaosp
         else
-            if ! git merge aosp/"${TAG}" --no-edit; then
-                echo "$repos" >> "${AOSIP_PATH}"/failed
+            if ! git rebase "${TAG}"; then
+                echo "$repos" >>"${AOSIP_PATH}"/failed
                 echo "$red $repos failed :( $end"
             else
-                if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/${SRC})" ]]; then
-                    echo "$repos" >> "${AOSIP_PATH}"/success
-                    git commit --signoff --date="$(date)" --amend --no-edit
-                    echo "$grn $repos succeeded $end"
-                    echo "Pushing!"
-                    #gerrit; git push gerrit $SRC
-                else
-                    echo "$repos - unchanged"
-                fi
+                echo "$repos" >>"${AOSIP_PATH}"/success
+                echo "$grn $repos succeeded $end"
+                echo "Pushing!"
+                r=$(git rv | grep github.com.AOSiP | awk '{print $2}' | head -1 | sed 's/AOSiP/kronic-staging/')
+                n=$(git rv | grep github.com.AOSiP | awk '{print $2}' | head -1 | awk -F'/' '{print $NF}')
+                curl -s -X POST -H "Authorization: token ${GITHUB_API_TOKEN}" -d '{ "name": "'"$n"'" }' "https://api.github.com/orgs/kronic-staging/repos"
+                git push "$r" HEAD:refs/heads/"$TAG-$SRC"
             fi
         fi
         echo -e ""
         cd "${AOSIP_PATH}" || exit 1
     fi
-done < <(grep 'remote="aosip"' "${AOSIP_PATH}"/.repo/manifests/snippets/aosip.xml  | awk '{print $2}' | awk -F '"' '{print $2}' | grep -v caf)
+done < <(grep 'remote="aosip"' "${AOSIP_PATH}"/.repo/manifests/snippets/aosip.xml | awk '{print $2}' | awk -F '"' '{print $2}' | grep -v caf)
 
 FAILED=$(cat "$AOSIP_PATH"/failed)
 export FAILED

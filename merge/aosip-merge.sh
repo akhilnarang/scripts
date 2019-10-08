@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 AOSIP_PATH=$PWD
-TAG="android-9.0.0_r${1:?}"
-SRC="pie"
+TAG="android-10.0.0_r${1:?}"
+SRC="ten"
 
 do_not_merge="vendor/aosip manifest updater packages/apps/OmniSwitch packages/apps/OmniStyle \
 packages/apps/OwlsNest external/google packages/apps/Launcher3 hardware/qcom/power \

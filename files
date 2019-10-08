@@ -9,8 +9,8 @@ gerrit/create-projects.sh
 gerrit/push-all-repos.sh
 github/change-default-branch.sh
 github/create-project.sh
-merge/aosip-merge-aosp.sh
-merge/aosip-pie-gsi.sh
+merge/aosip-merge.sh
+merge/aosip-rebase.sh
 merge/aospcaf.sh
 misc/extract_and_push.sh
 misc/ssh-copy-id-github.sh
