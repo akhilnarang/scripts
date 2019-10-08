@@ -21,7 +21,7 @@ if [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
     PACKAGES="${UBUNTU_14_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
     PACKAGES="${UBUNTU_16_PACKAGES}"
-elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" ]]; then
+elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" || "${LSB_RELEASE}" =~ "Deepin" ]]; then
     PACKAGES="${UBUNTU_18_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
