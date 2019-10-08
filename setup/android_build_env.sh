@@ -7,8 +7,8 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.2.1"
-LATEST_CCACHE_VERSION="3.4.2+226_gc4613eb"
-LATEST_NINJA_VERSION="1.8.2"
+LATEST_CCACHE_VERSION="3.7.1+246_gd8e2ab9"
+LATEST_NINJA_VERSION="1.9.0.git"
 UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
