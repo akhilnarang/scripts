@@ -40,9 +40,8 @@ while read -r repos; do
         if [[ "$repos" == "build/make" ]]; then
             repos="build"
         fi
-        git fetch aosip $SRC
         git branch -D $SRC
-        git checkout -b $SRC aosip/$SRC
+        git checkout -b $SRC m/$SRC
         git remote rm aosp 2>/dev/null
         git remote add aosp "${AOSP}/platform/$repos"
         if ! git fetch aosp --quiet --tags; then

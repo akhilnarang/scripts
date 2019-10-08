@@ -40,7 +40,7 @@ while read -r repos; do
             repos="build"
         fi
         git branch -D $SRC
-        git checkout -b $SRC m/ten
+        git checkout -b $SRC m/$SRC
         git remote rm aosp 2>/dev/null
         git remote add aosp "${AOSP}/platform/$repos"
         if ! git fetch aosp --quiet --tags; then
