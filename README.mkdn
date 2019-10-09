@@ -32,6 +32,8 @@ misc -> stuff.
 
 push -> scripts to push multiple repos at once if you don't wanna do it manually #lazyAf.
 
+personal-setup -> scripts to setup git credentials and functions after fresh installation
+
 random-html -> generates an index.html with a table with the list of files in current directory.
 
 setup -> setup Android Build Environment / Android SDK.
