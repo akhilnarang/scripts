@@ -9,7 +9,7 @@
 LATEST_MAKE_VERSION="4.2.1"
 LATEST_CCACHE_VERSION="3.7.1+246_gd8e2ab9"
 LATEST_NINJA_VERSION="1.9.0.git"
-UBUNTU_14_PACKAGES="binutils-static curl figlet git-core libesd0-dev libwxgtk2.8-dev schedtool"
+UBUNTU_14_PACKAGES="binutils-static curl figlet libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
 DEBIAN_10_PACKAGES="curl rsync"
@@ -29,11 +29,28 @@ fi
 
 sudo apt update -y
 sudo apt install -y adb autoconf automake axel bc bison build-essential clang cmake expat fastboot flex \
-    g++ g++-multilib gawk gcc gcc-multilib gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 \
+    g++ g++-multilib gawk gcc gcc-multilib git-core gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 \
     libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
     libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
     patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
     unzip w3m xsltproc zip zlib1g-dev "${PACKAGES}"
+	
+# For all those distro hoppers, lets setup your git credentials
+GIT_USERNAME="$(git config --get user.name)"
+GIT_EMAIL="$(git config --get user.email)"
+echo "Configuring Git"
+if [[ -z ${GIT_USERNAME} ]]; then
+	echo "Enter your name: "
+	read -r NAME
+	git config --global user.name "${NAME}"
+fi
+if [[ -z ${GIT_EMAIL} ]]; then
+	echo "Enter your email: "
+	read -r EMAIL
+	git config --global user.email "${EMAIL}"
+fi
+git config --global credential.helper "cache --timeout=7200"
+echo "Github credentials setup successfully"
 
 # From Ubuntu 18.10 onwards and Debian Buster libncurses5 package is not available, so we need to hack our way by symlinking required library
 # shellcheck disable=SC2076
