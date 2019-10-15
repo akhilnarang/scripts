@@ -7,7 +7,6 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.2.1"
-LATEST_CCACHE_VERSION="3.7.1+246_gd8e2ab9"
 LATEST_NINJA_VERSION="1.9.0.git"
 UBUNTU_14_PACKAGES="binutils-static curl figlet libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
@@ -28,7 +27,7 @@ elif [[ "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
 fi
 
 sudo apt update -y
-sudo apt install -y adb autoconf automake axel bc bison build-essential clang cmake expat fastboot flex \
+sudo apt install -y adb autoconf automake axel bc bison build-essential ccache clang cmake expat fastboot flex \
     g++ g++-multilib gawk gcc gcc-multilib git-core gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 \
     libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
     libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
@@ -81,16 +80,6 @@ fi
 echo "Installing repo"
 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
 sudo chmod a+x /usr/local/bin/repo
-
-if [[ "$(command -v ccache)" ]]; then
-    ccacheversion="$(ccache -V | head -1 | awk '{print $3}')"
-    if [[ "${ccacheversion}" != "${LATEST_CCACHE_VERSION}" ]]; then
-        echo "Installing ccache ${LATEST_CCACHE_VERSION} instead of ${ccacheversion}"
-        bash ./setup/ccache.sh
-    fi
-else
-    bash ./setup/ccache.sh
-fi
 
 if [[ "$(command -v ninja)" ]]; then
     ninjaversion="$(ninja --version)"
