@@ -58,9 +58,9 @@ bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
 ~/mkbootimg_tools/mkboot ./boot.img ./bootimg >/dev/null
 python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg >/dev/null
 mkdir bootdts dtbodts
-find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; >/dev/null
+find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; >/dev/null 2>&1
 [[ -f "dtbo.img" ]] && python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo >/dev/null
-find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; >/dev/null
+find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; >/dev/null 2>&1
 
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
@@ -70,7 +70,7 @@ for p in $PARTITIONS; do
     fi
 done
 
-ls system/build*.prop 2>/dev/null || ls system/system/build*.prop 2>/dev/null || (sendTG "No system build*.prop found, pushing cancelled!" && exit 1)
+ls system/build*.prop 2>/dev/null || ls system/system/build*.prop 2>/dev/null || { sendTG "No system build*.prop found, pushing cancelled!"; exit 1;}
 
 # board-info.txt
 find ./modem -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >>./board-info.txt
@@ -126,7 +126,7 @@ repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo"
 
-curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null || (echo "Already dumped"; sendTG "Already dumped"; exit 1)
+curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null && { echo "Already dumped"; sendTG "Already dumped"; exit 1;}
 
 git init
 git config user.name "Akhil's Lazy Buildbot"
@@ -155,7 +155,7 @@ git push ssh://git@github.com/$ORG/"$repo" HEAD:refs/heads/"$branch" ||
         git add system/
         git commit -asm "Add system for ${description}"
         git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-    ) || (sendTG "Pushing failed"; exit 1)
+    ) || { sendTG "Pushing failed"; exit 1;}
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
 
 commit_head=$(git log -1 --format=%H)
