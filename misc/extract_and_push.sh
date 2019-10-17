@@ -126,6 +126,8 @@ repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo"
 
+curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null || (echo "Already dumped" && sendTG "Already dumped" && exit 1)
+
 git init
 git config user.name "Akhil's Lazy Buildbot"
 git config user.email "jenkins@akhilnarang.me"
