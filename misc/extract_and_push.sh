@@ -126,7 +126,7 @@ repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo"
 
-curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null || (echo "Already dumped" && sendTG "Already dumped" && exit 1)
+curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null || (echo "Already dumped"; sendTG "Already dumped"; exit 1)
 
 git init
 git config user.name "Akhil's Lazy Buildbot"
@@ -155,7 +155,7 @@ git push ssh://git@github.com/$ORG/"$repo" HEAD:refs/heads/"$branch" ||
         git add system/
         git commit -asm "Add system for ${description}"
         git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-    ) || (sendTG "Pushing failed" && exit 1)
+    ) || (sendTG "Pushing failed"; exit 1)
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
 
 commit_head=$(git log -1 --format=%H)
