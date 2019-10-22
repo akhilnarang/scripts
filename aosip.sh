@@ -18,7 +18,7 @@ export PATH=~/bin:$PATH
 rm -fv .repo/local_manifests/*
 if [[ "${SYNC}" == "yes" ]]; then
 	repo init -u https://github.com/AOSiP/platform_manifest.git -b "${BRANCH}" --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify
-	repo forall -j"$(nproc)" -c "git reset --hard m/${BRANCH} && git clean -fdx"
+	repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/${BRANCH} && git clean -fdx"
 	if [[ -n "${LOCAL_MANIFEST}" ]]; then
 		curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
 	fi
