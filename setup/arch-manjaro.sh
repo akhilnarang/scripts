@@ -9,7 +9,7 @@ echo Installing Dependencies!
 # Update
 sudo pacman -Syyu
 # Install pacaur
-sudo pacman -S base-devel git wget multilib-devel cmake svn clang lzip
+sudo pacman -S base-devel git wget multilib-devel cmake svn clang lzip patchelf
 # Install ncurses5-compat-libs, lib32-ncurses5-compat-libs, aosp-devel, xml2, and lineageos-devel
 for package in ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel xml2 lineageos-devel; do
     git clone https://aur.archlinux.org/"${package}"
