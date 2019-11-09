@@ -39,7 +39,12 @@ set +e
 if [[ -d "jenkins" ]]; then
 	git -C jenkins pull
 else
-	git clone git@github.com:AOSiP-Devices/jenkins
+	git clone https://github.com/AOSiP-Devices/jenkins
+fi
+if [[ -d "${HOME}/api" ]]; then
+	git -C ~/api pull
+else
+	git clone https://github.com/AOSiP/api ~/api
 fi
 [[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
 repopick_stuff
@@ -52,27 +57,6 @@ export CCACHE_EXEC
 ccache -M 500G
 time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} build failed for ${DEVICE}](${BUILD_URL})")
 set +e
-ZIP="$(cout && ls AOSiP*.zip)" || exit 1
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
-[[ $QUIET == "no" ]] && [[ $AOSIP_BUILDTYPE != "Official" ]] && [[ $AOSIP_BUILDTYPE != "Beta" ]] && [[ $AOSIP_BUILDTYPE != "Alpha" ]] && sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
-url="https://illusion.aosip.dev/$ZIP"
-if [[ "$(hostname)" == "Illusion" ]]; then
-	cp -v "$OUT"/A* /var/www/html/
-	~/api/generate_json.py "$OUT"/A*.zip >/var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
-else
-	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$OUT"/A* akhil@illusion.aosip.dev:/var/www/html/
-	~/api/generate_json.py "$OUT"/A*.zip >/tmp/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
-	scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json akhil@illusion.aosip.dev:/var/www/html/
-fi
-case $AOSIP_BUILDTYPE in
-"Official" | "Beta" | "Alpha")
-	curl -s "https://jenkins.akhilnarang.me/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
-	;;
-*)
-	[[ $QUIET == "no" ]] && sendAOSiP "$url"
-	[[ $QUIET == "no" ]] && [[ -n "$REPOPICK_LIST" ]] && sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "$REPOPICK_LIST")"
-	;;
-esac
-GDRIVE_URL=$(gdrive upload -p 1hhyKQ9yqLg0bIn-QmkPhpMrrc7OuHuNC --share "${OUT}/${ZIP}" | awk '/https/ {print $7}')
-[[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[$ZIP](${GDRIVE_URL})" || exit 0
+~/api/generate_json.py "$OUT"/A*.zip > "${OUT}"/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
