@@ -26,6 +26,25 @@ sudo chmod 644 /etc/udev/rules.d/51-android.rules
 sudo chown root /etc/udev/rules.d/51-android.rules
 sudo udevadm control --reload-rules
 
+# Revert ccache to an older version.
+echo "Reverting ccache to older version....."
+sudo rm -rf /usr/bin/ccache
+wget https://github.com/ccache/ccache/releases/download/v3.6/ccache-3.6.tar.xz
+tar -xvf ccache-3.6.tar.xz
+sudo pacman -S asciidoc -y
+cd ccache-3.6/
+export CC="clang"
+./autogen.sh
+./configure
+sed -i 's/-Wall -W/-Wall -W -Wno-implicit-fallthrough -Wno-extra-semi-stmt/g' Makefile
+make
+sudo make install
+
+# Cleanup
+
+cd ..
+rm -rf ccache-3.6 ccache-3.6.tar.xz
+
 echo "All Done :'D"
 echo "Don't forget to run these commands before building, or make sure the python in your PATH is python2 and not python3"
 echo "
