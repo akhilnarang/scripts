@@ -48,7 +48,7 @@ else
 	git clone https://github.com/AOSiP/api ~/api
 fi
 [[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
-repopick_stuff
+repopick_stuff || { sendAOSiP "Picks failed"; exit 1; }
 set -e
 eval "${COMMAND_TO_RUN}"
 export USE_CCACHE=1
