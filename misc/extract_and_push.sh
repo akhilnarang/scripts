@@ -65,7 +65,7 @@ find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
         mkdir "$p" || rm -rf "${p:?}"/*
-        7z x "$p".img -y -o"$p"/ || sudo mount -o loop $p.img $p
+        7z x "$p".img -y -o"$p"/ || sudo mount -o loop "$p".img "$p"
         rm "$p".img
     fi
 done
