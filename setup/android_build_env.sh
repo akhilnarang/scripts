@@ -16,11 +16,13 @@ PACKAGES=""
 
 LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
+sudo apt install lsb-core
+
 if [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
     PACKAGES="${UBUNTU_14_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
     PACKAGES="${UBUNTU_16_PACKAGES}"
-elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" || "${LSB_RELEASE}" =~ "Ubuntu 19" || "${LSB_RELEASE}" =~ "Deepin" ]]; then
+elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" || "${LSB_RELEASE}" =~ "Ubuntu 19" || "${LSB_RELEASE}" =~ "Ubuntu Focal Fossa (development branch)" || "${LSB_RELEASE}" =~ "Deepin" ]]; then
     PACKAGES="${UBUNTU_18_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
@@ -53,7 +55,7 @@ echo "Github credentials setup successfully"
 
 # From Ubuntu 18.10 onwards and Debian Buster libncurses5 package is not available, so we need to hack our way by symlinking required library
 # shellcheck disable=SC2076
-if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" || "${LSB_RELEASE}" =~ "Ubuntu 19" || "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
+if [[ "${LSB_RELEASE}" =~ "Ubuntu 18.10" || "${LSB_RELEASE}" =~ "Ubuntu 19" || "${LSB_RELEASE}" =~ "Ubuntu Focal Fossa (development branch)" || "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
     if [[ -e /lib/x86_64-linux-gnu/libncurses.so.6 && ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]]; then
         sudo ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
     fi
