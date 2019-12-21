@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2018 Akhil Narang
+# Copyright (C) 2018-19 Akhil Narang
 # SPDX-License-Identifier: GPL-3.0-only
 
 # Script defining various functions used in the scripts across this repository
