@@ -7,7 +7,6 @@
 
 # shellcheck disable=SC1090,SC1091
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
-# SC1091: Not following: /tmp/venv/bin/activate: openBinaryFile: does not exist (No such file or directory)
 
 source ~/scripts/aliases
 
@@ -31,29 +30,6 @@ function repopick_stuff() {
     export IFS=$oldifs
 }
 
-# Creates a virtualenv if required and activates it
-function venv() {
-    PYV=$(python -c "import sys;t='{v[0]}'.format(v=list(sys.version_info[:1]))\
-            ;sys.stdout.write(t)")
-    if [[ "${PYV}" == "3" ]]; then
-        if [[ "$(command -v 'virtualenv2')" ]]; then
-            [[ -f "/tmp/venv/bin/activate" ]] || virtualenv2 /tmp/venv
-            source /tmp/venv/bin/activate
-        else
-            echo "Please install 'virtualenv2', or make 'python' point to \
-                    python2"
-        fi
-    fi
-}
-
-# Deactivates a virtualenv and deletes the folder
-function rmvenv() {
-    if [[ -d "/tmp/venv/" ]]; then
-        deactivate
-        rm -rf /tmp/venv
-    fi
-}
-
 # Uploads a given file to transfer.sh
 function transfer() {
     file="${1}"
@@ -62,15 +38,6 @@ function transfer() {
     url=$(curl -# -T "${file}" https://transfer.sh/"${destination}")
     printf '\n'
     echo -e "Download $zipname at $url"
-}
-
-# Calls venv(), runs the given command, and then calls rmvenv()
-function run_virtualenv() {
-    venv
-
-    "$@"
-
-    [[ -d "/tmp/venv" ]] && deactivate
 }
 
 # Repo sync with various flags I'm lazy to type each time
