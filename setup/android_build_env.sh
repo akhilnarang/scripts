@@ -14,15 +14,15 @@ UBUNTU_18_PACKAGES="curl"
 DEBIAN_10_PACKAGES="curl rsync"
 PACKAGES=""
 
-LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
-
 sudo apt install lsb-core
+
+LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
 if [[ "${LSB_RELEASE}" =~ "Ubuntu 14" ]]; then
     PACKAGES="${UBUNTU_14_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Mint 18" || "${LSB_RELEASE}" =~ "Ubuntu 16" ]]; then
     PACKAGES="${UBUNTU_16_PACKAGES}"
-elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" || "${LSB_RELEASE}" =~ "Ubuntu 19" || "${LSB_RELEASE}" =~ "Ubuntu Focal Fossa (development branch)" || "${LSB_RELEASE}" =~ "Deepin" ]]; then
+elif [[ "${LSB_RELEASE}" =~ "Ubuntu 18" || "${LSB_RELEASE}" =~ "Ubuntu 19" || "${LSB_RELEASE}" =~ "Ubuntu Focal Fossa" || "${LSB_RELEASE}" =~ "Deepin" ]]; then
     PACKAGES="${UBUNTU_18_PACKAGES}"
 elif [[ "${LSB_RELEASE}" =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
