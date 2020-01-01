@@ -15,9 +15,8 @@ export TZ=UTC
 [[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 [[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $(hostname), check progress <a href='${BUILD_URL}'>here</a>!"
-rm -fv .repo/local_manifests/*
 if [[ "${SYNC}" == "yes" ]]; then
-        rm -rf .repo/repo .repo/manifests
+        rm -rf .repo/repo .repo/manifests .repo/local_manifests
 	repo init -u https://github.com/AOSiP/platform_manifest.git -b "${BRANCH}" --no-tags --no-clone-bundle --current-branch --repo-url https://github.com/akhilnarang/repo --repo-branch master --no-repo-verify
 	repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/${BRANCH} && git clean -fdx"
 	if [[ -n "${LOCAL_MANIFEST}" ]]; then
