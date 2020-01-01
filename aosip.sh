@@ -29,7 +29,7 @@ set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ "${AOSIP_BUILDTYPE}" != "Official" ]] && [[ "${AOSIP_BUILDTYPE}" != "Beta" ]]; then
-	export OVERRIDE_OTA_CHANNEL="https://illusion.aosip.dev/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+	export OVERRIDE_OTA_CHANNEL="https://aosip.dev/direct/${DEVICE}-${AOSIP_BUILDTYPE}.json"
 fi
 set -e
 case "${CLEAN}" in
