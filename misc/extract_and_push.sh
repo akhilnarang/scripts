@@ -26,12 +26,6 @@ fi
 
 PARTITIONS="system vendor cust odm oem factory product modem xrom systemex"
 
-if [[ ! -d "${HOME}/extract_android_ota_payload" ]]; then
-    git clone -q https://github.com/cyxx/extract_android_ota_payload ~/extract_android_ota_payload
-else
-    git -C ~/extract_android_ota_payload pl
-fi
-
 if [[ ! -d "${HOME}/extract-dtb" ]]; then
     git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
 else
@@ -39,9 +33,9 @@ else
 fi
 
 if [[ ! -d "${HOME}/Firmware_extractor" ]]; then
-    git clone -q https://github.com/AndroidDumps/Firmware_extractor --recurse-submodules ~/Firmware_extractor
+    git clone -q https://github.com/AndroidDumps/Firmware_extractor ~/Firmware_extractor
 else
-    git -C ~/Firmware_extractor pl --recurse-submodules
+    git -C ~/Firmware_extractor pl
 fi
 
 if [[ ! -d "${HOME}/mkbootimg_tools" ]]; then
@@ -103,6 +97,12 @@ incremental=$(grep -oP "(?<=^ro.build.version.incremental=).*" -hs {system,syste
 tags=$(grep -oP "(?<=^ro.build.tags=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z "${tags}" ]] && tags=$(grep -oP "(?<=^ro.vendor.build.tags=).*" -hs vendor/build*.prop)
 [[ -z "${tags}" ]] && tags=$(grep -oP "(?<=^ro.system.build.tags=).*" -hs {system,system/system}/build*.prop)
+platform=$(grep -oP "(?<=^ro.board.platform=).*" -hs {system,system/system,vendor}/build*.prop)
+[[ -z "${platform}" ]] && tags=$(grep -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
+[[ -z "${platform}" ]] && tags=$(grep -oP "(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
+manufacturer=$(grep -oP "(?<=^ro.product.manufacturer=).*" -hs {system,system/system,vendor}/build*.prop)
+[[ -z "${manufacturer}" ]] && tags=$(grep -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
+[[ -z "${manufacturer}" ]] && tags=$(grep -oP "(?<=^ro.system.product.manufacturer=).*" -hs {system,system/system}/build*.prop)
 fingerprint=$(grep -oP "(?<=^ro.build.fingerprint=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build*.prop)
 [[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.system.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
@@ -123,8 +123,11 @@ description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system
 [[ -z "${description}" ]] && description="$flavor $release $id $incremental $tags"
 branch=$(echo "$description" | tr ' ' '-')
 repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
+platform=$(echo $platform | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
+top_codename=$(echo $codename | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
+manufacturer=$(echo $manufacturer | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
 
-printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo"
+printf "\nflavor: $flavor\nrelease: $release\nid: $id\nincremental: $incremental\ntags: $tags\nfingerprint: $fingerprint\nbrand: $brand\ncodename: $codename\ndescription: $description\nbranch: $branch\nrepo: $repo\nmanufacturer: $manufacturer\nplatform: $platform\ntop_codename: $top_codename\n"
 
 curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null && { echo "Already dumped"; sendTG "Already dumped"; exit 1;}
 
@@ -137,6 +140,8 @@ find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name 
 git add --all
 git commit -asm "Add $description" -S || exit 1
 curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
+curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
+
 sendTG "Pushing"
 git push ssh://git@github.com/$ORG/"$repo" HEAD:refs/heads/"$branch" ||
     (
