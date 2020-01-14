@@ -35,6 +35,7 @@ sudo dnf install \
     libXrandr.i686 \
     zip \
     perl-Digest-SHA \
+    python2 \
     wget \
     lzop \
     openssl-devel \
