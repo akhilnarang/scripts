@@ -38,19 +38,19 @@ sudo DEBIAN_FRONTEND=noninteractive apt install -y adb autoconf automake axel bc
 # For all those distro hoppers, lets setup your git credentials
 GIT_USERNAME="$(git config --get user.name)"
 GIT_EMAIL="$(git config --get user.email)"
-echo "Configuring Git"
+echo "Configuring git"
 if [[ -z ${GIT_USERNAME} ]]; then
-	echo "Enter your name: "
+	echo -n "Enter your name: "
 	read -r NAME
 	git config --global user.name "${NAME}"
 fi
 if [[ -z ${GIT_EMAIL} ]]; then
-	echo "Enter your email: "
+	echo -n "Enter your email: "
 	read -r EMAIL
 	git config --global user.email "${EMAIL}"
 fi
 git config --global credential.helper "cache --timeout=7200"
-echo "Github credentials setup successfully"
+echo "git identity setup successfully!"
 
 # From Ubuntu 18.10 onwards and Debian Buster libncurses5 package is not available, so we need to hack our way by symlinking required library
 # shellcheck disable=SC2076
