@@ -7,7 +7,6 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.2.1"
-LATEST_NINJA_VERSION="1.9.0.git"
 UBUNTU_14_PACKAGES="binutils-static curl figlet libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
@@ -82,13 +81,3 @@ fi
 echo "Installing repo"
 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
 sudo chmod a+x /usr/local/bin/repo
-
-if [[ "$(command -v ninja)" ]]; then
-    ninjaversion="$(ninja --version)"
-    if [[ "${ninjaversion}" != "${LATEST_NINJA_VERSION}" ]]; then
-        echo "Installing ninja ${LATEST_NINJA_VERSION} instead of ${ninjaversion}"
-        bash ./setup/ninja.sh
-    fi
-else
-    bash ./setup/ninja.sh
-fi
