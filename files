@@ -1,5 +1,6 @@
-aosip-gsi.sh
-aosip.sh
+aosip/build-gsi.sh
+aosip/build.sh
+aosip/build.sh
 crowdin/aosip-merge.sh
 crowdin/aosip.sh
 crowdin/rr.sh
@@ -9,6 +10,8 @@ gerrit/create-projects.sh
 gerrit/push-all-repos.sh
 github/change-default-branch.sh
 github/create-project.sh
+gitlab/list-repos.sh
+gitlab/make-project-public.sh
 merge/aosip-merge.sh
 merge/aosip-rebase.sh
 merge/aospcaf.sh

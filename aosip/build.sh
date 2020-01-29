@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2018-19 Akhil Narang
+# Copyright (C) 2018-20 Akhil Narang
 # SPDX-License-Identifier: GPL-3.0-only
-# AOSiP Build Script
+# AOSiP build script
 # shellcheck disable=SC1090,SC1091
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
@@ -28,7 +28,7 @@ set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ "${AOSIP_BUILDTYPE}" != "Official" ]] && [[ "${AOSIP_BUILDTYPE}" != "Beta" ]]; then
-	export OVERRIDE_OTA_CHANNEL="https://aosip.dev/direct/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+	export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
 fi
 set -e
 case "${CLEAN}" in
@@ -36,16 +36,19 @@ case "${CLEAN}" in
 *) rm -rf "${OUT}"/A* ;;
 esac
 set +e
+
 if [[ -d "jenkins" ]]; then
 	git -C jenkins pull
 else
 	git clone https://github.com/AOSiP-Devices/jenkins
 fi
+
 if [[ -d "${HOME}/api" ]]; then
 	git -C ~/api pull
 else
 	git clone https://github.com/AOSiP/api ~/api
 fi
+
 [[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
 repopick_stuff || { sendAOSiP "Picks failed"; exit 1; }
 set -e
