@@ -36,9 +36,7 @@ setup/arch-manjaro.sh
 setup/ccache.sh
 setup/create_user.sh
 setup/fedora.sh
-setup/flex.sh
 setup/hub.sh
 setup/install_android_sdk.sh
 setup/make.sh
-setup/ninja.sh
 setup/solus.sh
