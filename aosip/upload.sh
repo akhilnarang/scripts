@@ -26,7 +26,7 @@ ZIP=$(ls AOSiP-$VERSION-$AOSIP_BUILDTYPE-$DEVICE-*.zip | tail -1)
 [[ "${QUIET}" == "no" ]] && sendAOSiP "[GDrive]($BUILD_URL) incoming"
 GDRIVE_URL=$(gdrive upload -p $PARENT_FOLDER --share "${ZIP}" | awk '/https/ {print $7}')
 [[ "${QUIET}" == "no" ]] && sendAOSiP "[Google Drive]($GDRIVE_URL)"
-url="https://$BASE_URL/$FOLDER/$ZIP"
+url="$BASE_URL/$FOLDER/$ZIP"
 case $AOSIP_BUILDTYPE in
 "Official" | "Beta" | "Alpha")
 	curl -s "http://0.0.0.0:8080/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
