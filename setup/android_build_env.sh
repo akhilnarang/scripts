@@ -6,7 +6,7 @@
 
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
-LATEST_MAKE_VERSION="4.2.1"
+LATEST_MAKE_VERSION="4.3"
 UBUNTU_14_PACKAGES="binutils-static curl figlet libesd0-dev libwxgtk2.8-dev schedtool"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
