@@ -104,7 +104,6 @@ if [[ "$*" =~ "quiet" ]]; then
 else
     make_wrapper
 fi
-exitCode="$?"
 END=$(date +"%s")
 DIFF=$((END - START))
 echo -e "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
@@ -152,5 +151,3 @@ if [ -f "$FINAL_ZIP" ]; then
 else
     echo -e "Zip Creation Failed =("
 fi # FINAL_ZIP check
-
-exit ${exitCode}
