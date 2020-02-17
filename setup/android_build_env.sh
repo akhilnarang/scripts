@@ -33,7 +33,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt install -y adb autoconf automake axel bc
     libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-* liblzma* libmpc-dev libmpfr-dev \
     libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma* lzop maven ncftp ncurses-dev \
     patch patchelf pkg-config pngcrush pngquant python python-all-dev re2c schedtool squashfs-tools subversion texinfo \
-    unzip w3m xsltproc zip zlib1g-dev lzip "${PACKAGES}"
+    unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl "${PACKAGES}"
 
 # For all those distro hoppers, lets setup your git credentials
 GIT_USERNAME="$(git config --get user.name)"
