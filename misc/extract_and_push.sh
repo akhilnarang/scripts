@@ -81,7 +81,7 @@ fi
 sort -u -o ./board-info.txt ./board-info.txt
 
 # Fix permissions
-chown "$(whoami)" ./* -R
+sudo chown "$(whoami)" ./* -R
 chmod -R u+rwX ./*
 
 # Generate all_files.txt
