@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-[[ -z "${API_KEY}" ]] && echo "API_KEY not defined, exiting!" && exit 1
+[[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 
 function sendTG() {
     curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" >/dev/null
 }
 
-[[ -z "$ORG" ]] && ORG="AndroidDumps"
+[[ -z $ORG ]] && ORG="AndroidDumps"
 sendTG "Starting <a href=\"${URL:?}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
 aria2c -x16 -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
 sendTG "Downloaded the file"
@@ -15,7 +15,7 @@ EXTENSION=${URL##*.}
 UNZIP_DIR=${FILE/.$EXTENSION/}
 export UNZIP_DIR
 
-if [[ ! -f "${FILE}" ]]; then
+if [[ ! -f ${FILE} ]]; then
     if [[ "$(find . -type f | wc -l)" != 1 ]]; then
         sendTG "Can't seem to find downloaded file!"
         exit 1
@@ -64,7 +64,10 @@ for p in $PARTITIONS; do
     fi
 done
 
-ls system/build*.prop 2>/dev/null || ls system/system/build*.prop 2>/dev/null || { sendTG "No system build*.prop found, pushing cancelled!"; exit 1;}
+ls system/build*.prop 2>/dev/null || ls system/system/build*.prop 2>/dev/null || {
+    sendTG "No system build*.prop found, pushing cancelled!"
+    exit 1
+}
 
 # board-info.txt
 find ./modem -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >>./board-info.txt
@@ -82,45 +85,45 @@ chmod -R u+rwX ./*
 find . -type f -printf '%P\n' | sort | grep -v ".git/" >./all_files.txt
 
 flavor=$(grep -oP "(?<=^ro.build.flavor=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${flavor}" ]] && flavor=$(grep -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
-[[ -z "${flavor}" ]] && flavor=$(grep -oP "(?<=^ro.system.build.flavor=).*" -hs {system,system/system}/build*.prop)
-[[ -z "${flavor}" ]] && flavor=$(grep -oP "(?<=^ro.build.type=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${flavor} ]] && flavor=$(grep -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
+[[ -z ${flavor} ]] && flavor=$(grep -oP "(?<=^ro.system.build.flavor=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${flavor} ]] && flavor=$(grep -oP "(?<=^ro.build.type=).*" -hs {system,system/system}/build*.prop)
 release=$(grep -oP "(?<=^ro.build.version.release=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${release}" ]] && release=$(grep -oP "(?<=^ro.vendor.build.version.release=).*" -hs vendor/build*.prop)
-[[ -z "${release}" ]] && release=$(grep -oP "(?<=^ro.system.build.version.release=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${release} ]] && release=$(grep -oP "(?<=^ro.vendor.build.version.release=).*" -hs vendor/build*.prop)
+[[ -z ${release} ]] && release=$(grep -oP "(?<=^ro.system.build.version.release=).*" -hs {system,system/system}/build*.prop)
 id=$(grep -oP "(?<=^ro.build.id=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${id}" ]] && id=$(grep -oP "(?<=^ro.vendor.build.id=).*" -hs vendor/build*.prop)
-[[ -z "${id}" ]] && id=$(grep -oP "(?<=^ro.system.build.id=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${id} ]] && id=$(grep -oP "(?<=^ro.vendor.build.id=).*" -hs vendor/build*.prop)
+[[ -z ${id} ]] && id=$(grep -oP "(?<=^ro.system.build.id=).*" -hs {system,system/system}/build*.prop)
 incremental=$(grep -oP "(?<=^ro.build.version.incremental=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${incremental}" ]] && incremental=$(grep -oP "(?<=^ro.vendor.build.version.incremental=).*" -hs vendor/build*.prop)
-[[ -z "${incremental}" ]] && incremental=$(grep -oP "(?<=^ro.system.build.version.incremental=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${incremental} ]] && incremental=$(grep -oP "(?<=^ro.vendor.build.version.incremental=).*" -hs vendor/build*.prop)
+[[ -z ${incremental} ]] && incremental=$(grep -oP "(?<=^ro.system.build.version.incremental=).*" -hs {system,system/system}/build*.prop)
 tags=$(grep -oP "(?<=^ro.build.tags=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${tags}" ]] && tags=$(grep -oP "(?<=^ro.vendor.build.tags=).*" -hs vendor/build*.prop)
-[[ -z "${tags}" ]] && tags=$(grep -oP "(?<=^ro.system.build.tags=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${tags} ]] && tags=$(grep -oP "(?<=^ro.vendor.build.tags=).*" -hs vendor/build*.prop)
+[[ -z ${tags} ]] && tags=$(grep -oP "(?<=^ro.system.build.tags=).*" -hs {system,system/system}/build*.prop)
 platform=$(grep -oP "(?<=^ro.board.platform=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${platform}" ]] && tags=$(grep -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
-[[ -z "${platform}" ]] && tags=$(grep -oP "(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${platform} ]] && tags=$(grep -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
+[[ -z ${platform} ]] && tags=$(grep -oP "(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
 manufacturer=$(grep -oP "(?<=^ro.product.manufacturer=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${manufacturer}" ]] && tags=$(grep -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
-[[ -z "${manufacturer}" ]] && tags=$(grep -oP "(?<=^ro.system.product.manufacturer=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${manufacturer} ]] && tags=$(grep -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
+[[ -z ${manufacturer} ]] && tags=$(grep -oP "(?<=^ro.system.product.manufacturer=).*" -hs {system,system/system}/build*.prop)
 fingerprint=$(grep -oP "(?<=^ro.build.fingerprint=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build*.prop)
-[[ -z "${fingerprint}" ]] && fingerprint=$(grep -oP "(?<=^ro.system.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${fingerprint} ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build*.prop)
+[[ -z ${fingerprint} ]] && fingerprint=$(grep -oP "(?<=^ro.system.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
 brand=$(grep -oP "(?<=^ro.product.brand=).*" -hs {system,system/system,vendor}/build*.prop | head -1)
-[[ -z "${brand}" ]] && brand=$(grep -oP "(?<=^ro.product.vendor.brand=).*" -hs vendor/build*.prop | head -1)
-[[ -z "${brand}" ]] && brand=$(grep -oP "(?<=^ro.vendor.product.brand=).*" -hs vendor/build*.prop | head -1)
-[[ -z "${brand}" ]] && brand=$(grep -oP "(?<=^ro.product.system.brand=).*" -hs {system,system/system}/build*.prop | head -1)
-[[ -z "${brand}" ]] && brand=$(echo "$fingerprint" | cut -d / -f1)
+[[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.product.vendor.brand=).*" -hs vendor/build*.prop | head -1)
+[[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.vendor.product.brand=).*" -hs vendor/build*.prop | head -1)
+[[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.product.system.brand=).*" -hs {system,system/system}/build*.prop | head -1)
+[[ -z ${brand} ]] && brand=$(echo "$fingerprint" | cut -d / -f1)
 codename=$(grep -oP "(?<=^ro.product.device=).*" -hs {system,system/system,vendor}/build*.prop | head -1)
-[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.product.vendor.device=).*" -hs vendor/build*.prop | head -1)
-[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.vendor.product.device=).*" -hs vendor/build*.prop | head -1)
-[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.product.system.device=).*" -hs {system,system/system}/build*.prop | head -1)
-[[ -z "${codename}" ]] && codename=$(echo "$fingerprint" | cut -d / -f3 | cut -d : -f1)
-[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.build.fota.version=).*" -hs {system,system/system}/build*.prop | cut -d - -f1 | head -1)
+[[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.vendor.device=).*" -hs vendor/build*.prop | head -1)
+[[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.vendor.product.device=).*" -hs vendor/build*.prop | head -1)
+[[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.system.device=).*" -hs {system,system/system}/build*.prop | head -1)
+[[ -z ${codename} ]] && codename=$(echo "$fingerprint" | cut -d / -f3 | cut -d : -f1)
+[[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.build.fota.version=).*" -hs {system,system/system}/build*.prop | cut -d - -f1 | head -1)
 description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z "${description}" ]] && description=$(grep -oP "(?<=^ro.vendor.build.description=).*" -hs vendor/build*.prop)
-[[ -z "${description}" ]] && description=$(grep -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
-[[ -z "${description}" ]] && description="$flavor $release $id $incremental $tags"
+[[ -z ${description} ]] && description=$(grep -oP "(?<=^ro.vendor.build.description=).*" -hs vendor/build*.prop)
+[[ -z ${description} ]] && description=$(grep -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
 branch=$(echo "$description" | tr ' ' '-')
 repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
 platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
@@ -129,7 +132,11 @@ manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[[:pr
 
 printf "\nflavor: $flavor\nrelease: $release\nid: $id\nincremental: $incremental\ntags: $tags\nfingerprint: $fingerprint\nbrand: $brand\ncodename: $codename\ndescription: $description\nbranch: $branch\nrepo: $repo\nmanufacturer: $manufacturer\nplatform: $platform\ntop_codename: $top_codename\n"
 
-curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null && { echo "Already dumped"; sendTG "Already dumped"; exit 1;}
+curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" >/dev/null && {
+    echo "Already dumped"
+    sendTG "Already dumped"
+    exit 1
+}
 
 git init
 git config user.name "Akhil's Lazy Buildbot"
@@ -160,7 +167,10 @@ git push ssh://git@github.com/$ORG/"$repo" HEAD:refs/heads/"$branch" ||
         git add system/
         git commit -asm "Add system for ${description}"
         git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-    ) || { sendTG "Pushing failed"; exit 1;}
+    ) || {
+    sendTG "Pushing failed"
+    exit 1
+}
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
 
 commit_head=$(git log -1 --format=%H)

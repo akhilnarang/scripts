@@ -3,7 +3,7 @@
 # Random script that outputs an index.html with a table containing the files in the current dir
 
 file="index.html"
-[[ -f "${file}" ]] && echo "${file} already exists, please rename/remove" && exit 1
+[[ -f ${file} ]] && echo "${file} already exists, please rename/remove" && exit 1
 touch ${file}
 echo "
 <table border=1>
@@ -19,11 +19,11 @@ echo "
 " >>${file}
 count=1
 for f in ./*; do
-  if [ -f "${f}" ]; then
-    filename=${f}
-    filesize=$(du -sh "${f}" | awk '{print $1}')
-    filemd5=$(md5sum "${f}" | cut -d ' ' -f 1)
-    echo "
+    if [ -f "${f}" ]; then
+        filename=${f}
+        filesize=$(du -sh "${f}" | awk '{print $1}')
+        filemd5=$(md5sum "${f}" | cut -d ' ' -f 1)
+        echo "
   <tr>
   <td>${count}</td>
   <td><a href=\"${filename}\">${filename}</a>
@@ -31,8 +31,8 @@ for f in ./*; do
   <td>${filesize}</td>
   </tr>
   " >>${file}
-    count=$(("$count" + 1))
-  fi
+        count=$(("$count" + 1))
+    fi
 done
 echo "
 </tbody>

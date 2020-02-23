@@ -31,13 +31,13 @@ repo sync --detach --quiet
 while read -r repos; do
     echo -e ""
     # shellcheck disable=SC2076,SC2154
-    if [[ "${do_not_merge}" =~ "${repos}" ]]; then
+    if [[ ${do_not_merge} =~ ${repos} ]]; then
         echo -e "${repos} is not to be merged"
     else
         echo "$blu Merging $repos $end"
         echo -e ""
         cd "$repos" || continue
-        if [[ "$repos" == "build/make" ]]; then
+        if [[ $repos == "build/make" ]]; then
             repos="build"
         fi
         git branch -D $SRC

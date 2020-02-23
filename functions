@@ -134,29 +134,29 @@ function sendTG() {
     shift
     msg=${*:?}
     case "${bot}" in
-    "ts") BOT_API_KEY="$(cat ~/.tskey)" ;;
-    "kronic") BOT_API_KEY="$(cat ~/.kronickey)" ;;
-    "rr") BOT_API_KEY="$(cat ~/.rrkey)" ;;
-    *)
-        echo -e "Invalid bot, must be one of ts|kronic|rr!"
-        return
-        ;;
+        "ts") BOT_API_KEY="$(cat ~/.tskey)" ;;
+        "kronic") BOT_API_KEY="$(cat ~/.kronickey)" ;;
+        "rr") BOT_API_KEY="$(cat ~/.rrkey)" ;;
+        *)
+            echo -e "Invalid bot, must be one of ts|kronic|rr!"
+            return
+            ;;
     esac
 
     case "${chat}" in
-    "me") CHAT_ID="92027269" ;;
-    "kernelberyllium") CHAT_ID="-1001297323361" ;;
-    "aosip") CHAT_ID="-1001055786180" ;;
-    *) CHAT_ID="${chat}" ;;
+        "me") CHAT_ID="92027269" ;;
+        "kernelberyllium") CHAT_ID="-1001297323361" ;;
+        "aosip") CHAT_ID="-1001055786180" ;;
+        *) CHAT_ID="${chat}" ;;
     esac
 
     case "${parse_mode}" in
-    "md") parse_mode="Markdown" ;;
-    "html") parse_mode="HTML" ;;
-    *)
-        echo -e "Invalid parse mode, must be one of Markdown|HTML!"
-        return
-        ;;
+        "md") parse_mode="Markdown" ;;
+        "html") parse_mode="HTML" ;;
+        *)
+            echo -e "Invalid parse mode, must be one of Markdown|HTML!"
+            return
+            ;;
     esac
     curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null
     echo
@@ -182,7 +182,7 @@ function gdrivedl() {
     local CONFIRM FILE_ID URL
     URL="${1}"
     shift
-    if [[ "${URL:?}" =~ folders ]]; then
+    if [[ ${URL:?} =~ folders ]]; then
         FILE_ID="$(echo "${URL}" | sed -r -e 's/https.*folders\/(.*)/\1/' -e 's/(.*)\?usp=sharing/\1/')"
     else
         FILE_ID="$(echo "${URL:?}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
@@ -201,7 +201,7 @@ function gdriveul() {
         return
     }
     PARENT="${2}"
-    if [[ -n "${PARENT}" ]]; then
+    if [[ -n ${PARENT} ]]; then
         PARENT="-p ${PARENT}"
     fi
     ZIP_SIZE="$(du -h "${FILE}" | awk '{print $1}')"

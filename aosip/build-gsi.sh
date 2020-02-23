@@ -31,16 +31,16 @@ time m -j systemimage
 set +e
 cout && ls system.img || exit 1
 case ${SYSTEMTYPE} in
-"a") type="aonly" ;;
-"b") type="ab" ;;
-*) type="${SYSTEMTYPE}" ;;
+    "a") type="aonly" ;;
+    "b") type="ab" ;;
+    *) type="${SYSTEMTYPE}" ;;
 esac
 NAME="AOSiP-9.0-GSI-${ARCH}_${type}-$(date +%Y%m%d).img"
 cp -v "$OUT"/system.img /var/www/html/"$NAME"
 sendAOSiP "${ARCH}_${type} GSI build done on $(hostname)!"
 url="https://$(hostname)/$NAME"
 sendAOSiP "$url"
-if [[ "${RELEASE}" == "yes" ]]; then
+if [[ ${RELEASE} == "yes" ]]; then
     rsync -av --progress "$OUT"/system.img kronic@illusion.aosip.dev:/mnt/builds/GSI/"$NAME"
     url="https://get.aosip.dev/GSI/$NAME"
     sendAOSiP "$url"

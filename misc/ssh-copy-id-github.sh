@@ -42,7 +42,7 @@ function ssh_copy_id_github() {
         read -rp "SSH key file doesn't exist: $key_file, do you want to generate a $key_file (y/n)?: "
         echo
 
-        if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
             ssh-keygen -t ed25519 -f "${key_file%.pub}"
         else
             echo "Need SSH key file to upload, e.g. $DEFAULT_KEY"

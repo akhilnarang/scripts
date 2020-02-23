@@ -9,8 +9,8 @@ QUERY="topic:translations status:open"
 PORT="29418"
 # shellcheck disable=SC2029
 COMMITS=$(ssh -p${PORT} ${GERRIT_HOST} gerrit query "${QUERY}" | grep number |
-	cut -d: -f2)
+    cut -d: -f2)
 for COMMIT in ${COMMITS}; do
-	ssh -p29418 ${GERRIT_HOST} gerrit review "${COMMIT}",1 --code-review=+2 \
-		--verified=+1 --submit
+    ssh -p29418 ${GERRIT_HOST} gerrit review "${COMMIT}",1 --code-review=+2 \
+        --verified=+1 --submit
 done

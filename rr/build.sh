@@ -6,18 +6,18 @@
 
 # Repopicks a | delimited set of commits
 function repopick_stuff() {
-	export oldifs=$IFS
-	export IFS="|"
-	for f in ${REPOPICK_LIST}; do
-		echo "Picking: $f"
-		eval repopick "${f}" || return
-	done
-	export IFS=$oldifs
+    export oldifs=$IFS
+    export IFS="|"
+    for f in ${REPOPICK_LIST}; do
+        echo "Picking: $f"
+        eval repopick "${f}" || return
+    done
+    export IFS=$oldifs
 }
 
-[[ -z "${API_KEY}" ]] && echo "API_KEY not defined, exiting!" && exit 1
+[[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 function sendTG() {
-	curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001185331716&parse_mode=Markdown" >/dev/null
+    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001185331716&parse_mode=Markdown" >/dev/null
 }
 rm -fv .repo/local_manifests/*
 export days_to_log=${DAY}
@@ -25,8 +25,8 @@ source ~/.bashrc
 repo sync --force-sync -j64
 . build/envsetup.sh
 if ! breakfast "${DEVICE:?}"; then
-	sendTG "Lunching [$DEVICE]($BUILD_URL) failed on $NODE_NAME"
-	exit 1
+    sendTG "Lunching [$DEVICE]($BUILD_URL) failed on $NODE_NAME"
+    exit 1
 fi
 repopick_stuff
 export USE_CCACHE=1
@@ -35,8 +35,8 @@ mka "${CLOBBER:?}"
 rm -rfv "${OUT}/{RR*,system,vendor}"
 sendTG "Starting build for [$DEVICE]($BUILD_URL) on $NODE_NAME"
 if ! mka bacon; then
-	sendTG "[$DEVICE]($BUILD_URL) Build failed on $NODE_NAME"
-	exit 1
+    sendTG "[$DEVICE]($BUILD_URL) Build failed on $NODE_NAME"
+    exit 1
 fi
 cout
 ZIP=$(ls RR*.zip)

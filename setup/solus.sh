@@ -10,7 +10,8 @@ sudo eopkg it openjdk-8-devel curl-devel git gnupg gperf libgcc-32bit libxslt-de
 
 # ADB/Fastboot
 sudo eopkg bi --ignore-safety https://raw.githubusercontent.com/solus-project/3rd-party/master/programming/tools/android-tools/pspec.xml
-sudo eopkg it android-tools*.eopkg;sudo rm android-tools*.eopkg
+sudo eopkg it android-tools*.eopkg
+sudo rm android-tools*.eopkg
 
 # udev rules
 echo "Setting up udev rules for adb!"
