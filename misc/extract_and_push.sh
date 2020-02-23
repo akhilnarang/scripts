@@ -126,11 +126,11 @@ description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
 branch=$(echo "$description" | tr ' ' '-')
 repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
-platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
-top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
-manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[[:print:]]' | tr '_' '-' | cut -c 1-35)
+platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
+top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
+manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 
-printf "\nflavor: $flavor\nrelease: $release\nid: $id\nincremental: $incremental\ntags: $tags\nfingerprint: $fingerprint\nbrand: $brand\ncodename: $codename\ndescription: $description\nbranch: $branch\nrepo: $repo\nmanufacturer: $manufacturer\nplatform: $platform\ntop_codename: $top_codename\n"
+printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
 
 curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" >/dev/null && {
     echo "Already dumped"
