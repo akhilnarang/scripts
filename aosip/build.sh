@@ -32,7 +32,7 @@ if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]];
 fi
 set -e
 case "${CLEAN}" in
-    "clean" | "deviceclean" | "installclean") m -j "${CLEAN}" ;;
+    "clean" | "deviceclean" | "installclean") m "${CLEAN}" ;;
     *) rm -rf "${OUT}"/A* ;;
 esac
 set +e
@@ -61,7 +61,7 @@ export CCACHE_DIR="${HOME}/.ccache"
 CCACHE_EXEC="$(command -v ccache)"
 export CCACHE_EXEC
 ccache -M 500G
-time m -j kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
+time m kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
 set +e
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
