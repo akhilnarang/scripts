@@ -20,22 +20,22 @@ Enjoy!
 
 ### Brief explanation of stuff in here
 
-build-rom -> has a bunch of random build scripts I use to build ROMs.
-
-crowdin -> bunch of scripts I use for RR's crowdin.
+aosip-> some scripts I use for AOSiP.
 
 gerrit -> useful for setting up gerrit and stuff.
 
-merge -> scripts to merge upstream AOSP/CAF into a ROM source.
+github -> some actions on github.
+
+gitlab -> some actions on gitlab.
 
 misc -> stuff.
 
-push -> scripts to push multiple repos at once if you don't wanna do it manually #lazyAf.
+personal-setup -> scripts to setup git credentials and functions after fresh installation.
 
-personal-setup -> scripts to setup git credentials and functions after fresh installation
+push -> scripts to push multiple repos at once if you don't wanna do it manually.
 
 random-html -> generates an index.html with a table with the list of files in current directory.
 
-setup -> setup Android Build Environment / Android SDK.
+rr -> some scripts for ResurrectionRemix.
 
-utils -> some binaries.
+setup -> setup Android Build Environment / Android SDK.
