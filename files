@@ -5,6 +5,7 @@ aosip/create-project.sh
 aosip/crowdin-merge.sh
 aosip/crowdin.sh
 aosip/merge.sh
+aosip/push.sh
 aosip/rebase.sh
 build-kernel
 functions
@@ -19,8 +20,6 @@ misc/extract_and_push.sh
 misc/ssh-copy-id-github.sh
 personal-setup/arch-setup.sh
 personal-setup/deb-setup.sh
-push/aosip.sh
-push/aosp-caf.sh
 random-html/generate-index.sh
 release-kernel
 rr/build.sh
