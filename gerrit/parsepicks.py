@@ -7,7 +7,7 @@ import requests
 
 DOGBIN = 'https://del.dog'
 DOGBIN_API = os.path.join(DOGBIN, 'documents')
-GERRIT = 'https://review.aosiprom.com'
+GERRIT = 'https://review.aosip.dev'
 GERRIT_API = os.path.join(GERRIT, 'changes/?q=')
 
 

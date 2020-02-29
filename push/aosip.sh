@@ -18,7 +18,7 @@ PROJECTS="$(grep aosip .repo/manifests/snippets/aosip.xml | grep project | awk '
 
 for project in ${PROJECTS}; do
     cd "$project" || continue
-    #git push $(git remote -v | head -1 | awk '{print $2}' | sed -e 's/https:\/\/github.com\/AOSiP/ssh:\/\/akhil@review.aosiprom.com:29418\/AOSIP/') HEAD:oreo
+    #git push $(git remote -v | head -1 | awk '{print $2}' | sed -e 's/https:\/\/github.com\/AOSiP/ssh:\/\/akhil@review.aosip.dev:29418\/AOSIP/') HEAD:oreo
     gerrit
     git push gerrit HEAD:refs/heads/"${BRANCH}"
     cd - || exit 1

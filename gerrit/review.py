@@ -10,7 +10,7 @@ import json
 
 commits = {}
 query = 'topic:dnm-gsi'
-gerrit = 'review.aosiprom.com'
+gerrit = 'review.aosip.dev'
 action = '--abandon'
 code_review = '-2'
 verified = '-1'

@@ -4,7 +4,7 @@
 # We assume sanely that's there only 1 patchset per commit
 # And that they're all under topic:translations
 
-GERRIT_HOST="review.aosiprom.com"
+GERRIT_HOST="review.aosip.dev"
 QUERY="topic:translations status:open"
 PORT="29418"
 # shellcheck disable=SC2029
