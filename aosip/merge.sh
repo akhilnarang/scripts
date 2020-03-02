@@ -68,5 +68,5 @@ while read -r repos; do
     fi
 done < <(grep 'remote="aosip"' "${AOSIP_PATH}"/.repo/manifests/snippets/aosip.xml | awk '{print $2}' | awk -F '"' '{print $2}' | grep -v caf)
 
-FAILED=$(cat "$AOSIP_PATH"/failed)
-export FAILED
+echo "Repos that failed are - "
+cat "$AOSIP_PATH"/failed
