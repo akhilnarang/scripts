@@ -42,7 +42,7 @@ export CROSS_COMPILE_ARM32="${KERNELDIR}/arm-linux-androideabi-4.9/bin/arm-linux
 export DEFCONFIG="${DEVICE}_defconfig"
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb"
-export DOWNLOAD_BASE_URL="https://downloads.akhilnarang.me/kernel/${DEVICE}/Test"
+export DOWNLOAD_BASE_URL="https://mirror.akhilnarang.dev/kernel/${DEVICE}/Test"
 if [[ -z ${JOBS} ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)"
 fi

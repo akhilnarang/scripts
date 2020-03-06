@@ -23,8 +23,8 @@ function tg() {
 }
 
 SERVER="ssh.packet.resurrectionremix.com"
-DOWNLOAD_HOST="https://downloads.akhilnarang.me"
-MIRROR_HOST="https://mirror.akhilnarang.me"
+DOWNLOAD_HOST="https://downloads.akhilnarang.dev"
+MIRROR_HOST="https://mirror.akhilnarang.dev"
 KERNEL_PATH="kernel/${DEVICE}"
 NAME=$(ssh "${SERVER}" ls mirror/"${KERNEL_PATH}"/Test/*.zip | tail -1)
 ILLUSIONVERSION="${1:?}"
