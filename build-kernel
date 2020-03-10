@@ -13,6 +13,8 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1
 fi
 
+[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "raphael" ]] || [[ "$*" =~ "raphael" ]]; } && DEVICE=raphael
+[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "phoenix" ]] || [[ "$*" =~ "phoenix" ]]; } && DEVICE=phoenix
 [[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]]; } && DEVICE=beryllium
 [[ -z ${DEVICE} ]] && DEVICE=beryllium
 
@@ -20,6 +22,12 @@ function tg() {
     case "${DEVICE}" in
         "beryllium")
             sendKernelBeryllium "${@:?}"
+            ;;
+        "raphael")
+            sendTG "-1001317348741" "${@:?}"
+            ;;
+        "*")
+            sendTG "92027269" "${@:?}"
             ;;
     esac
 }
@@ -69,7 +77,7 @@ function make_wrapper() {
 }
 
 if [[ ! -d ${ANYKERNEL} ]]; then
-    hub clone AnyKernel2 -b "${DEVICE}" "${ANYKERNEL}" || exit 1
+    hub clone AnyKernel3 -b "${DEVICE}" "${ANYKERNEL}" || exit 1
 fi
 
 if [[ -z ${NAME} ]]; then
