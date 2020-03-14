@@ -7,9 +7,16 @@ function sendTG() {
 }
 
 [[ -z $ORG ]] && ORG="AndroidDumps"
-sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
-aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
-sendTG "Downloaded the file"
+
+if [[ -f "$URL" ]]; then
+    cp -v "$URL" .
+    sendTG "Found file locally"
+else
+    sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
+    aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
+    sendTG "Downloaded the file"
+fi
+
 FILE=${URL##*/}
 EXTENSION=${URL##*.}
 UNZIP_DIR=${FILE/.$EXTENSION/}
