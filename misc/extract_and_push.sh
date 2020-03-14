@@ -7,8 +7,8 @@ function sendTG() {
 }
 
 [[ -z $ORG ]] && ORG="AndroidDumps"
-sendTG "Starting <a href=\"${URL:?}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
-aria2c -x16 -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
+sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
+aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
 sendTG "Downloaded the file"
 FILE=${URL##*/}
 EXTENSION=${URL##*.}
@@ -29,19 +29,19 @@ PARTITIONS="system vendor cust odm oem factory product modem xrom systemex"
 if [[ ! -d "${HOME}/extract-dtb" ]]; then
     git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
 else
-    git -C ~/extract-dtb pl
+    git -C ~/extract-dtb pull
 fi
 
 if [[ ! -d "${HOME}/Firmware_extractor" ]]; then
     git clone -q https://github.com/AndroidDumps/Firmware_extractor ~/Firmware_extractor
 else
-    git -C ~/Firmware_extractor pl
+    git -C ~/Firmware_extractor pull
 fi
 
 if [[ ! -d "${HOME}/mkbootimg_tools" ]]; then
     git clone -q https://github.com/xiaolu/mkbootimg_tools ~/mkbootimg_tools
 else
-    git -C ~/mkbootimg_tools pl
+    git -C ~/mkbootimg_tools pull
 fi
 
 bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
