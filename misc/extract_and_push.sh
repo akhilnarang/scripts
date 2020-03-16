@@ -146,9 +146,6 @@ curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_f
 }
 
 git init
-git config user.name "Akhil's Lazy Buildbot"
-git config user.email "jenkins@akhilnarang.me"
-git config user.signingKey "76954A7A24F0F2E30B3DB2354D5819B432B2123C"
 git checkout -b "$branch"
 find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' >.gitignore
 git add --all
