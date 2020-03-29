@@ -31,7 +31,7 @@ if [[ ! -f ${FILE} ]]; then
     fi
 fi
 
-PARTITIONS="system vendor cust odm oem factory product modem xrom systemex"
+PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other"
 
 if [[ ! -d "${HOME}/extract-dtb" ]]; then
     git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
