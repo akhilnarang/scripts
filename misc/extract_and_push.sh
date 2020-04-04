@@ -86,7 +86,7 @@ sort -u -o ./board-info.txt ./board-info.txt
 
 # Fix permissions
 sudo chown "$(whoami)" ./* -R
-chmod -R u+rwX ./*
+sudo chmod -R u+rwX ./*
 
 # Generate all_files.txt
 find . -type f -printf '%P\n' | sort | grep -v ".git/" >./all_files.txt
@@ -192,3 +192,4 @@ echo -e "Sending telegram notification"
 TEXT=$(cat tg.html)
 curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" >/dev/null
 rm -fv tg.html
+sudo umount $WORKSPACE/* -R
