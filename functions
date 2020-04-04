@@ -158,7 +158,7 @@ function sendTG() {
             return
             ;;
     esac
-    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1>/dev/null
+    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1> /dev/null
     echo
 }
 

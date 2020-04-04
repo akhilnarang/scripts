@@ -16,7 +16,7 @@ echo "
 </tr>
 </thead>
 <tbody>
-" >>${file}
+" >> ${file}
 count=1
 for f in ./*; do
     if [ -f "${f}" ]; then
@@ -30,12 +30,12 @@ for f in ./*; do
   <td>${filemd5}</td>
   <td>${filesize}</td>
   </tr>
-  " >>${file}
+  " >> ${file}
         count=$(("$count" + 1))
     fi
 done
 echo "
 </tbody>
 </table>
-" >>${file}
+" >> ${file}
 echo "Done :)"

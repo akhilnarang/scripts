@@ -20,7 +20,7 @@ vendor/qcom/opensource/dataservices vendor/qcom/opensource/interfaces vendor/qco
 AOSP="https://android.googlesource.com"
 
 for filess in failed success notaosp; do
-    rm $filess 2>/dev/null
+    rm $filess 2> /dev/null
     touch $filess
 done
 
@@ -42,17 +42,17 @@ while read -r repos; do
         fi
         git branch -D $SRC
         git checkout -b $SRC m/$SRC
-        git remote rm aosp 2>/dev/null
+        git remote rm aosp 2> /dev/null
         git remote add aosp "${AOSP}/platform/$repos"
         if ! git fetch aosp --quiet --tags; then
-            echo "$repos" >>"${AOSIP_PATH}"/notaosp
+            echo "$repos" >> "${AOSIP_PATH}"/notaosp
         else
             if ! git merge "${TAG}" --no-edit; then
-                echo "$repos" >>"${AOSIP_PATH}"/failed
+                echo "$repos" >> "${AOSIP_PATH}"/failed
                 echo "$red $repos failed :( $end"
             else
                 if [[ "$(git rev-parse HEAD)" != "$(git rev-parse aosip/${SRC})" ]]; then
-                    echo "$repos" >>"${AOSIP_PATH}"/success
+                    echo "$repos" >> "${AOSIP_PATH}"/success
                     git commit --signoff --date="$(date)" --amend --no-edit
                     echo "$grn $repos succeeded $end"
                     echo "Pushing!"

@@ -17,7 +17,7 @@ function repopick_stuff() {
 
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 function sendTG() {
-    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001185331716&parse_mode=Markdown" >/dev/null
+    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001185331716&parse_mode=Markdown" > /dev/null
 }
 rm -fv .repo/local_manifests/*
 export days_to_log=${DAY}

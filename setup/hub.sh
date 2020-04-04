@@ -12,7 +12,7 @@ function get_release_assets() {
         RELEASE_ID=$(curl --silent "https://api.github.com/repos/${1:?}/releases/latest" | # Get the latest release from GitHub API
             jq -r .id)
     else
-        curl --silent "https://api.github.com/repos/${REPOSITORY}/releases" | jq '.[] | {id: .id, name: .tag_name}' >"${TMP_FILE}"
+        curl --silent "https://api.github.com/repos/${REPOSITORY}/releases" | jq '.[] | {id: .id, name: .tag_name}' > "${TMP_FILE}"
         RELEASE_ID=$(jq -r '"\(.id) \(.name)"' "${TMP_FILE}" | grep "${RELEASE_TAG}" | awk '{print $1}')
     fi
     curl --silent "https://api.github.com/repos/${REPOSITORY}/releases/${RELEASE_ID}" | jq -r .assets[].browser_download_url

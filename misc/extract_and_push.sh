@@ -3,12 +3,12 @@
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 
 function sendTG() {
-    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" >/dev/null
+    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
 }
 
 [[ -z $ORG ]] && ORG="AndroidDumps"
 
-if [[ -f "$URL" ]]; then
+if [[ -f $URL ]]; then
     cp -v "$URL" .
     sendTG "Found file locally"
 else
@@ -56,12 +56,12 @@ bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
     exit 1
 )
 
-~/mkbootimg_tools/mkboot ./boot.img ./bootimg >/dev/null
-python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg >/dev/null
+~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
+python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
 mkdir bootdts dtbodts
-find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; >/dev/null 2>&1
-[[ -f "dtbo.img" ]] && python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo >/dev/null
-find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; >/dev/null 2>&1
+find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+[[ -f "dtbo.img" ]] && python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
+find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
 
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
@@ -71,16 +71,16 @@ for p in $PARTITIONS; do
     fi
 done
 
-ls system/build*.prop 2>/dev/null || ls system/system/build*.prop 2>/dev/null || {
+ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null || {
     sendTG "No system build*.prop found, pushing cancelled!"
     exit 1
 }
 
 # board-info.txt
-find ./modem -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >>./board-info.txt
-find ./tz* -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING" | sed "s|QC_IMAGE_VERSION_STRING|require version-trustzone|g" >>./board-info.txt
+find ./modem -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >> ./board-info.txt
+find ./tz* -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING" | sed "s|QC_IMAGE_VERSION_STRING|require version-trustzone|g" >> ./board-info.txt
 if [ -f ./vendor/build.prop ]; then
-    strings ./vendor/build.prop | grep "ro.vendor.build.date.utc" | sed "s|ro.vendor.build.date.utc|require version-vendor|g" >>./board-info.txt
+    strings ./vendor/build.prop | grep "ro.vendor.build.date.utc" | sed "s|ro.vendor.build.date.utc|require version-vendor|g" >> ./board-info.txt
 fi
 sort -u -o ./board-info.txt ./board-info.txt
 
@@ -89,7 +89,7 @@ sudo chown "$(whoami)" ./* -R
 sudo chmod -R u+rwX ./*
 
 # Generate all_files.txt
-find . -type f -printf '%P\n' | sort | grep -v ".git/" >./all_files.txt
+find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
 flavor=$(grep -oP "(?<=^ro.build.flavor=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
@@ -139,7 +139,7 @@ manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:pri
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
 
-curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" >/dev/null && {
+curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null && {
     echo "Already dumped"
     sendTG "Already dumped"
     exit 1
@@ -147,7 +147,7 @@ curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_f
 
 git init
 git checkout -b "$branch"
-find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' >.gitignore
+find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
 git add --all
 git commit -asm "Add $description" -S || exit 1
 curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
@@ -188,8 +188,8 @@ echo -e "Sending telegram notification"
     printf "\n<b>GitHub:</b>"
     printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
     printf "\n<a href=\"https://github.com/%s/%s/tree/%s/\">$codename</a>" "$ORG" "$repo" "$branch"
-) >>tg.html
+) >> tg.html
 TEXT=$(cat tg.html)
-curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" >/dev/null
+curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" > /dev/null
 rm -fv tg.html
 sudo umount "$WORKSPACE/*" -R

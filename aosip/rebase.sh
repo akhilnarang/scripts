@@ -20,7 +20,7 @@ vendor/qcom/opensource/dataservices vendor/qcom/opensource/interfaces vendor/qco
 AOSP="https://android.googlesource.com"
 
 for filess in failed success notaosp; do
-    rm $filess 2>/dev/null
+    rm $filess 2> /dev/null
     touch $filess
 done
 
@@ -41,16 +41,16 @@ while read -r repos; do
         fi
         git branch -D $SRC
         git checkout -b $SRC m/$SRC
-        git remote rm aosp 2>/dev/null
+        git remote rm aosp 2> /dev/null
         git remote add aosp "${AOSP}/platform/$repos"
         if ! git fetch aosp --quiet --tags; then
-            echo "$repos" >>"${AOSIP_PATH}"/notaosp
+            echo "$repos" >> "${AOSIP_PATH}"/notaosp
         else
             if ! git rebase "${TAG}"; then
-                echo "$repos" >>"${AOSIP_PATH}"/failed
+                echo "$repos" >> "${AOSIP_PATH}"/failed
                 echo "$red $repos failed :( $end"
             else
-                echo "$repos" >>"${AOSIP_PATH}"/success
+                echo "$repos" >> "${AOSIP_PATH}"/success
                 echo "$grn $repos succeeded $end"
                 echo "Pushing!"
                 r=$(git rv | grep github.com.AOSiP | awk '{print $2}' | head -1 | sed 's/AOSiP/kronic-staging/')

@@ -65,4 +65,4 @@ time m kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} bu
 set +e
 [[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
-~/api/generate_json.py "$OUT"/A*.zip >"${OUT}"/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
+~/api/generate_json.py "$OUT"/A*.zip > "${OUT}"/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json

@@ -13,9 +13,9 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1
 fi
 
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "raphael" ]] || [[ "$*" =~ "raphael" ]]; } && DEVICE=raphael
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "phoenix" ]] || [[ "$*" =~ "phoenix" ]]; } && DEVICE=phoenix
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]]; } && DEVICE=beryllium
+[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "raphael" ]] || [[ $* =~ "raphael" ]]; } && DEVICE=raphael
+[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "phoenix" ]] || [[ $* =~ "phoenix" ]]; } && DEVICE=phoenix
+[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ $* =~ "beryllium" ]]; } && DEVICE=beryllium
 [[ -z ${DEVICE} ]] && DEVICE=beryllium
 
 function tg() {
@@ -94,11 +94,11 @@ export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
 cd "${SRCDIR}" || exit
 rm -fv "${IMAGE}"
 
-if [[ "$*" =~ "mrproper" ]]; then
+if [[ $* =~ "mrproper" ]]; then
     make_wrapper mrproper
 fi
 
-if [[ "$*" =~ "clean" ]]; then
+if [[ $* =~ "clean" ]]; then
     make_wrapper clean
 fi
 
@@ -106,8 +106,8 @@ make_wrapper $DEFCONFIG || (echo "Failed to build with ${DEFCONFIG}, exiting!" &
     exit 1)
 
 START=$(date +"%s")
-[[ "$*" =~ "upload" ]] && tg "Building!"
-if [[ "$*" =~ "quiet" ]]; then
+[[ $* =~ "upload" ]] && tg "Building!"
+if [[ $* =~ "quiet" ]]; then
     make_wrapper |& ag -ia "error:|warning:"
 else
     make_wrapper
@@ -115,11 +115,11 @@ fi
 END=$(date +"%s")
 DIFF=$((END - START))
 echo -e "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
-[[ "$*" =~ "upload" ]] && tg "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
+[[ $* =~ "upload" ]] && tg "Build took $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds."
 
 if [[ ! -f ${IMAGE} ]]; then
     echo -e "Build failed :P"
-    [[ "$*" =~ "upload" ]] && tg "Build failed!"
+    [[ $* =~ "upload" ]] && tg "Build failed!"
     exit 1
 else
     echo -e "Build Succesful!"
@@ -131,16 +131,16 @@ cp -v "${IMAGE}" "${ANYKERNEL}/"
 cd - || exit
 cd "${ANYKERNEL}" || exit
 zip -r9 "${FINAL_ZIP}" ./* -x ".git/*" "README.md" ".gitignore" "*.zip"
-md5sum "${FINAL_ZIP}" | sed -e "s|${ZIP_DIR}||" >"${FINAL_ZIP}.md5sum"
+md5sum "${FINAL_ZIP}" | sed -e "s|${ZIP_DIR}||" > "${FINAL_ZIP}.md5sum"
 cd - || exit
 
 if [ -f "$FINAL_ZIP" ]; then
     echo -e "$NAME zip can be found at $FINAL_ZIP"
-    if [[ "$*" =~ "transfer" ]]; then
+    if [[ $* =~ "transfer" ]]; then
         echo -e "Uploading ${ZIPNAME} to https://transfer.sh/"
         transfer "${FINAL_ZIP}"
     fi
-    if [[ "$*" =~ "upload" ]]; then
+    if [[ $* =~ "upload" ]]; then
         echo -e "Uploading ${ZIPNAME}"
         case $(hostname) in
             "memebox")
