@@ -17,10 +17,10 @@ else
     git clone https://github.com/akhilnarang/scripts ~/scripts
 fi
 
-if [[ -d "${HOME}/platform_build_make" ]]; then
-    git -C ~/platform_build_make fetch origin ten && git -C ~/platform_build_make reset --hard origin/ten
+if [[ -d "${HOME}/platform_build" ]]; then
+    git -C ~/platform_build fetch origin ten && git -C ~/platform_build reset --hard origin/ten
 else
-    git clone https://github.com/AOSiP/platform_build_make ~/platform_build_make
+    git clone https://github.com/AOSiP/platform_build ~/platform_build
 fi
 
 if [[ -d "${HOME}/api" ]]; then
@@ -38,8 +38,8 @@ SIGNED_TARGET_FILES="signed-target-files.zip"
 SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
 # shellcheck disable=SC2086
 # SC2086: Double quote to prevent globbing and word splitting
-"$HOME"/platform_build_make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS aosip_"$DEVICE"-target_files-*.zip "$SIGNED_TARGET_FILES"
-"$HOME"/platform_build_make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$SIGNED_TARGET_FILES" "$SIGNED_OTAPACKAGE"
+"$HOME"/platform_build/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS aosip_"$DEVICE"-target_files-*.zip "$SIGNED_TARGET_FILES"
+"$HOME"/platform_build/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$SIGNED_TARGET_FILES" "$SIGNED_OTAPACKAGE"
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/"$PARAM_JOB_NUMBER"
 mkdir -pv /var/www/html/"$PARAM_JOB_NUMBER"
