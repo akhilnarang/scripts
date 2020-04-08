@@ -54,7 +54,11 @@ case $AOSIP_BUILDTYPE in
         python3 ~/api/post_device.py "${DEVICE}" "${AOSIP_BUILDTYPE}"
         ;;
     *)
-        [[ ${QUIET} == "no" ]] && PARSE_MODE=html sendAOSiP "$(~/jenkins-scripts/message_testers.py "${DEVICE}")"
-        [[ ${QUIET} == "no" ]] && [[ -n $REPOPICK_LIST ]] && sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
+        if [[ ${QUIET} == "no" ]]; then
+            PARSE_MODE=html sendAOSiP "$(~/jenkins-scripts/message_testers.py "${DEVICE}")"
+            if [[ -n $REPOPICK_LIST ]]; then
+                sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
+            fi
+        fi
         ;;
 esac
