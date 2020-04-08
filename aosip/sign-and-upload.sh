@@ -42,8 +42,8 @@ rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/
 mkdir -pv /var/www/html/"$PARAM_BUILD_NUMBER"
 cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_BUILD_NUMBER"
 FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
-[[ ${QUIET} == "no" ]] && PARSE_MODE="html" sendAOSiP "Build <a href=$FOLDER_LINK>$PARAM_BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-[[ ${QUIET} == "no" ]] && PARSE_MODE="html" sendAOSiP "<a href=https://aosip.dev/dl/$PARAM_BUILD_NUMBER>$DEVICE $AOSIP_BUILDTYPE</a>"
+[[ ${QUIET} == "no" ]] && PARSE_MODE="html" sendAOSiP "Build <a href=\"$FOLDER_LINK\">$PARAM_BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
+[[ ${QUIET} == "no" ]] && PARSE_MODE="html" sendAOSiP "<a href=\"https://aosip.dev/dl/$PARAM_BUILD_NUMBER\">$DEVICE $AOSIP_BUILDTYPE</a>"
 case $AOSIP_BUILDTYPE in
     "Gapps" | "Official" | "Beta" | "Alpha")
         mkdir -pv /mnt/builds/"$DEVICE"
