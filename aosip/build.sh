@@ -41,12 +41,6 @@ else
     git clone https://github.com/AOSiP-Devices/jenkins
 fi
 
-if [[ -d "${HOME}/api" ]]; then
-    git -C ~/api pull
-else
-    git clone https://github.com/AOSiP/api ~/api
-fi
-
 [[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
 repopick_stuff || {
     sendAOSiP "Picks failed"
@@ -63,8 +57,7 @@ set +e
 [[ $QUIET == "no" ]] && sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
 cd "$OUT"
-~/api/generate_json.py AOSiP*.zip > "${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 mkdir /tmp/"$BUILD_NUMBER" -v
-for f in system/build.prop *.img *.zip *.json obj/PACKAGING/target_files_intermediates/*.zip; do cp "$f" /tmp/"$BUILD_NUMBER"; done
+for f in system/build.prop *.img *.zip obj/PACKAGING/target_files_intermediates/*.zip; do cp "$f" /tmp/"$BUILD_NUMBER"; done
 rclone copy -P --drive-chunk-size 1024M /tmp/"$BUILD_NUMBER" kronic-sync:jenkins/"$BUILD_NUMBER"
 rm -rf /tmp/"$BUILD_NUMBER"
