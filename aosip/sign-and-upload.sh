@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # AOSiP upload script
 
-
 if [[ -d "${HOME}/jenkins-scripts" ]]; then
     git -C ~/jenkins-scripts fetch origin master && git -C ~/jenkins-scripts reset --hard origin/master
 else
@@ -30,7 +29,7 @@ else
 fi
 
 source ~/scripts/functions
-rclone copy -P --drive-chunk-size 1024M kronic-sync:jenkins/"$PARAM_JOB_NUMBER" "$PARAM_JOB_NUMBER" || exit 1
+rclone copy -P --drive-chunk-size 1024M kronic-sync:jenkins/"${PARAM_JOB_NUMBER:?}"/ "$PARAM_JOB_NUMBER" || exit 1
 
 cd "$PARAM_JOB_NUMBER" || exit 1
 SIGNED_OTAPACKAGE="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip"
