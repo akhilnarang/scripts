@@ -5,31 +5,43 @@
 # AOSiP upload script
 
 if [[ -d "${HOME}/jenkins-scripts" ]]; then
-	git -C ~/jenkins-scripts pull
+    git -C ~/jenkins-scripts fetch origin master && git -C ~/jenkins-scripts reset --hard origin/master
 else
 	git clone https://github.com/AOSiP-Devices/jenkins ~/jenkins-scripts
 fi
 
 if [[ -d "${HOME}/scripts" ]]; then
-    git -C ~/scripts pull
+    git -C ~/scripts fetch origin master && git -C ~/scripts reset --hard origin/master
 else
     git clone https://github.com/akhilnarang/scripts ~/scripts
 fi
 
+if [[ -d "${HOME}/platform_build_make"]]; then
+    git -C ~/platform_build_make fetch origin ten && git -C ~/platform_build_make reset --hard origin/ten
+else
+    git clone https://github.com/AOSiP/platform_build_make ~/platform_build_make
+fi
+
+
 source ~/scripts/functions
-cd /var/www/html/$FOLDER
-mv $DEVICE-$AOSIP_BUILDTYPE.json ../
-VERSION=10
-[[ "$BRANCH" == "pie" ]] && VERSION=9.0
-ZIP=$(ls AOSiP-$VERSION-$AOSIP_BUILDTYPE-$DEVICE-*.zip | tail -1)
-[[ "${QUIET}" == "no" ]] && sendAOSiP "[$ZIP]($BASE_URL/$FOLDER/$ZIP)"
-[[ "${QUIET}" == "no" ]] && sendAOSiP "[GDrive]($BUILD_URL) incoming"
-GDRIVE_URL=$(gdrive upload -p $PARENT_FOLDER --share "${ZIP}" | awk '/https/ {print $7}')
-[[ "${QUIET}" == "no" ]] && sendAOSiP "[Google Drive]($GDRIVE_URL)"
-url="$BASE_URL/$FOLDER/$ZIP"
+rclone copy -P --drive-chunk-size 1024M kronic-sync:jenkins/$PARAM_JOB_NUMBER $PARAM_JOB_NUMBER || exit 1
+
+cd $PARAM_JOB_NUMBER || exit 1
+mv $DEVICE-$AOSIP_BUILDTYPE.json /var/www/html/
+SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
+$HOME/platform_build_make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs *-target_files-*.zip signed-target-files.zip
+$HOME/platform_build_make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true signed-target-files.zip AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip
+rclone copy -P --drive-chunk-size 256M AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip kronic-sync:jenkins/$PARAM_JOB_NUMBER
+FOLDER_LINK="$(rclone link kronic-sync:jenkins/$PARAM_JOB_NUMBER)"
+[[ "${QUIET}" == "no" ]] && sendAOSiP "Build [$PARAM_JOB_NUMBER]($FOLDER_LINK)"
 case $AOSIP_BUILDTYPE in
-"Official" | "Beta" | "Alpha")
-	curl -s "http://0.0.0.0:8080/job/AOSiP-Mirror/buildWithParameters?token=${TOKEN:?}&DEVICE=$DEVICE&TYPE=direct&LINK=$url" || exit 0
+"Gapps" | "Official" | "Beta" | "Alpha")
+	mkdir -pv /mnt/builds/$DEVICE
+	cp -v AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip /mnt/builds/$DEVICE
+	cp -v boot.img /mnt/builds/$DEVICE/AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-boot.img
+	cd /mnt/builds/$DEVICE
+	md5sum AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip > AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip.md5sum
+	python3 ~/api/post_device.py "${DEVICE}" "${AOSIP_BUILDTYPE}"
 	;;
 *)
 	[[ "${QUIET}" == "no" ]] && PARSE_MODE=html sendAOSiP "$(~/jenkins-scripts/message_testers.py ${DEVICE})"

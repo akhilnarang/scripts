@@ -7,18 +7,16 @@
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
 
-export PARSE_MODE="html"
-
 set -e
 source ~/scripts/functions
 export TZ=UTC
 [[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
-[[ $QUIET == "no" ]] && sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $(hostname), check progress <a href='${BUILD_URL}'>here</a>!"
+[[ $QUIET == "no" ]] && PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
 if [[ ${SYNC} == "yes" ]]; then
     rm -rf .repo/repo .repo/manifests .repo/local_manifests
-    repo init -u https://github.com/AOSiP/platform_manifest.git -b "${BRANCH}" --no-tags --no-clone-bundle --current-branch
-    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/${BRANCH} && git clean -fdx"
+    repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
+    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi
@@ -27,13 +25,13 @@ fi
 set +e
 . build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
-if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]]; then
+if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]] && [[ ${AOSIP_BUILDTYPE} != "Alpha" ]] && [[ ${AOSIP_BUILDTYPE} != "Gapps" ]]; then
     export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
 fi
 set -e
 case "${CLEAN}" in
     "clean" | "deviceclean" | "installclean") m "${CLEAN}" ;;
-    *) rm -rf "${OUT}"/A* ;;
+    *) rm -rf "${OUT}"/AOSiP* ;;
 esac
 set +e
 
@@ -55,14 +53,18 @@ repopick_stuff || {
     exit 1
 }
 set -e
-eval "${COMMAND_TO_RUN}"
-export USE_CCACHE=1
-export CCACHE_DIR="${HOME}/.ccache"
+USE_CCACHE=1
+CCACHE_DIR="${HOME}/.ccache"
 CCACHE_EXEC="$(command -v ccache)"
-export CCACHE_EXEC
+export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
-time m kronic || ([[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "[${BRANCH} build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
+time m kronic || ([[ $QUIET == "no" ]] && sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
 set +e
-[[ $QUIET == "no" ]] && PARSE_MODE=md sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
+[[ $QUIET == "no" ]] && sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
-~/api/generate_json.py "$OUT"/A*.zip > "${OUT}"/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
+cd "$OUT"
+~/api/generate_json.py AOSiP*.zip > "${DEVICE}"-"${AOSIP_BUILDTYPE}".json
+mkdir /tmp/"$BUILD_NUMBER" -v
+for f in system/build.prop *.img *.zip *.json obj/PACKAGING/target_files_intermediates/*.zip; do cp "$f" /tmp/"$BUILD_NUMBER"; done
+rclone copy -P --drive-chunk-size 1024M /tmp/"$BUILD_NUMBER" kronic-sync:jenkins/"$BUILD_NUMBER"
+rm -rf /tmp/"$BUILD_NUMBER"
