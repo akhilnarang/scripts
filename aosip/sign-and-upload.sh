@@ -29,9 +29,9 @@ else
 fi
 
 source ~/scripts/functions
-rclone copy -P --drive-chunk-size 1024M kronic-sync:jenkins/"${PARAM_JOB_NUMBER:?}"/ "$PARAM_JOB_NUMBER" || exit 1
+rclone copy -P --drive-chunk-size 1024M kronic-sync:jenkins/"${PARAM_BUILD_NUMBER:?}"/ "$PARAM_BUILD_NUMBER" || exit 1
 
-cd "$PARAM_JOB_NUMBER" || exit 1
+cd "$PARAM_BUILD_NUMBER" || exit 1
 SIGNED_OTAPACKAGE="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip"
 SIGNED_TARGET_FILES="signed-target-files.zip"
 SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
@@ -40,11 +40,11 @@ SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA
 "$HOME"/platform_build/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS aosip_"$DEVICE"-target_files-*.zip "$SIGNED_TARGET_FILES"
 "$HOME"/platform_build/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$SIGNED_TARGET_FILES" "$SIGNED_OTAPACKAGE"
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
-rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/"$PARAM_JOB_NUMBER"
-mkdir -pv /var/www/html/"$PARAM_JOB_NUMBER"
-cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_JOB_NUMBER"
-FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_JOB_NUMBER")"
-[[ ${QUIET} == "no" ]] && sendAOSiP "Build [$PARAM_JOB_NUMBER]($FOLDER_LINK)"
+rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
+mkdir -pv /var/www/html/"$PARAM_BUILD_NUMBER"
+cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_BUILD_NUMBER"
+FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
+[[ ${QUIET} == "no" ]] && sendAOSiP "Build [$PARAM_BUILD_NUMBER]($FOLDER_LINK)"
 case $AOSIP_BUILDTYPE in
     "Gapps" | "Official" | "Beta" | "Alpha")
         mkdir -pv /mnt/builds/"$DEVICE"
