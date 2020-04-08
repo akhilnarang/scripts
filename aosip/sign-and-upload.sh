@@ -29,20 +29,20 @@ cd "$PARAM_BUILD_NUMBER" || exit 1
 SIGNED_OTAPACKAGE="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip"
 SIGNED_TARGET_FILES="signed-target-files.zip"
 SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
+cd ~/ten || exit
+echo "Signing target_files APKs"
 # shellcheck disable=SC2086
 # SC2086: Double quote to prevent globbing and word splitting
-cd ~/ten
-echo "Signing target_files APKs"
 ./build/make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS "$OLDPWD"/aosip_"$DEVICE"-target_files-*.zip "$OLDPWD"/"$SIGNED_TARGET_FILES"
 echo "Generating signed otapackage"
 ./build/make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$OLDPWD"/"$SIGNED_TARGET_FILES" "$OLDPWD"/"$SIGNED_OTAPACKAGE"
-cd -
+cd - || exit
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
 mkdir -pv /var/www/html/"$PARAM_BUILD_NUMBER"
 cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_BUILD_NUMBER"
 FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
-[[ ${QUIET} == "no" ]] && sendAOSiP "Build [$PARAM_BUILD_NUMBER]($FOLDER_LINK)"
+[[ ${QUIET} == "no" ]] && sendAOSiP "Build [$PARAM_BUILD_NUMBER]($FOLDER_LINK) - $DEVICE $AOSIP_BUILDTYPE"
 case $AOSIP_BUILDTYPE in
     "Gapps" | "Official" | "Beta" | "Alpha")
         mkdir -pv /mnt/builds/"$DEVICE"
