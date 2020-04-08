@@ -33,9 +33,9 @@ cd ~/ten || exit
 echo "Signing target_files APKs"
 # shellcheck disable=SC2086
 # SC2086: Double quote to prevent globbing and word splitting
-./build/make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS "$OLDPWD"/aosip_"$DEVICE"-target_files-*.zip "$OLDPWD"/"$SIGNED_TARGET_FILES"
+./build/make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS "$OLDPWD"/aosip_"$DEVICE"-target_files-*.zip "$OLDPWD/$SIGNED_TARGET_FILES"
 echo "Generating signed otapackage"
-./build/make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$OLDPWD"/"$SIGNED_TARGET_FILES" "$OLDPWD"/"$SIGNED_OTAPACKAGE"
+./build/make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$SIGNED_OTAPACKAGE"
 cd - || exit
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
