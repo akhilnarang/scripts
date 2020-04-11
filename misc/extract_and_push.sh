@@ -192,4 +192,3 @@ echo -e "Sending telegram notification"
 TEXT=$(cat tg.html)
 curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" > /dev/null
 rm -fv tg.html
-df -h | grep -q "$WORKSPACE" && sudo umount "$WORKSPACE/*" -R 2> /dev/null
