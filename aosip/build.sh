@@ -13,6 +13,11 @@ export TZ=UTC
 [[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 [[ $QUIET == "no" ]] && PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
+if [[ -d "jenkins" ]]; then
+    git -C jenkins pull
+else
+    git clone https://github.com/AOSiP-Devices/jenkins
+fi
 . build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
     rm -rf .repo/repo .repo/manifests .repo/local_manifests
@@ -41,12 +46,6 @@ case "${CLEAN}" in
     *) rm -rf "${OUT}"/AOSiP* ;;
 esac
 set +e
-
-if [[ -d "jenkins" ]]; then
-    git -C jenkins pull
-else
-    git clone https://github.com/AOSiP-Devices/jenkins
-fi
 
 [[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
 repopick_stuff || {
