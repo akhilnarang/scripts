@@ -20,9 +20,10 @@ else
 fi
 . build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
-    rm -rf .repo/repo .repo/manifests .repo/local_manifests
+    rm -rf .repo/repo .repo/manifests
     repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
     repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
+    rm -rf .repo/local_manifests
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi
@@ -67,3 +68,5 @@ mkdir /tmp/"$BUILD_NUMBER" -v
 for f in system/build.prop *.img *.zip obj/PACKAGING/target_files_intermediates/*.zip; do cp "$f" /tmp/"$BUILD_NUMBER"; done
 rclone copy -P --drive-chunk-size 1024M /tmp/"$BUILD_NUMBER" kronic-sync:jenkins/"$BUILD_NUMBER"
 rm -rf /tmp/"$BUILD_NUMBER"
+FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
+sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
