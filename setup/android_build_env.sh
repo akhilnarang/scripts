@@ -13,7 +13,8 @@ UBUNTU_18_PACKAGES="curl"
 DEBIAN_10_PACKAGES="curl rsync"
 PACKAGES=""
 
-sudo apt install lsb-core
+# Install lsb-core packages
+sudo apt install lsb-core -y
 
 LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
@@ -27,7 +28,7 @@ elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
 fi
 
-sudo apt update -y
+sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive \
     apt install \
     adb autoconf automake axel bc bison build-essential \
