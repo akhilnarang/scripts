@@ -13,6 +13,7 @@ export TZ=UTC
 [[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 [[ $QUIET == "no" ]] && PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
+. build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
     rm -rf .repo/repo .repo/manifests .repo/local_manifests
     repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
@@ -20,10 +21,16 @@ if [[ ${SYNC} == "yes" ]]; then
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi
+    [[ -f "jenkins/${DEVICE}-presync" ]] && PRE_SYNC_PICKS+=" | $(cat jenkins/"${DEVICE}-presync")"
+    if [[ -n ${PRE_SYNC_PICKS} ]]; then
+        REPOPICK_LIST="$PRE_SYNC_PICKS" repopick_stuff || {
+            sendAOSiP "Pre-sync picks failed"
+            exit 1
+        }
+    fi
     time repo sync -j"$(nproc)" --current-branch --no-tags --no-clone-bundle --force-sync
 fi
 set +e
-. build/envsetup.sh
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]] && [[ ${AOSIP_BUILDTYPE} != "Alpha" ]] && [[ ${AOSIP_BUILDTYPE} != "Gapps" ]]; then
     export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
