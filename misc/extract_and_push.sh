@@ -13,7 +13,12 @@ if [[ -f $URL ]]; then
     sendTG "Found file locally"
 else
     sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
-    aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
+    if [[ $URL =~ drive.google.com ]]; then
+        FILE_ID="$(echo "${URL:?}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
+        gdrive download "$FILE_ID" || exit 1
+    else
+        aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
+    fi
     sendTG "Downloaded the file"
 fi
 
