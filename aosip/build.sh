@@ -7,6 +7,14 @@
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
 
+function repo_init() {
+    repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
+}
+
+function repo_sync() {
+    time repo sync -j"$(nproc)" --current-branch --no-tags --no-clone-bundle --force-sync
+}
+
 set -e
 source ~/scripts/functions
 export TZ=UTC
@@ -18,10 +26,16 @@ if [[ -d "jenkins" ]]; then
 else
     git clone https://github.com/AOSiP-Devices/jenkins
 fi
+
+[[ -d "vendor/aosip" ]] || {
+    repo_init
+    repo_sync
+}
+
 . build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
     rm -rf .repo/repo .repo/manifests
-    repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
+    repo_init
     repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
     rm -rf .repo/local_manifests
     if [[ -n ${LOCAL_MANIFEST} ]]; then
@@ -34,7 +48,7 @@ if [[ ${SYNC} == "yes" ]]; then
             exit 1
         }
     fi
-    time repo sync -j"$(nproc)" --current-branch --no-tags --no-clone-bundle --force-sync
+    repo_sync
 fi
 set +e
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
