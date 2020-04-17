@@ -29,8 +29,7 @@ elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
 fi
 
 sudo apt update
-sudo DEBIAN_FRONTEND=noninteractive \
-    apt install \
+sudo DEBIAN_FRONTEND=noninteractive apt install \
     adb autoconf automake axel bc bison build-essential \
     ccache clang cmake expat fastboot flex g++ \
     g++-multilib gawk gcc gcc-multilib git gnupg gperf \
