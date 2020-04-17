@@ -16,6 +16,8 @@ else
     if [[ $URL =~ drive.google.com ]]; then
         FILE_ID="$(echo "${URL:?}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
         gdrive download "$FILE_ID" || exit 1
+    elif [[ $URL =~ mega.nz ]]; then
+        megadl "'$URL'" || exit 1
     else
         aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
     fi
