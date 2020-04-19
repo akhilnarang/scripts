@@ -26,7 +26,9 @@ source ~/scripts/functions
 rclone copy -P --drive-chunk-size 1024M kronic-sync:jenkins/"${PARAM_BUILD_NUMBER:?}"/ "$PARAM_BUILD_NUMBER" || exit 1
 
 cd "$PARAM_BUILD_NUMBER" || exit 1
-SIGNED_OTAPACKAGE="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d)-signed.zip"
+AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-$(date +%Y%m%d)"
+SIGNED_OTAPACKAGE="${AOSIP_VERSION}-signed.zip"
+BOOTIMAGE="${AOSIP_VERSION}-boot.img"
 SIGNED_TARGET_FILES="signed-target_files.zip"
 SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
 cd ~/ten || exit 1
@@ -38,8 +40,8 @@ echo "Generating signed otapackage"
 ./build/make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$SIGNED_OTAPACKAGE" || exit 1
 cd - || exit 1
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
-rclone copy -P --drive-chunk-size 256M "$SIGNED_TARGET_FILES" kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
-rclone copy -P --drive-chunk-size 256M "$SIGNED_OTAPACKAGE" kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
+7z e "$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$BOOTIMAGE"
+rclone copy -P --drive-chunk-size 256M . kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
 mkdir -pv /var/www/html/"$PARAM_BUILD_NUMBER"
 cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_BUILD_NUMBER"
 FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
@@ -49,7 +51,7 @@ case $AOSIP_BUILDTYPE in
     "Gapps" | "Official" | "Beta" | "Alpha")
         mkdir -pv /mnt/builds/"$DEVICE"
         cp -v "$SIGNED_OTAPACKAGE" /mnt/builds/"$DEVICE"
-        cp -v boot.img /mnt/builds/"$DEVICE"/AOSiP-10-"$AOSIP_BUILDTYPE"-"$DEVICE"-"$(date +%Y%m%d)"-boot.img
+        cp -v "$BOOTIMAGE" /mnt/builds/"$DEVICE"
         cd /mnt/builds/"$DEVICE" || exit
         md5sum "$SIGNED_OTAPACKAGE" > "$SIGNED_OTAPACKAGE".md5sum
         python3 ~/api/post_device.py "${DEVICE}" "${AOSIP_BUILDTYPE}"
