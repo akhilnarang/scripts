@@ -38,7 +38,7 @@ if [[ ! -f ${FILE} ]]; then
     fi
 fi
 
-PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other"
+PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other oppo_product"
 
 if [[ ! -d "${HOME}/extract-dtb" ]]; then
     git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
@@ -121,11 +121,12 @@ tags=$(grep -oP "(?<=^ro.build.tags=).*" -hs {system,system/system,vendor}/build
 [[ -z ${tags} ]] && tags=$(grep -oP "(?<=^ro.vendor.build.tags=).*" -hs vendor/build*.prop)
 [[ -z ${tags} ]] && tags=$(grep -oP "(?<=^ro.system.build.tags=).*" -hs {system,system/system}/build*.prop)
 platform=$(grep -oP "(?<=^ro.board.platform=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z ${platform} ]] && tags=$(grep -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
-[[ -z ${platform} ]] && tags=$(grep -oP "(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${platform} ]] && platform=$(grep -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
+[[ -z ${platform} ]] && platform=$(grep -oP "(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
 manufacturer=$(grep -oP "(?<=^ro.product.manufacturer=).*" -hs {system,system/system,vendor}/build*.prop)
-[[ -z ${manufacturer} ]] && tags=$(grep -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
-[[ -z ${manufacturer} ]] && tags=$(grep -oP "(?<=^ro.system.product.manufacturer=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${manufacturer} ]] && manufacturer=$(grep -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
+[[ -z ${manufacturer} ]] && manufacturer=$(grep -oP "(?<=^ro.system.product.manufacturer=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${manufacturer} ]] && manufacturer=$(grep -oP "(?<=^ro.product.manufacturer=).*" -hs oppo_product/build*.prop)
 fingerprint=$(grep -oP "(?<=^ro.build.fingerprint=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build*.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -oP "(?<=^ro.system.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
@@ -133,13 +134,15 @@ brand=$(grep -oP "(?<=^ro.product.brand=).*" -hs {system,system/system,vendor}/b
 [[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.product.vendor.brand=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.vendor.product.brand=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.product.system.brand=).*" -hs {system,system/system}/build*.prop | head -1)
+[[ -z ${brand} ]] && brand=$(grep -oP "(?<=^ro.product.brand=).*" -hs oppo_product/build*.prop)
 [[ -z ${brand} ]] && brand=$(echo "$fingerprint" | cut -d / -f1)
 codename=$(grep -oP "(?<=^ro.product.device=).*" -hs {system,system/system,vendor}/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.vendor.device=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.vendor.product.device=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.system.device=).*" -hs {system,system/system}/build*.prop | head -1)
-[[ -z ${codename} ]] && codename=$(echo "$fingerprint" | cut -d / -f3 | cut -d : -f1)
+[[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.device=).*" -hs oppo_product/build*.prop)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.build.fota.version=).*" -hs {system,system/system}/build*.prop | cut -d - -f1 | head -1)
+[[ -z ${codename} ]] && codename=$(echo "$fingerprint" | cut -d / -f3 | cut -d : -f1)
 description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z ${description} ]] && description=$(grep -oP "(?<=^ro.vendor.build.description=).*" -hs vendor/build*.prop)
 [[ -z ${description} ]] && description=$(grep -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
