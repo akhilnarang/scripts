@@ -38,6 +38,8 @@ echo "Signing target_files APKs"
 ./build/make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS "$OLDPWD"/aosip_"$DEVICE"-target_files-*.zip "$OLDPWD/$SIGNED_TARGET_FILES" || exit 1
 echo "Generating signed otapackage"
 ./build/make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$SIGNED_OTAPACKAGE" || exit 1
+echo "Generating signed images package"
+./build/make/tools/releasetools/img_from_target_files "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$AOSIP_VERSION-img.zip" || exit 1
 cd - || exit 1
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 7z e "$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$BOOTIMAGE"
