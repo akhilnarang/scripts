@@ -19,7 +19,16 @@ else
     elif [[ $URL =~ mega.nz ]]; then
         megadl "'$URL'" || exit 1
     else
-        aria2c -j"$(nproc)" "${URL}" || wget "${URL}" || exit 1
+        # Try to download with axel, else aria, else wget. Clean the directory each time.
+        axel -a -n64 "${URL}" || {
+            rm -fv ./*
+            aria2c -j64 "${URL}" || {
+                rm -fv ./*
+                wget "${URL}" || {
+                    exit 1
+                }
+            }
+        }
     fi
     sendTG "Downloaded the file"
 fi
