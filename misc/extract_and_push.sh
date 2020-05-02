@@ -20,7 +20,7 @@ else
         megadl "'$URL'" || exit 1
     else
         # Try to download with axel, else aria, else wget. Clean the directory each time.
-        axel -a -n64 "${URL}" || {
+        axel --quiet -a -n64 "${URL}" || {
             rm -fv ./*
             aria2c -j64 "${URL}" || {
                 rm -fv ./*
