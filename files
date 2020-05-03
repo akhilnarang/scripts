@@ -34,6 +34,7 @@ setup/ccache.sh
 setup/create_user.sh
 setup/crowdin-cli.sh
 setup/fedora.sh
+setup/git.sh
 setup/hub.sh
 setup/install_android_sdk.sh
 setup/make.sh
