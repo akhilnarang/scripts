@@ -20,11 +20,17 @@ else
         megadl "'$URL'" || exit 1
     else
         # Try to download with axel, else aria, else wget. Clean the directory each time.
+        echo "Starting download with axel"
         axel --quiet -a -n64 "${URL}" || {
+            echo "Download with axel failed"
             rm -fv ./*
+            echo "Start download with aria2"
             aria2c -j64 "${URL}" || {
+                echo "Download with aria2 failed"
                 rm -fv ./*
+                echo "Starting download with wget"
                 wget "${URL}" || {
+                    echo "Download with wget failed. Exiting."
                     exit 1
                 }
             }
