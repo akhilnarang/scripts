@@ -30,6 +30,7 @@ AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-$(date +%Y%m%d)"
 SIGNED_OTAPACKAGE="${AOSIP_VERSION}-signed.zip"
 BOOTIMAGE="${AOSIP_VERSION}-boot.img"
 SIGNED_TARGET_FILES="signed-target_files.zip"
+SIGNED_IMAGE_PACKAGE="${AOSIP_VERSION}-img.zip"
 SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
 cd ~/ten || exit 1
 echo "Signing target_files APKs"
@@ -39,7 +40,7 @@ echo "Signing target_files APKs"
 echo "Generating signed otapackage"
 ./build/make/tools/releasetools/ota_from_target_files -k ~/.android-certs/releasekey --backup=true "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$SIGNED_OTAPACKAGE" || exit 1
 echo "Generating signed images package"
-./build/make/tools/releasetools/img_from_target_files "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$AOSIP_VERSION-img.zip" || exit 1
+./build/make/tools/releasetools/img_from_target_files "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$SIGNED_IMAGE_PACKAGE" || exit 1
 cd - || exit 1
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 7z e "$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$BOOTIMAGE"
@@ -54,8 +55,10 @@ case $AOSIP_BUILDTYPE in
         mkdir -pv /mnt/builds/"$DEVICE"
         cp -v "$SIGNED_OTAPACKAGE" /mnt/builds/"$DEVICE"
         cp -v "$BOOTIMAGE" /mnt/builds/"$DEVICE"
+        cp -v "$SIGNED_IMAGE_PACKAGE" /mnt/builds/"$DEVICE"
         cd /mnt/builds/"$DEVICE" || exit
         md5sum "$SIGNED_OTAPACKAGE" > "$SIGNED_OTAPACKAGE".md5sum
+        md5sum "$SIGNED_IMAGE_PACKAGE" > "$SIGNED_IMAGE_PACKAGE".md5sum
         python3 ~/api/post_device.py "${DEVICE}" "${AOSIP_BUILDTYPE}"
         ;;
     *)
