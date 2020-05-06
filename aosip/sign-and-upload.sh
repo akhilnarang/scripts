@@ -45,11 +45,6 @@ cd - || exit 1
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 7z e "$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$BOOTIMAGE"
 rclone copy -P --drive-chunk-size 256M . kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"
-mkdir -pv /var/www/html/"$PARAM_BUILD_NUMBER"
-cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_BUILD_NUMBER"
-FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
-[[ ${QUIET} == "no" ]] && PARSE_MODE="html" sendAOSiP "Build <a href=\"$FOLDER_LINK\">$PARAM_BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-[[ ${QUIET} == "no" ]] && PARSE_MODE="html" sendAOSiP "<a href=\"https://aosip.dev/dl/$PARAM_BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
 case $AOSIP_BUILDTYPE in
     "Gapps" | "Official" | "Beta" | "Alpha")
         mkdir -pv /mnt/builds/"$DEVICE"
@@ -62,8 +57,14 @@ case $AOSIP_BUILDTYPE in
         python3 ~/api/post_device.py "${DEVICE}" "${AOSIP_BUILDTYPE}"
         ;;
     *)
+        mkdir -pv /var/www/html/"$PARAM_BUILD_NUMBER"
+        cp -v "$SIGNED_OTAPACKAGE" /var/www/html/"$PARAM_BUILD_NUMBER"
         if [[ ${QUIET} == "no" ]]; then
-            PARSE_MODE=html sendAOSiP "$(~/jenkins-scripts/message_testers.py "${DEVICE}")"
+            FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
+            export PARSE_MODE="html"
+            sendAOSiP "Build <a href=\"$FOLDER_LINK\">$PARAM_BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
+            sendAOSiP "<a href=\"https://aosip.dev/dl/$PARAM_BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
+            sendAOSiP "$(~/jenkins-scripts/message_testers.py "${DEVICE}")"
             if [[ -n $REPOPICK_LIST ]]; then
                 sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
             fi
