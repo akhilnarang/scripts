@@ -53,11 +53,11 @@ FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$PARAM_BUILD_NUMBER")"
 case $AOSIP_BUILDTYPE in
     "Gapps" | "Official" | "Beta" | "Alpha")
         mkdir -pv /mnt/builds/"$DEVICE"
-        cp -v "$SIGNED_OTAPACKAGE" /mnt/builds/"$DEVICE"
+        cp -v "$SIGNED_OTAPACKAGE" /mnt/builds/"$DEVICE"/"${SIGNED_OTAPACKAGE/-signed/}"
         cp -v "$BOOTIMAGE" /mnt/builds/"$DEVICE"
         cp -v "$SIGNED_IMAGE_PACKAGE" /mnt/builds/"$DEVICE"
         cd /mnt/builds/"$DEVICE" || exit
-        md5sum "$SIGNED_OTAPACKAGE" > "$SIGNED_OTAPACKAGE".md5sum
+        md5sum "${SIGNED_OTAPACKAGE/-signed/}" > "${SIGNED_OTAPACKAGE/-signed/}".md5sum
         md5sum "$SIGNED_IMAGE_PACKAGE" > "$SIGNED_IMAGE_PACKAGE".md5sum
         python3 ~/api/post_device.py "${DEVICE}" "${AOSIP_BUILDTYPE}"
         ;;
