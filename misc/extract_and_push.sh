@@ -78,12 +78,17 @@ bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
     exit 1
 )
 
-~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
-python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
-mkdir bootdts dtbodts
-find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
-[[ -f "dtbo.img" ]] && python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
-find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+if [[ -f "$PROJECT_DIR"/working/"${UNZIP_DIR}"/boot.img ]]; then
+    ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
+    python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
+    mkdir bootdts
+    find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+fi
+if [[ -f "$PROJECT_DIR"/working/"${UNZIP_DIR}"/dtbo.img ]]; then
+    mkdir dtbodts
+    [[ -f "dtbo.img" ]] && python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
+    find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+fi
 
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
