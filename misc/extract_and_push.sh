@@ -84,11 +84,13 @@ if [[ -f "boot.img" ]]; then
     ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
     python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
     find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+    rm -fv boot.img
 fi
 if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts 
     python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
     find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+    rm -fv dtbo.img
 fi
 
 for p in $PARTITIONS; do
@@ -101,7 +103,7 @@ for p in $PARTITIONS; do
         sudo umount "${p}"
         sudo mv "${p}_" "${p}"
 }
-        rm "$p".img
+        rm -fv "$p".img
     fi
 done
 
