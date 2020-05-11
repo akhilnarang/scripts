@@ -31,6 +31,7 @@ else
                 echo "Starting download with wget"
                 wget "${URL}" || {
                     echo "Download with wget failed. Exiting."
+                    sendTG "Failed to download the file."
                     exit 1
                 }
             }
