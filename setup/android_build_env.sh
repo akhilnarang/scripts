@@ -68,6 +68,14 @@ if [[ ${LSB_RELEASE} =~ "Ubuntu 18.10" || ${LSB_RELEASE} =~ "Ubuntu 19" || ${LSB
     fi
 fi
 
+# ubuntu 20.04 needs python symlinking to read python2
+# shellcheck disable=SC2076
+if [[ ${LSB_RELEASE} =~ "Ubuntu Focal Fossa" ]]; then
+    if [[ - /usr/bin/python2 && ! -e /usr/bin/python ]]; then
+        sudo ln -s /usr/bin/python2 /usr/bin/python
+    fi
+fi
+
 if [[ "$(command -v adb)" != "" ]]; then
     echo -e "Setting up udev rules for adb!"
     sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
