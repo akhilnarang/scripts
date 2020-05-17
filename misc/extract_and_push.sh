@@ -209,7 +209,7 @@ curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_f
 
 git init
 git checkout -b "$branch"
-find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
+find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
 git add --all
 git commit -asm "Add $description" -S || exit 1
 curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
