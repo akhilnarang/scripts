@@ -90,7 +90,6 @@ if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts 
     python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
     find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
-    rm -fv dtbo.img
 fi
 
 for p in $PARTITIONS; do
