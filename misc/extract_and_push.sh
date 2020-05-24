@@ -79,19 +79,7 @@ bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
     exit 1
 )
 
-if [[ -f "boot.img" ]]; then
-    mkdir -v bootdts
-    ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
-    python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
-    find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
-    rm -fv boot.img
-fi
-if [[ -f "dtbo.img" ]]; then
-    mkdir -v dtbodts 
-    python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
-    find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
-fi
-
+# Extract the images
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
         mkdir "$p" || rm -rf "${p:?}"/*
@@ -106,6 +94,27 @@ for p in $PARTITIONS; do
     fi
 done
 
+# Bail out right now if no system build.prop
+ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null || {
+    sendTG "No system build*.prop found, pushing cancelled!"
+    exit 1
+}
+
+# Extract bootimage and dtbo
+if [[ -f "boot.img" ]]; then
+    mkdir -v bootdts
+    ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
+    python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
+    find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+    rm -fv boot.img
+fi
+if [[ -f "dtbo.img" ]]; then
+    mkdir -v dtbodts 
+    python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
+    find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+fi
+
+# Oppo/Realme devices have some images in a euclid folder in their vendor, extract those for props
 if [[ -d "vendor/euclid" ]]; then
     pushd vendor/euclid || exit 1
     for f in *.img; do
@@ -115,11 +124,6 @@ if [[ -d "vendor/euclid" ]]; then
     done
     popd || exit 1
 fi
-
-ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null || {
-    sendTG "No system build*.prop found, pushing cancelled!"
-    exit 1
-}
 
 # board-info.txt
 find ./modem -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >> ./board-info.txt
@@ -136,6 +140,7 @@ sudo chmod -R u+rwX ./*
 # Generate all_files.txt
 find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
+# Prop extraction
 flavor=$(grep -oP "(?<=^ro.build.flavor=).*" -hs {system,system/system,vendor}/build.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -oP "(?<=^ro.build.flavor=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
@@ -200,21 +205,24 @@ manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:pri
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
 
+# Check whether this has already been dumped or not
 curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null && {
     echo "Already dumped"
     sendTG "Already dumped"
     exit 1
 }
 
+# Create the repo if it doesn't exist
 curl --location --silent --fail "https://github.com/$ORG/$repo" || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
 
+# Add, commit, and push after filtering out certain files
 git init
 git checkout -b "$branch"
 find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
 sendTG "Committing and pushing"
 for f in ./*; do
     # shellcheck disable=SC2015
-    # SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
+    #        SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
     git add "$f" && git commit --quiet --signoff --gpg-sign --message="Add $f for $description" && git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch" || {
         sendTG "Pushing failed"
         exit 1
@@ -227,6 +235,7 @@ curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: appli
 # Set default branch to the newly pushed branch
 curl -s -X PATCH -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"${repo}"'", "default_branch": "'"${branch}"'" }' "https://api.github.com/repos/${ORG}/${repo}"
 
+# Send message to Telegram group
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
 
 # Prepare message to be sent to Telegram channel
