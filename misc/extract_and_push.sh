@@ -211,7 +211,7 @@ git checkout -b "$branch"
 find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
 git add --all
 git commit -asm "Add $description" -S || exit 1
-curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
+curl --location --silent --fail "https://github.com/$ORG/$repo" || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
 curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
 
 sendTG "Pushing"
