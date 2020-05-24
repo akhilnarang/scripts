@@ -206,36 +206,23 @@ curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_f
     exit 1
 }
 
+curl --location --silent --fail "https://github.com/$ORG/$repo" || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
+
 git init
 git checkout -b "$branch"
 find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
-git add --all
-git commit -asm "Add $description" -S || exit 1
-curl --location --silent --fail "https://github.com/$ORG/$repo" || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
-curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
+sendTG "Committing and pushing"
+for f in ./*; do
+    # shellcheck disable=SC2015
+    # SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
+    git add "$f" && git commit --quiet --signoff --gpg-sign --message="Add $f for $description" && git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch" || {
+        sendTG "Pushing failed"
+        exit 1
+    }
+done
 
-sendTG "Pushing"
-git push ssh://git@github.com/$ORG/"$repo" HEAD:refs/heads/"$branch" ||
-    (
-        sendTG "Pushing failed, splitting commits and trying"
-        git update-ref -d HEAD
-        git reset system/ vendor/
-        git checkout -b "$branch"
-        git commit -asm "Add extras for ${description}"
-        git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-        git add vendor/
-        git commit -asm "Add vendor for ${description}"
-        git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-        git add system/system/app/ system/system/priv-app/ || git add system/app/ system/priv-app/
-        git commit -asm "Add apps for ${description}"
-        git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-        git add system/
-        git commit -asm "Add system for ${description}"
-        git push ssh://git@github.com/$ORG/"${repo,,}".git "$branch"
-    ) || {
-    sendTG "Pushing failed"
-    exit 1
-}
+# Set repository topics
+curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
 
 # Set default branch to the newly pushed branch
 curl -s -X PATCH -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"${repo}"'", "default_branch": "'"${branch}"'" }' "https://api.github.com/repos/${ORG}/${repo}"
@@ -243,7 +230,7 @@ curl -s -X PATCH -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "
 sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
 
 # Prepare message to be sent to Telegram channel
-commit_head=$(git log -1 --format=%H)
+commit_head=$(git rev-parse HEAD)
 commit_link="https://github.com/$ORG/$repo/commit/$commit_head"
 echo -e "Sending telegram notification"
 (
@@ -263,5 +250,3 @@ curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT
 
 # Delete file after sending message
 rm -fv tg.html
-
-
