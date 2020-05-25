@@ -213,7 +213,7 @@ curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_f
 }
 
 # Create the repo if it doesn't exist
-curl --location --silent --fail "https://github.com/$ORG/$repo" || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
+curl --location --silent --fail "https://github.com/$ORG/$repo" > /dev/null || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
 
 # Add, commit, and push after filtering out certain files
 git init
