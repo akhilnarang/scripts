@@ -227,6 +227,7 @@ sendTG "Committing and pushing"
 for f in system vendor product bootimg bootdts dtbo odm modem opproduct oppo_product reserve; do
     # shellcheck disable=SC2015
     #        SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
+    [[ -d "$f" ]] || continue
     git add "$f" && git commit --quiet --signoff --gpg-sign --message="Add $f for $description" && git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch" || {
         sendTG "Pushing failed"
         exit 1
