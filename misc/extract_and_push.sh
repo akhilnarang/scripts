@@ -224,7 +224,7 @@ find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name 
 find . -maxdepth 1 -type f -exec git add {} \;
 git commit --quiet --signoff --gpg-sign --message="Initial commit for $description"
 sendTG "Committing and pushing"
-for f in $(find -maxdepth 1 -type d -not -iwholename './.git'); do
+for f in $(find -maxdepth 1 -type d -not -iwholename '.'); do
     # shellcheck disable=SC2015
     #        SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
     git add "$f" && git commit --quiet --signoff --gpg-sign --message="Add $f for $description" && git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch" || {
