@@ -224,7 +224,7 @@ find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name 
 find . -maxdepth 1 -type f -exec git add {} \;
 git commit --quiet --signoff --gpg-sign --message="Initial commit for $description"
 sendTG "Committing and pushing"
-for f in $(find -maxdepth 1 -type d -not -iwholename '.'); do
+for f in system vendor product bootimg bootdts dtbo odm modem opproduct oppo_product reserve; do
     # shellcheck disable=SC2015
     #        SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
     git add "$f" && git commit --quiet --signoff --gpg-sign --message="Add $f for $description" && git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch" || {
@@ -232,6 +232,9 @@ for f in $(find -maxdepth 1 -type d -not -iwholename '.'); do
         exit 1
     }
 done
+git add -A
+git commit --quiet --signoff --gpg-sign --message="Add the remnants for $description"
+git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch"
 
 # Set repository topics
 curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
