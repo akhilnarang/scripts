@@ -79,6 +79,8 @@ bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
     exit 1
 )
 
+rm -fv "$FILE"
+
 # Extract the images
 for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
