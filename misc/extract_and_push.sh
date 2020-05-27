@@ -220,7 +220,7 @@ curl --location --silent --fail "https://github.com/$ORG/$repo" > /dev/null || c
 # Add, commit, and push after filtering out certain files
 git init
 git checkout -b "$branch"
-find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -name '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' > .gitignore
+find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' -o -name '*zookhrs*' -printf '%P\n' > .gitignore
 find . -maxdepth 1 -type f -exec git add {} \;
 git commit --quiet --signoff --gpg-sign --message="Initial commit for $description"
 sendTG "Committing and pushing"
