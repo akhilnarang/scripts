@@ -41,7 +41,13 @@ if [[ ${SYNC} == "yes" ]]; then
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi
-    [[ -f "jenkins/${DEVICE}-presync" ]] && PRE_SYNC_PICKS+=" | $(cat jenkins/"${DEVICE}-presync")"
+    if [[ -f "jenkins/${DEVICE}-presync" ]]; then
+        if [[ -z "$PRE_SYNC_PICKS" ]]; then
+            PRE_SYNC_PICKS="$(cat jenkins/"${DEVICE}-presync")"
+        else
+            PRE_SYNC_PICKS+=" | $(cat jenkins/"${DEVICE}-presync")"
+        fi
+    fi
     if [[ -n ${PRE_SYNC_PICKS} ]]; then
         REPOPICK_LIST="$PRE_SYNC_PICKS" repopick_stuff || {
             sendAOSiP "Pre-sync picks failed"
@@ -62,7 +68,13 @@ case "${CLEAN}" in
 esac
 set +e
 
-[[ -f "jenkins/${DEVICE}" ]] && REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
+if [[ -f "jenkins/${DEVICE}" ]]; then
+    if [[ -z "$REPOPICK_LIST" ]]; then
+        REPOPICK_LIST="$(cat jenkins/"${DEVICE}")"
+    else
+        REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
+    fi
+fi
 repopick_stuff || {
     sendAOSiP "Picks failed"
     exit 1
