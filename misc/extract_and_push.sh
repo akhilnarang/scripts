@@ -14,7 +14,7 @@ if [[ -f $URL ]]; then
 else
     sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
     if [[ $URL =~ drive.google.com ]]; then
-        FILE_ID="$(echo "${URL:?}" | sed -r -e 's/(.*)&export.*/\1/' -e 's/https.*id=(.*)/\1/' -e 's/https.*\/d\/(.*)\/view/\1/')"
+        FILE_ID="$(echo "${URL:?}" | sed -r 's/.*([0-9a-zA-Z_-]{33}).*/\1/')"
         gdrive download "$FILE_ID" || exit 1
     elif [[ $URL =~ mega.nz ]]; then
         megadl "'$URL'" || exit 1
