@@ -42,6 +42,8 @@ echo "Generating signed otapackage"
 echo "Generating signed images package"
 ./build/make/tools/releasetools/img_from_target_files "$OLDPWD/$SIGNED_TARGET_FILES" "$OLDPWD/$SIGNED_IMAGE_PACKAGE" || exit 1
 cd - || exit 1
+echo "Extracting build.prop to get build timestamp"
+7z e "$SIGNED_TARGET_FILES" SYSTEM/build.prop
 ~/api/generate_json.py "$SIGNED_OTAPACKAGE" > /var/www/html/"${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 7z e "$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$BOOTIMAGE"
 rclone copy -P --drive-chunk-size 256M . kronic-sync:jenkins/"$PARAM_BUILD_NUMBER"

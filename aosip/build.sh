@@ -7,6 +7,22 @@
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
 
+# Set some variables based on the buildtype
+case "$AOSIP_BUILDTYPE" in
+    "Official"|"Gapps"|"Beta"|"Alpha"|"CI"|"CI_Gapps"|"Quiche"|"Quiche_Gapps")
+        TARGET="target-files-package"
+        ZIP="obj/PACKAGING/target_files_intermediates/aosip_$DEVICE-target_files-eng.$USER.zip"
+        if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]] && [[ ${AOSIP_BUILDTYPE} != "Alpha" ]] && [[ ${AOSIP_BUILDTYPE} != "Gapps" ]]; then
+            export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+        fi
+        ;;
+    *)
+        TARGET="kronic"
+        ZIP="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d).zip"
+        ;;
+esac
+
+
 function repo_init() {
     repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
 }
@@ -58,9 +74,6 @@ if [[ ${SYNC} == "yes" ]]; then
 fi
 set +e
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
-if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]] && [[ ${AOSIP_BUILDTYPE} != "Alpha" ]] && [[ ${AOSIP_BUILDTYPE} != "Gapps" ]]; then
-    export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
-fi
 set -e
 case "${CLEAN}" in
     "clean" | "deviceclean" | "installclean") m "${CLEAN}" ;;
@@ -79,20 +92,18 @@ repopick_stuff || {
     sendAOSiP "Picks failed"
     exit 1
 }
+
 set -e
 USE_CCACHE=1
 CCACHE_DIR="${HOME}/.ccache"
 CCACHE_EXEC="$(command -v ccache)"
 export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
-time m kronic || ([[ $QUIET == "no" ]] && sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
+time m "$TARGET" || ([[ $QUIET == "no" ]] && sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
 set +e
 [[ $QUIET == "no" ]] && sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 [[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
 cd "$OUT"
-mkdir /tmp/"$BUILD_NUMBER" -v
-for f in system/build.prop *.img *.zip obj/PACKAGING/target_files_intermediates/*.zip; do cp "$f" /tmp/"$BUILD_NUMBER"; done
-rclone copy -P --drive-chunk-size 1024M /tmp/"$BUILD_NUMBER" kronic-sync:jenkins/"$BUILD_NUMBER"
-rm -rf /tmp/"$BUILD_NUMBER"
+rclone copy -P --drive-chunk-size 512M "$ZIP" kronic-sync:jenkins/"$BUILD_NUMBER"
 FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
 sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
