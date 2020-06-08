@@ -4,6 +4,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # AOSiP upload script
 
+case "${AOSIP_BUILDTYPE:?}" in
+    "Official"|"Gapps"|"Beta"|"Alpha"|"CI"|"CI_Gapps"|"Quiche"|"Quiche_Gapps")
+        ;;
+    *) exit 0
+        ;;
+esac
+
 if [[ -d "${HOME}/jenkins-scripts" ]]; then
     git -C ~/jenkins-scripts fetch origin master && git -C ~/jenkins-scripts reset --hard origin/master
 else
