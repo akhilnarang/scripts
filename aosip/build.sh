@@ -11,7 +11,7 @@
 case "$AOSIP_BUILDTYPE" in
     "Official"|"Gapps"|"Beta"|"Alpha"|"CI"|"CI_Gapps"|"Quiche"|"Quiche_Gapps")
         TARGET="target-files-package"
-        ZIP="obj/PACKAGING/target_files_intermediates/aosip_$DEVICE-target_files-eng.$USER.zip"
+        ZIP="obj/PACKAGING/target_files_intermediates/aosip_$DEVICE-target_files-$BUILD_NUMBER.zip"
         if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]] && [[ ${AOSIP_BUILDTYPE} != "Alpha" ]] && [[ ${AOSIP_BUILDTYPE} != "Gapps" ]]; then
             export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
         fi
