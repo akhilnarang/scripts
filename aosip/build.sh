@@ -8,20 +8,15 @@
 # SC1091: Not following: (error message here)
 
 # Set some variables based on the buildtype
-case "$AOSIP_BUILDTYPE" in
-    "Official"|"Gapps"|"Beta"|"Alpha"|"CI"|"CI_Gapps"|"Quiche"|"Quiche_Gapps")
-        TARGET="target-files-package"
-        ZIP="obj/PACKAGING/target_files_intermediates/aosip_$DEVICE-target_files-$BUILD_NUMBER.zip"
-        if [[ ${AOSIP_BUILDTYPE} != "Official" ]] && [[ ${AOSIP_BUILDTYPE} != "Beta" ]] && [[ ${AOSIP_BUILDTYPE} != "Alpha" ]] && [[ ${AOSIP_BUILDTYPE} != "Gapps" ]]; then
-            export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
-        fi
-        ;;
-    *)
-        TARGET="kronic"
-        ZIP="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d).zip"
-        ;;
-esac
-
+if [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps|Beta|Alpha|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+    TARGET="otatools target-files-package"
+    if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+        export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
+    fi
+else
+    TARGET="kronic"
+    ZIP="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d).zip"
+fi
 
 function repo_init() {
     repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
@@ -33,10 +28,9 @@ function repo_sync() {
 
 set -e
 source ~/scripts/functions
-export TZ=UTC
-[[ $QUIET == "no" ]] && sendAOSiP "${START_MESSAGE}"
+sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
-[[ $QUIET == "no" ]] && PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
+PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
 if [[ -d "jenkins" ]]; then
     git -C jenkins pull
 else
@@ -72,14 +66,20 @@ if [[ ${SYNC} == "yes" ]]; then
     fi
     repo_sync
 fi
+
 set +e
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
+if [[ "$AOSIP_BUILD" != "$DEVICE" ]]; then
+    sendAOSiP "Lunching failed!"
+    exit 1
+fi
 set -e
-case "${CLEAN}" in
-    "clean" | "deviceclean" | "installclean") m "${CLEAN}" ;;
-    *) rm -rf "${OUT}"/AOSiP* ;;
-esac
-set +e
+
+if [[ "${CLEAN}" =~ ^(clean|deviceclean|installclean)$ ]]; then
+    m "${CLEAN}"
+else
+    rm -rf "${OUT}"/AOSiP*
+fi
 
 if [[ -f "jenkins/${DEVICE}" ]]; then
     if [[ -z "$REPOPICK_LIST" ]]; then
@@ -99,11 +99,22 @@ CCACHE_DIR="${HOME}/.ccache"
 CCACHE_EXEC="$(command -v ccache)"
 export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
-time m "$TARGET" || ([[ $QUIET == "no" ]] && sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})" && exit 1)
-set +e
-[[ $QUIET == "no" ]] && sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
-[[ $QUIET == "no" ]] && sendAOSiP "${END_MESSAGE}"
-cd "$OUT"
-rclone copy -P --drive-chunk-size 512M "$ZIP" kronic-sync:jenkins/"$BUILD_NUMBER"
-FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
-sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
+if ! m "$TARGET"; then
+    sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})"
+    exit 1
+fi
+
+sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
+sendAOSiP "${END_MESSAGE}"
+
+if [[ "$TARGET" == "kronic" ]]; then
+    rclone copy -P --drive-chunk-size 256M "$OUT/$ZIP" kronic-sync:jenkins/"$BUILD_NUMBER"
+    FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
+    sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
+    sendAOSiP "$(~/jenkins-scripts/message_testers.py "${DEVICE}")"
+    if [[ -n $REPOPICK_LIST ]]; then
+        sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
+    fi
+else
+    sendAOSiP "Wait a few minutes for a signed zip to be generated!"
+fi

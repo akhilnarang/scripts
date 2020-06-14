@@ -7,7 +7,7 @@ aosip/crowdin.sh
 aosip/merge.sh
 aosip/push.sh
 aosip/rebase.sh
-aosip/sign-and-upload.sh
+aosip/sign.sh
 build-kernel
 functions
 gerrit/change-merge-type.sh
