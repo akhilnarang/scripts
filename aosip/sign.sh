@@ -51,4 +51,8 @@ if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     export PARSE_MODE="html"
     sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
     sendAOSiP "<a href=\"https://aosip.dev/dl/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE (its still uploading)"
+    sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
+    if [[ -n $REPOPICK_LIST ]]; then
+        sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
+    fi
 fi
