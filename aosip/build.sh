@@ -31,11 +31,7 @@ source ~/scripts/functions
 sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
-if [[ -d "jenkins" ]]; then
-    git -C jenkins pull
-else
-    git clone https://github.com/AOSiP-Devices/jenkins
-fi
+
 
 [[ -d "vendor/aosip" ]] || {
     repo_init
