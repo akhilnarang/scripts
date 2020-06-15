@@ -35,7 +35,7 @@ echo "Extracting build.prop to get build timestamp"
 BUILD_TIMESTAMP=$(grep -oP "(?<=ro.build.date.utc=).*" "$OUT"/system/build.prop)
 
 echo "Generating JSON for updater"
-~/api/generate_json.py "$SIGNED_OTAPACKAGE" "$BUILD_TIMESTAMP" > "${DEVICE}"-"${AOSIP_BUILDTYPE}".json
+~/api/generate_json.py "$UPLOAD/$SIGNED_OTAPACKAGE" "$BUILD_TIMESTAMP" > "${DEVICE}"-"${AOSIP_BUILDTYPE}".json
 
 echo "Extracting signed bootimage"
 7z e "$UPLOAD/$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$UPLOAD/$BOOTIMAGE"
