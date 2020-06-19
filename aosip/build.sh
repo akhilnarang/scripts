@@ -8,7 +8,7 @@
 # SC1091: Not following: (error message here)
 
 # Set some variables based on the buildtype
-if [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps|Beta|Alpha|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+if [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     TARGET="otatools target-files-package"
     if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
         export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
