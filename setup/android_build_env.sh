@@ -43,7 +43,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
     maven ncftp ncurses-dev patch patchelf pkg-config pngcrush \
     pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
-    libxml-simple-perl apt-utils \
+    libxml-simple-perl apt-utils libgetopt-complete-perl \
     "${PACKAGES}" -y
 
 # For all those distro hoppers, lets setup your git credentials
