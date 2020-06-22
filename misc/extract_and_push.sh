@@ -20,16 +20,18 @@ else
     elif [[ $URL =~ mega.nz ]]; then
         megadl "'$URL'" || exit 1
     else
-        # Try to download aria, else wget. Clean the directory each time.
-        echo "Starting download with aria2"
-        aria2c -j64 "${URL}" || {
-            echo "Download with aria2 failed"
-            rm -fv ./*
-            echo "Starting download with wget"
-            wget "${URL}" || {
-                echo "Download with wget failed. Exiting."
-                sendTG "Failed to download the file."
-                exit 1
+        # Try to download certain URLs with axel first
+        [[ $URL =~ ^.+(ota\.d\.miui\.com|otafsg|oxygenos\.oneplus\.net|ozip)(.+)?$ ]] && {
+            axel -a -n64 "$URL" || {
+                # Try to download aria, else wget. Clean the directory each time.
+                aria2c -j64 "${URL}" || {
+                    rm -fv ./*
+                    wget "${URL}" || {
+                        echo "Download failed. Exiting."
+                        sendTG "Failed to download the file."
+                        exit 1
+                    }
+                }
             }
         }
     fi
@@ -50,7 +52,7 @@ if [[ ! -f ${FILE} ]]; then
     fi
 fi
 
-PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other oppo_product opproduct reserve india"
+PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other oppo_product opproduct reserve india my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap"
 
 if [[ ! -d "${HOME}/extract-dtb" ]]; then
     git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
