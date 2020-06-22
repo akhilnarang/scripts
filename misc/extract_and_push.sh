@@ -22,7 +22,7 @@ else
     else
         # Try to download certain URLs with axel first
         [[ $URL =~ ^.+(ota\.d\.miui\.com|otafsg|oxygenos\.oneplus\.net|ozip)(.+)?$ ]] && {
-            axel -a -n64 "$URL" || {
+            axel -q -a -n64 "$URL" || {
                 # Try to download aria, else wget. Clean the directory each time.
                 aria2c -j64 "${URL}" || {
                     rm -fv ./*
