@@ -43,7 +43,7 @@ if [[ ${SYNC} == "yes" ]]; then
     rm -rf .repo/repo .repo/manifests
     repo_init
     repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
-    rm -rf .repo/local_manifests
+    [[ -d ".repo/local_manifests" ]] && rm -rf .repo/local_manifests
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi
