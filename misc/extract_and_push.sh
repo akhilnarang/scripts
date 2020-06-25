@@ -21,9 +21,9 @@ else
         megadl "'$URL'" || exit 1
     else
         # Try to download certain URLs with axel first
-        [[ $URL =~ ^.+(ota\.d\.miui\.com|otafsg|oxygenos\.oneplus\.net|ozip)(.+)?$ ]] && {
+        if [[ $URL =~ ^.+(ota\.d\.miui\.com|otafsg|oxygenos\.oneplus\.net|dl.google|android.googleapis|ozip)(.+)?$ ]]; then
             axel -q -a -n64 "$URL" || {
-                # Try to download aria, else wget. Clean the directory each time.
+                # Try to download with aria, else wget. Clean the directory each time.
                 aria2c -j64 "${URL}" || {
                     rm -fv ./*
                     wget "${URL}" || {
@@ -33,7 +33,17 @@ else
                     }
                 }
             }
-        }
+        else
+            # Try to download with aria, else wget. Clean the directory each time.
+            aria2c -j64 "${URL}" || {
+                rm -fv ./*
+                wget "${URL}" || {
+                    echo "Download failed. Exiting."
+                    sendTG "Failed to download the file."
+                    exit 1
+                }
+            }
+        fi
     fi
     sendTG "Downloaded the file"
 fi
