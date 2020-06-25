@@ -44,7 +44,11 @@ echo "Generating MD5 checksums"
 md5sum "$UPLOAD/$SIGNED_OTAPACKAGE" > "$UPLOAD/$SIGNED_OTAPACKAGE".md5sum
 md5sum "$UPLOAD/$SIGNED_IMAGE_PACKAGE" > "$UPLOAD/$SIGNED_IMAGE_PACKAGE".md5sum
 
+# Upload everything to gdrive
 rclone copy -P --drive-chunk-size 256M "$UPLOAD/" kronic-sync:jenkins/"$BUILD_NUMBER"
+
+# This doesn't have any further use
+rm -fv "$UPLOAD/$SIGNED_TARGET_FILES"
 
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
