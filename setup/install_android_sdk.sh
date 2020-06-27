@@ -12,7 +12,7 @@ function setup_android_sdk() {
     mkdir -p "${HOME:?}"/Android/Sdk
     cd "${HOME}"/Android/Sdk || return 1
     if [ ! -f "${SDK_TOOLS}" ]; then
-        aria2c https://dl.google.com/android/repository/"${SDK_TOOLS}"
+        wget -c https://dl.google.com/android/repository/"${SDK_TOOLS}"
     fi
     unzip -qo "${SDK_TOOLS}"
     while read -r package; do
