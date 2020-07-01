@@ -6,7 +6,7 @@ function sendTG() {
     curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
 }
 
-[[ -z $ORG ]] && ORG="AndroidDumps"
+[[ -z $ORG ]] && ORG="dumps"
 
 if [[ -f $URL ]]; then
     cp -v "$URL" .
@@ -17,6 +17,7 @@ else
         FILE_ID="$(echo "${URL:?}" | sed -r 's/.*([0-9a-zA-Z_-]{33}).*/\1/')"
         CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$FILE_ID" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
         aria2c --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$FILE_ID" || exit 1
+        rm /tmp/cookies.txt
     elif [[ $URL =~ mega.nz ]]; then
         megadl "'$URL'" || exit 1
     else
@@ -219,7 +220,10 @@ description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system
 [[ -z ${description} ]] && description=$(grep -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
 branch=$(echo "$description" | tr ' ' '-')
-repo=$(echo "$brand"_"$codename"_dump | tr '[:upper:]' '[:lower:]')
+repo_subgroup=$(echo "$brand" | tr '[:upper:]' '[:lower:]')
+[[ -z "$repo_subgroup" ]] && repo_subgroup=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]')
+repo_name=$(echo "$codename" | tr '[:upper:]' '[:lower:]')
+repo="$repo_subgroup/$repo_name"
 platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
@@ -227,44 +231,62 @@ manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:pri
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
 
 # Check whether this has already been dumped or not
-curl --silent --fail "https://raw.githubusercontent.com/$ORG/$repo/$branch/all_files.txt" > /dev/null && {
+curl --silent --fail "https://git.rip/$ORG/$repo/-/blob/$branch/all_files.txt" > /dev/null && {
     echo "Already dumped"
     sendTG "Already dumped"
     exit 1
 }
 
+# Check whether the subgroup exists or not
+if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/dumps%2f$repo_subgroup" -s --fail > x; then
+    if ! curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=562 -F path="${repo_subgroup}" --silent --fail > x; then
+        sendTG "Creating subgroup for $repo_subgroup failed!"
+        exit 1
+    fi
+fi
+group_id="$(jq -r '.id' x)"
+rm -f x
+
+[[ -n "$group_id" ]] && {
+    sendTG "Unable to get gitlab group id!"
+    exit 1
+}
+
 # Create the repo if it doesn't exist
-curl --location --silent --fail "https://github.com/$ORG/$repo" > /dev/null || curl -s -X POST -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"$repo"'" }' "https://api.github.com/orgs/$ORG/repos" || exit 1
+curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects%2f$ORG%2f$repo_subgroup%2f%repo_name" > x
+project_id="$(jq .id x)"
+rm -f x
+if [[ -z "$project_id" ]]; then
+    curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo" -F visibility=public > x
+    project_id="$(jq .id x)"
+    rm -f x
+    if [[ -z "$project_id" ]]; then
+        sendTG "Could not get project id"
+        exit 1
+    fi
+fi
 
 # Add, commit, and push after filtering out certain files
 git init
+git config user.name 'dumper'
+git config user.email '457-dumper@users.noreply.git.rip'
 git checkout -b "$branch"
 find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' -o -name '*zookhrs*' -printf '%P\n' > .gitignore
 find . -maxdepth 1 -type f -exec git add {} \;
-git commit --quiet --signoff --gpg-sign --message="Initial commit for $description"
 sendTG "Committing and pushing"
-for f in system/system/app system/system/priv-app system vendor product bootimg bootdts dtbo odm modem opproduct oppo_product reserve; do
-    # shellcheck disable=SC2015
-    #        SC2015: Note that A && B || C is not if-then-else. C may run when A is true.
-    [[ -d "$f" ]] || continue
-    git add "$f" && git commit --quiet --signoff --gpg-sign --message="Add $f for $description" && git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch" 
-done
 git add -A
-git commit --quiet --signoff --gpg-sign --message="Add the remnants for $description"
-git push ssh://git@github.com/"$ORG"/"$repo" HEAD:refs/heads/"$branch"
-
-# Set repository topics
-curl -s -X PUT -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$manufacturer"'","'"$platform"'","'"$top_codename"'"]}' "https://api.github.com/repos/${ORG}/${repo}/topics"
-
+git commit --quiet --signoff --message="$description"
+git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo" HEAD:refs/heads/"$branch"
+   
 # Set default branch to the newly pushed branch
-curl -s -X PATCH -H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d '{ "name": "'"${repo}"'", "default_branch": "'"${branch}"'" }' "https://api.github.com/repos/${ORG}/${repo}"
+curl -s -X PATCH -H "Authorization: bearer ${DUMPER_TOKEN}" -d '{ "name": "'"${repo}"'", "default_branch": "'"${branch}"'" }' "https://api.github.com/repos/${ORG}/${repo}"
 
 # Send message to Telegram group
-sendTG "Pushed <a href=\"https://github.com/$ORG/$repo\">$description</a>"
+sendTG "Pushed <a href=\"https://git.rip/$ORG/$repo\">$description</a>"
 
 # Prepare message to be sent to Telegram channel
 commit_head=$(git rev-parse HEAD)
-commit_link="https://github.com/$ORG/$repo/commit/$commit_head"
+commit_link="https://git.rip/$ORG/$repo/commit/$commit_head"
 echo -e "Sending telegram notification"
 (
     printf "<b>Brand: %s</b>" "$brand"
