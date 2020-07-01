@@ -276,10 +276,10 @@ find . -maxdepth 1 -type f -exec git add {} \;
 sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
-git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo" HEAD:refs/heads/"$branch"
+git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch"
    
 # Set default branch to the newly pushed branch
-curl -s -X PATCH -H "Authorization: bearer ${DUMPER_TOKEN}" -d '{ "name": "'"${repo}"'", "default_branch": "'"${branch}"'" }' "https://api.github.com/repos/${ORG}/${repo}"
+curl -s -X PATCH -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
 sendTG "Pushed <a href=\"https://git.rip/$ORG/$repo\">$description</a>"
@@ -295,7 +295,7 @@ echo -e "Sending telegram notification"
     printf "\n<b>Fingerprint:</b> %s" "$fingerprint"
     printf "\n<b>GitHub:</b>"
     printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
-    printf "\n<a href=\"https://github.com/%s/%s/tree/%s/\">$codename</a>" "$ORG" "$repo" "$branch"
+    printf "\n<a href=\"https://git.rip/%s/%s/tree/%s/\">$codename</a>" "$ORG" "$repo" "$branch"
 ) >> tg.html
 
 TEXT=$(cat tg.html)
