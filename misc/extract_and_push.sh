@@ -238,7 +238,7 @@ curl --silent --fail "https://git.rip/$ORG/$repo/-/blob/$branch/all_files.txt" >
 }
 
 # Check whether the subgroup exists or not
-if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/dumps%2f$repo_subgroup" -s --fail > x; then
+if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
     if ! curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=562 -F path="${repo_subgroup}" --silent --fail > x; then
         sendTG "Creating subgroup for $repo_subgroup failed!"
         exit 1
@@ -247,7 +247,7 @@ fi
 group_id="$(jq -r '.id' x)"
 rm -f x
 
-[[ -n "$group_id" ]] && {
+[[ -z "$group_id" ]] && {
     sendTG "Unable to get gitlab group id!"
     exit 1
 }
