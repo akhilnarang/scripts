@@ -28,6 +28,7 @@ function repo_sync() {
 
 set -e
 source ~/scripts/functions
+export TZ=UTC
 sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
