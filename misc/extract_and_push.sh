@@ -279,7 +279,7 @@ git commit --quiet --signoff --message="$description"
 git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch"
    
 # Set default branch to the newly pushed branch
-curl -s -X PATCH -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
+curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
 sendTG "Pushed <a href=\"https://git.rip/$ORG/$repo\">$description</a>"
