@@ -231,11 +231,11 @@ manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:pri
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
 
 # Check whether this has already been dumped or not
-curl --silent --fail "https://git.rip/$ORG/$repo/-/blob/$branch/all_files.txt" > /dev/null && {
-    echo "Already dumped"
-    sendTG "Already dumped"
-    exit 1
-}
+#curl --silent --fail "https://git.rip/$ORG/$repo/-/blob/$branch/all_files.txt" > /dev/null && {
+#    echo "Already dumped"
+#    sendTG "Already dumped"
+#    exit 1
+#}
 
 # Check whether the subgroup exists or not
 if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
@@ -272,11 +272,14 @@ git config user.name 'dumper'
 git config user.email '457-dumper@users.noreply.git.rip'
 git checkout -b "$branch"
 find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' -o -name '*zookhrs*' -printf '%P\n' > .gitignore
-find . -maxdepth 1 -type f -exec git add {} \;
 sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
-git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch"
+git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
+    sendTG "Pushing failed (Already dumped?)"
+    echo "Pushing failed!"
+    exit 1
+}
    
 # Set default branch to the newly pushed branch
 curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
