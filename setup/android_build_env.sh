@@ -11,7 +11,6 @@ UBUNTU_14_PACKAGES="binutils-static curl figlet libesd0-dev libwxgtk2.8-dev sche
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_18_PACKAGES="curl"
 UBUNTU_20_PACKAGES="python"
-DEBIAN_10_PACKAGES="curl rsync"
 PACKAGES=""
 
 # Install lsb-core packages
@@ -27,8 +26,6 @@ elif [[ ${LSB_RELEASE} =~ "Ubuntu 18" || ${LSB_RELEASE} =~ "Ubuntu 19" || ${LSB_
     PACKAGES="${UBUNTU_18_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Ubuntu 20" ]]; then
     PACKAGES="${UBUNTU_20_PACKAGES}"
-elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
-    PACKAGES="${DEBIAN_10_PACKAGES}"
 fi
 
 sudo apt update
