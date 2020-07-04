@@ -296,7 +296,7 @@ echo -e "Sending telegram notification"
     printf "\n<b>Device: %s</b>" "$codename"
     printf "\n<b>Version:</b> %s" "$release"
     printf "\n<b>Fingerprint:</b> %s" "$fingerprint"
-    printf "\n<b>GitHub:</b>"
+    printf "\n<b>Git link:</b>"
     printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
     printf "\n<a href=\"https://git.rip/%s/%s/tree/%s/\">$codename</a>" "$ORG" "$repo" "$branch"
 ) >> tg.html
