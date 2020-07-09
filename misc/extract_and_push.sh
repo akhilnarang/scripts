@@ -266,10 +266,13 @@ if [[ -z "$project_id" ]]; then
     fi
 fi
 
-curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id/repository/branches/$branch" | jq -r '.name' && {
+curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id/repository/branches/$branch" > x
+[[ "$(jq -r '.name' x)" == "$branch" ]] && {
     sendTG "$branch already exists in $repo!"
+    rm -f x
     exit 1
 }
+rm -f x
 
 # Add, commit, and push after filtering out certain files
 git init
