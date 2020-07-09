@@ -253,7 +253,7 @@ rm -f x
 }
 
 # Create the repo if it doesn't exist
-curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects%2f$ORG%2f$repo_subgroup%2f%repo_name" > x
+curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name" > x
 project_id="$(jq .id x)"
 rm -f x
 if [[ -z "$project_id" ]]; then
@@ -265,6 +265,11 @@ if [[ -z "$project_id" ]]; then
         exit 1
     fi
 fi
+
+curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id/repository/branches/$branch" | jq -r '.name' && {
+    sendTG "$branch already exists in $repo!"
+    exit 1
+}
 
 # Add, commit, and push after filtering out certain files
 git init
