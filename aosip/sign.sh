@@ -50,6 +50,9 @@ rclone copy -P --drive-chunk-size 256M "$UPLOAD/" kronic-sync:jenkins/"$BUILD_NU
 # This doesn't have any further use
 rm -fv "$UPLOAD/$SIGNED_TARGET_FILES"
 
+rsync -av --progress "$DEVICE-$AOSIP_BUILDTYPE".json Illusion:/var/www/html/
+rsync -av --progress "$UPLOAD"/*.zip Illusion:/var/www/html/"$BUILD_NUMBER"
+
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
@@ -59,4 +62,9 @@ if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
+elif [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+    rsync -av --progress "$UPLOAD"/* Illusion:/mnt/builds/"$DEVICE"/
+    python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
+
+rm -rfv "$DEVICE-$AOSIP_BUILDTYPE".json "$UPLOAD"
