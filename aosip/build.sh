@@ -98,6 +98,7 @@ export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
 if ! m "$TARGET"; then
     sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})"
+    sendAOSiP "$(./jenkins/tag_maintainer.py)"
     exit 1
 fi
 
@@ -108,7 +109,7 @@ if [[ "$TARGET" == "kronic" ]]; then
     rclone copy -P --drive-chunk-size 256M "$OUT/$ZIP" kronic-sync:jenkins/"$BUILD_NUMBER"
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
-    sendAOSiP "$(~/jenkins-scripts/message_testers.py "${DEVICE}")"
+    sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
