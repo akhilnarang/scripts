@@ -26,6 +26,10 @@ function repo_sync() {
     time repo sync -j"$(nproc)" --current-branch --no-tags --no-clone-bundle --force-sync
 }
 
+function clean_repo() {
+    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
+}
+
 set -e
 source ~/scripts/functions
 export TZ=UTC
@@ -41,9 +45,9 @@ PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NOD
 
 . build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
+    clean_repo
     rm -rf .repo/repo .repo/manifests
     repo_init
-    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
     [[ -d ".repo/local_manifests" ]] && rm -rf .repo/local_manifests
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
