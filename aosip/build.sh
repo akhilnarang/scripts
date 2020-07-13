@@ -9,7 +9,7 @@
 
 # Set some variables based on the buildtype
 if [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
-    TARGET="otatools target-files-package"
+    TARGET="dist"
     if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
         export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
     fi
