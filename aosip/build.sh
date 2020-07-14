@@ -102,7 +102,7 @@ export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
 if ! m "$TARGET"; then
     sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})"
-    sendAOSiP "$(./jenkins/tag_maintainer.py)"
+    sendAOSiP "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
 fi
 
