@@ -230,13 +230,6 @@ manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:pri
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
 
-# Check whether this has already been dumped or not
-#curl --silent --fail "https://git.rip/$ORG/$repo/-/blob/$branch/all_files.txt" > /dev/null && {
-#    echo "Already dumped"
-#    sendTG "Already dumped"
-#    exit 1
-#}
-
 # Check whether the subgroup exists or not
 if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
     if ! curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=562 -F path="${repo_subgroup}" --silent --fail > x; then
@@ -268,7 +261,7 @@ fi
 
 curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id/repository/branches/$branch" > x
 [[ "$(jq -r '.name' x)" == "$branch" ]] && {
-    sendTG "$branch already exists in $repo!"
+    sendTG "$branch already exists in [$repo](https://git.rip/dumps/$repo)!"
     rm -f x
     exit 1
 }
