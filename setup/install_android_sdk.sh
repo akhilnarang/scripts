@@ -5,7 +5,7 @@
 
 CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 CUR_DIR="${CUR_DIR/setup/}"
-SDK_TOOLS=commandlinetools-linux-6200805_latest.zip
+SDK_TOOLS=commandlinetools-linux-6609375_latest.zip
 
 function setup_android_sdk() {
     echo "Installing Android SDK"
