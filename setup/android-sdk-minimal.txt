@@ -1,7 +1,7 @@
-build-tools;29.0.3
-cmake;3.6.4111459
-ndk;20.0.5594570
+build-tools;30.0.1
+cmake;3.10.2.4988404
+ndk;21.3.6528147
 platform-tools
 tools
-platforms;android-28
 platforms;android-29
+platforms;android-30
