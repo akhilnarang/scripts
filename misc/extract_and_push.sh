@@ -261,7 +261,7 @@ fi
 
 curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id/repository/branches/$branch" > x
 [[ "$(jq -r '.name' x)" == "$branch" ]] && {
-    sendTG "$branch already exists in [$repo](https://git.rip/dumps/$repo)!"
+    sendTG "$branch already exists in <a href=\"https://git.rip/dumps/$repo\">$repo</a>!"
     rm -f x
     exit 1
 }
