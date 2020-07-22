@@ -250,7 +250,8 @@ curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4
 project_id="$(jq .id x)"
 rm -f x
 if [[ -z "$project_id" ]]; then
-    curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo" > x
+    curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo" -F visibility=public > x
+    cat x
     project_id="$(jq .id x)"
     rm -f x
     if [[ -z "$project_id" ]]; then
@@ -283,7 +284,7 @@ git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"
 }
    
 # Set default branch to the newly pushed branch
-curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" -F visibility=public > /dev/null
+curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
 sendTG "Pushed <a href=\"https://git.rip/$ORG/$repo\">$description</a>"
