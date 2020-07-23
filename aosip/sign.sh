@@ -6,7 +6,7 @@
 
 
 source ~/scripts/functions
-
+export TZ=UTC
 AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-$(date +%Y%m%d)"
 SIGNED_OTAPACKAGE="${AOSIP_VERSION}.zip"
 BOOTIMAGE="${AOSIP_VERSION}-boot.img"
