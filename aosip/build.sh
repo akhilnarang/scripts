@@ -112,7 +112,7 @@ sendAOSiP "${END_MESSAGE}"
 
 if [[ "$TARGET" == "kronic" ]]; then
     cp "$OUT/$ZIP" ~/nginx
-    ssh Illusion "wget http://$(hostname)/$ZIP -O /tmp/$ZIP; rclone copy -P --drive-chunk-size 256M /tmp/$ZIP kronic-sync:jenkins/$BUILD_NUMBER/; rm -rfv /tmp/$ZIP"
+    ssh Illusion "axel -a -n16 -q http://$(hostname)/$ZIP -O /tmp/$ZIP; rclone copy -P --drive-chunk-size 256M /tmp/$ZIP kronic-sync:jenkins/$BUILD_NUMBER/; rm -rfv /tmp/$ZIP"
     rm -fv ~/nginx/"$ZIP"
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
