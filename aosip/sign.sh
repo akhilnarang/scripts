@@ -48,7 +48,7 @@ md5sum "$UPLOAD/$SIGNED_IMAGE_PACKAGE" > "$UPLOAD/$SIGNED_IMAGE_PACKAGE".md5sum
 tar -cvf ~/nginx/"$BUILD_NUMBER".tar upload_assets/*
 
 # Mirror the archive
-ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv - -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
+ssh Illusion "mkdir /var/www/html/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /var/www/html/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /var/www/html/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
 
 # This doesn't have any further use
 rm -fv "$UPLOAD"
@@ -57,15 +57,14 @@ if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
     sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-    sendAOSiP "<a href=\"https://drive.aosip.dev/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
+    sendAOSiP "<a href=\"https://aosip.dev/dl/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
     sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
 elif [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps)$ ]]; then
-    ssh Illusion "cp -v /tmp/$BUILD_NUMBER/* /home/kronic/builds/$DEVICE/"
+    ssh Illusion "cp -v /var/www/html/$BUILD_NUMBER/* /home/kronic/builds/$DEVICE/"
     python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
 
-ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
 rm -rfv "$DEVICE-$AOSIP_BUILDTYPE".json
