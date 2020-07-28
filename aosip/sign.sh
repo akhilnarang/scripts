@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # AOSiP upload script
 
-
+# shellcheck disable=SC2086,SC2029
+# SC2086: Double quote to prevent globbing and word splitting
+# SC2029: Note that, unescaped, this expands on the client side.
 source ~/scripts/functions
 export TZ=UTC
 AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-$(date +%Y%m%d)"
@@ -21,8 +23,6 @@ if [[ "$WITH_GAPPS" == "true" ]]; then
 fi
 
 echo "Signing target_files APKs"
-# shellcheck disable=SC2086
-# SC2086: Double quote to prevent globbing and word splitting
 ./build/make/tools/releasetools/sign_target_files_apks -o -d ~/.android-certs $SIGNING_FLAGS "$OUT"/obj/PACKAGING/target_files_intermediates/aosip_"$DEVICE"-target_files-"$BUILD_NUMBER".zip "$UPLOAD/$SIGNED_TARGET_FILES" || exit 1
 
 echo "Generating signed otapackage"
@@ -44,26 +44,28 @@ echo "Generating MD5 checksums"
 md5sum "$UPLOAD/$SIGNED_OTAPACKAGE" > "$UPLOAD/$SIGNED_OTAPACKAGE".md5sum
 md5sum "$UPLOAD/$SIGNED_IMAGE_PACKAGE" > "$UPLOAD/$SIGNED_IMAGE_PACKAGE".md5sum
 
-# Upload everything to gdrive
-rclone copy -P --drive-chunk-size 256M "$UPLOAD/" kronic-sync:jenkins/"$BUILD_NUMBER"
+# Create an archive out of everything
+tar -cvf ~/nginx/"$BUILD_NUMBER".tar upload_assets/*
+
+# Mirror the archive
+ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv - -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
 
 # This doesn't have any further use
-rm -fv "$UPLOAD/$SIGNED_TARGET_FILES"
+rm -fv "$UPLOAD"
 
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
-    rsync -av --progress "$DEVICE-$AOSIP_BUILDTYPE".json Illusion:/var/www/html/
-    rsync -av --progress "$UPLOAD"/*.zip Illusion:/var/www/html/"$BUILD_NUMBER"
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
     sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-    sendAOSiP "<a href=\"https://aosip.dev/dl/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
+    sendAOSiP "<a href=\"https://drive.aosip.dev/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
     sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
 elif [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps)$ ]]; then
-    rsync -av --progress "$UPLOAD"/* Illusion:/mnt/builds/"$DEVICE"/
+    ssh Illusion "cp -v /tmp/$BUILD_NUMBER/* /home/kronic/builds/$DEVICE/"
     python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
 
-rm -rfv "$DEVICE-$AOSIP_BUILDTYPE".json "$UPLOAD"
+ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
+rm -rfv "$DEVICE-$AOSIP_BUILDTYPE".json

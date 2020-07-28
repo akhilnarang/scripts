@@ -3,9 +3,10 @@
 # Copyright (C) 2018-20 Akhil Narang
 # SPDX-License-Identifier: GPL-3.0-only
 # AOSiP build script
-# shellcheck disable=SC1090,SC1091
+# shellcheck disable=SC1090,SC1091,SC2029
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
 # SC1091: Not following: (error message here)
+# SC2029: Note that, unescaped, this expands on the client side.
 
 # Set some variables based on the buildtype
 if [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
@@ -110,7 +111,9 @@ sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 sendAOSiP "${END_MESSAGE}"
 
 if [[ "$TARGET" == "kronic" ]]; then
-    rclone copy -P --drive-chunk-size 256M "$OUT/$ZIP" kronic-sync:jenkins/"$BUILD_NUMBER"
+    cp "$OUT/$ZIP" ~/nginx
+    ssh Illusion "wget http://$(hostname)/$ZIP -O /tmp/$ZIP; rclone copy -P --drive-chunk-size 256M /tmp/$ZIP kronic-sync:jenkins/$BUILD_NUMBER/; rm -rfv /tmp/$ZIP"
+    rm -fv ~/nginx/"$ZIP"
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     sendAOSiP "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
     sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
