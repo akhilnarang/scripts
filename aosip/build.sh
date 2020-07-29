@@ -111,7 +111,7 @@ sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 sendAOSiP "${END_MESSAGE}"
 
 if [[ "$TARGET" == "kronic" ]]; then
-    cp "$OUT/$ZIP" ~/nginx
+    cp -v "$OUT/$ZIP" ~/nginx
     ssh Illusion "axel -a -n16 -q http://$(hostname)/$ZIP -O /tmp/$ZIP; rclone copy -P --drive-chunk-size 256M /tmp/$ZIP kronic-sync:jenkins/$BUILD_NUMBER/; rm -rfv /tmp/$ZIP"
     rm -fv ~/nginx/"$ZIP"
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
