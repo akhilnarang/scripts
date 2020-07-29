@@ -54,7 +54,7 @@ rm -rfv $UPLOAD
 ssh Illusion "mkdir /var/www/html/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /var/www/html/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /var/www/html/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
 
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
-    scp "${DEVICE}"-"${AOSIP_BUILDTYPE}".json Illusion:/var/www/html/$BUILD_NUMBER/
+    scp "${DEVICE}"-"${AOSIP_BUILDTYPE}".json Illusion:/var/www/html/
     rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json    
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
