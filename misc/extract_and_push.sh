@@ -278,7 +278,7 @@ sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
 git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
-    sendTG "Pushing failed (Already dumped?)"
+    sendTG "Pushing failed!"
     echo "Pushing failed!"
     exit 1
 }
