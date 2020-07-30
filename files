@@ -7,6 +7,7 @@ aosip/crowdin.sh
 aosip/merge.sh
 aosip/push.sh
 aosip/rebase.sh
+aosip/release.sh
 aosip/sign.sh
 build-kernel
 functions

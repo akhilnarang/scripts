@@ -9,7 +9,9 @@
 # SC2029: Note that, unescaped, this expands on the client side.
 source ~/scripts/functions
 export TZ=UTC
-AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-$(date +%Y%m%d)"
+DATE="$(date +%Y%m%d)"
+AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-${DATE}"
+RELEASE_TAG="$DEVICE-$AOSIP_BUILDTYPE-$DATE"
 SIGNED_OTAPACKAGE="${AOSIP_VERSION}.zip"
 BOOTIMAGE="${AOSIP_VERSION}-boot.img"
 SIGNED_TARGET_FILES="signed-target_files.zip"
@@ -52,21 +54,20 @@ rm -rfv $UPLOAD
 
 # Mirror the archive
 ssh Illusion "mkdir /var/www/html/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /var/www/html/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /var/www/html/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
+rm -fv ~/nginx/$BUILD_NUMBER.tar
 
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
-    scp "${DEVICE}"-"${AOSIP_BUILDTYPE}".json Illusion:/var/www/html/
+    rclone copy "${DEVICE}"-"${AOSIP_BUILDTYPE}".json kronic-sync:jenkins/
     rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json    
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
     sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-    sendAOSiP "<a href=\"https://aosip.dev/dl/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
+    sendAOSiP "<a href=\"https://drive.aosip.dev/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
     sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
 elif [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps)$ ]]; then
-    ssh Illusion "cp -v /var/www/html/$BUILD_NUMBER/AOSiP* /home/kronic/builds/$DEVICE/; rm -rfv /var/www/html/$BUILD_NUMBER"
+    ssh Illusion "bash ~/scripts/release.sh $AOSIP_VERSION $RELEASE_TAG $DEVICE $BUILD_NUMBER $AOSIP_BUILDTYPE"
     python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
-
-
