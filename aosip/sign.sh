@@ -53,10 +53,11 @@ cd - || exit
 rm -rfv $UPLOAD
 
 # Mirror the archive
-ssh Illusion "mkdir /var/www/html/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /var/www/html/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /var/www/html/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
+ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
 rm -fv ~/nginx/$BUILD_NUMBER.tar
 
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+    ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
     rclone copy "${DEVICE}"-"${AOSIP_BUILDTYPE}".json kronic-sync:jenkins/
     rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json    
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
