@@ -46,6 +46,7 @@ PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NOD
 
 . build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
+    git -C .repo/manifests reset --hard
     clean_repo
     rm -rf .repo/repo .repo/manifests
     repo_init
