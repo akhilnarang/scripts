@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2086
+# SC2086: Double quote to prevent globbing and word splitting.
+
 AOSIP_VERSION=$1
 RELEASE_TAG=$2
 DEVICE=$3
