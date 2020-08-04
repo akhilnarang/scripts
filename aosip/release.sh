@@ -12,7 +12,7 @@ s=""
 for d in "$AOSIP_VERSION"*; do
     s+="-a $d "
 done
-hub -C ~/github-release release create "$RELEASE_TAG" "$s" -m "Assets for $AOSIP_VERSION"
+hub -C ~/github-release release create "$RELEASE_TAG" $s -m "Assets for $AOSIP_VERSION"
 rm -fv /home/kronic/builds/"$DEVICE"/*"$AOSIP_BUILDTYPE"*
 cp -v /tmp/"$BUILD_NUMBER"/AOSiP* /home/kronic/builds/"$DEVICE"/
 rm -rfv /tmp/"$BUILD_NUMBER"
