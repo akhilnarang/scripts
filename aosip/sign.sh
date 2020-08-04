@@ -69,6 +69,6 @@ if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
 elif [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps)$ ]]; then
-    ssh Illusion "bash ~/scripts/release.sh $AOSIP_VERSION $RELEASE_TAG $DEVICE $BUILD_NUMBER $AOSIP_BUILDTYPE"
+    ssh Illusion "bash ~/scripts/aosip/release.sh $AOSIP_VERSION $RELEASE_TAG $DEVICE $BUILD_NUMBER $AOSIP_BUILDTYPE"
     python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
