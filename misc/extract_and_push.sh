@@ -264,6 +264,7 @@ rm -f x
 # Create the repo if it doesn't exist
 curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name" > x
 message="$(jq -r .message x)"
+project_id="$(jq .id x)"
 rm -f x
 if [[ "$message" == "404 Project Not Found" ]]; then
     curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo" -F visibility=public > x
