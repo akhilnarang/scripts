@@ -83,6 +83,12 @@ else
     git -C ~/mkbootimg_tools pull
 fi
 
+if [[ ! -d "${HOME}/vmlinux-to-elf" ]]; then
+    git clone -q https://github.com/marin-m/vmlinux-to-elf ~/vmlinux-to-elf
+else
+    git -C ~/vmlinux-to-elf pull
+fi
+
 bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
     sendTG "Extraction failed!"
     exit 1
@@ -117,13 +123,23 @@ if [[ -f "boot.img" ]]; then
     ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
     python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
     find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
-    rm -fv boot.img
 fi
 if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts 
     python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
     find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
 fi
+
+# Extract ikconfig
+if [[ "$(command -v extract-ikconfig)" ]]; then
+    extract-ikconfig boot.img > ikconfig
+fi
+
+# Kallsyms
+python3 ~/vmlinux-to-elf/vmlinux_to_elf/kallsyms_finder.py boot.img > kallsyms.txt
+
+# ELF
+python3 ~/vmlinux-to-elf/vmlinux_to_elf/main.py boot.img boot.elf
 
 # Oppo/Realme devices have some images in a euclid folder in their vendor, extract those for props
 if [[ -d "vendor/euclid" ]]; then
