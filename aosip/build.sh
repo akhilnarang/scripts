@@ -46,11 +46,11 @@ PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NOD
 
 . build/envsetup.sh
 if [[ ${SYNC} == "yes" ]]; then
+    [[ -d ".repo/local_manifests" ]] && rm -rf .repo/local_manifests
     git -C .repo/manifests reset --hard
     clean_repo
     rm -rf .repo/repo .repo/manifests
     repo_init
-    [[ -d ".repo/local_manifests" ]] && rm -rf .repo/local_manifests
     if [[ -n ${LOCAL_MANIFEST} ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi

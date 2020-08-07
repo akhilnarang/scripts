@@ -59,7 +59,6 @@ rm -fv ~/nginx/$BUILD_NUMBER.tar
 if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
     rclone copy "${DEVICE}"-"${AOSIP_BUILDTYPE}".json kronic-sync:jenkins/
-    rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json    
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
     sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
@@ -72,3 +71,4 @@ elif [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps)$ ]]; then
     ssh Illusion "bash ~/scripts/aosip/release.sh $AOSIP_VERSION $RELEASE_TAG $DEVICE $BUILD_NUMBER $AOSIP_BUILDTYPE"
     python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
+rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json    
