@@ -13,6 +13,8 @@ UBUNTU_18_PACKAGES="curl"
 UBUNTU_20_PACKAGES="python"
 PACKAGES=""
 
+sudo apt update
+
 # Install lsb-core packages
 sudo apt install lsb-core -y
 
@@ -28,7 +30,6 @@ elif [[ ${LSB_RELEASE} =~ "Ubuntu 20" ]]; then
     PACKAGES="${UBUNTU_20_PACKAGES}"
 fi
 
-sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive \
     apt install \
     adb autoconf automake axel bc bison build-essential \
