@@ -101,12 +101,12 @@ for p in $PARTITIONS; do
     if [ -f "$p.img" ]; then
         mkdir "$p" || rm -rf "${p:?}"/*
         7z x "$p".img -y -o"$p"/ || {
-        sudo mount -o loop "$p".img "$p"
-        mkdir "${p}_"
-        sudo cp -rf "${p}/*" "${p}_"
-        sudo umount "${p}"
-        sudo mv "${p}_" "${p}"
-}
+            sudo mount -o loop "$p".img "$p"
+            mkdir "${p}_"
+            sudo cp -rf "${p}/*" "${p}_"
+            sudo umount "${p}"
+            sudo mv "${p}_" "${p}"
+        }
         rm -fv "$p".img
     fi
 done
@@ -125,7 +125,7 @@ if [[ -f "boot.img" ]]; then
     find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
 fi
 if [[ -f "dtbo.img" ]]; then
-    mkdir -v dtbodts 
+    mkdir -v dtbodts
     python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
     find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
 fi
@@ -145,7 +145,7 @@ python3 ~/vmlinux-to-elf/vmlinux_to_elf/main.py boot.img boot.elf
 if [[ -d "vendor/euclid" ]]; then
     pushd vendor/euclid || exit 1
     for f in *.img; do
-        [[ -f "$f" ]] || continue
+        [[ -f $f ]] || continue
         7z x "$f" -o"${f/.img/}"
         rm -fv "$f"
     done
@@ -237,7 +237,7 @@ description=$(grep -oP "(?<=^ro.build.description=).*" -hs {system,system/system
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
 branch=$(echo "$description" | tr ' ' '-')
 repo_subgroup=$(echo "$brand" | tr '[:upper:]' '[:lower:]')
-[[ -z "$repo_subgroup" ]] && repo_subgroup=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]')
+[[ -z $repo_subgroup ]] && repo_subgroup=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]')
 repo_name=$(echo "$codename" | tr '[:upper:]' '[:lower:]')
 repo="$repo_subgroup/$repo_name"
 platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
@@ -256,7 +256,7 @@ fi
 group_id="$(jq -r '.id' x)"
 rm -f x
 
-[[ -z "$group_id" ]] && {
+[[ -z $group_id ]] && {
     sendTG "Unable to get gitlab group id!"
     exit 1
 }
@@ -266,11 +266,11 @@ curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4
 message="$(jq -r .message x)"
 project_id="$(jq .id x)"
 rm -f x
-if [[ "$message" == "404 Project Not Found" ]]; then
+if [[ $message == "404 Project Not Found" ]]; then
     curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo" -F visibility=public > x
     project_id="$(jq .id x)"
     rm -f x
-    if [[ -z "$project_id" ]]; then
+    if [[ -z $project_id ]]; then
         sendTG "Could not get project id"
         exit 1
     fi
@@ -298,7 +298,7 @@ git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"
     echo "Pushing failed!"
     exit 1
 }
-   
+
 # Set default branch to the newly pushed branch
 curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 

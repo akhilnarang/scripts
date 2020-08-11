@@ -20,7 +20,7 @@ OUT="./out/target/product/$DEVICE"
 UPLOAD="./upload_assets"
 mkdir -pv "$UPLOAD"
 
-if [[ "$WITH_GAPPS" == "true" ]]; then
+if [[ $WITH_GAPPS == "true" ]]; then
     SIGNING_FLAGS="-e CronetDynamite.apk= -e DynamiteLoader.apk= -e DynamiteModulesA.apk= -e AdsDynamite.apk= -e DynamiteModulesC.apk= -e MapsDynamite.apk= -e GoogleCertificates.apk= -e AndroidPlatformServices.apk="
 fi
 
@@ -56,7 +56,7 @@ rm -rfv $UPLOAD
 ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
 rm -fv ~/nginx/$BUILD_NUMBER.tar
 
-if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
     rclone copy "${DEVICE}"-"${AOSIP_BUILDTYPE}".json kronic-sync:jenkins/
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
@@ -67,8 +67,8 @@ if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
-elif [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps)$ ]]; then
+elif [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps)$ ]]; then
     ssh Illusion "bash ~/scripts/aosip/release.sh $AOSIP_VERSION $RELEASE_TAG $DEVICE $BUILD_NUMBER $AOSIP_BUILDTYPE"
     python3 ~/api/post_device.py "$DEVICE" "$AOSIP_BUILDTYPE"
 fi
-rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json    
+rm -fv "$DEVICE-$AOSIP_BUILDTYPE".json

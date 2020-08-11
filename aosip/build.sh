@@ -9,9 +9,9 @@
 # SC2029: Note that, unescaped, this expands on the client side.
 
 # Set some variables based on the buildtype
-if [[ "$AOSIP_BUILDTYPE" =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+if [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     TARGET="dist"
-    if [[ "$AOSIP_BUILDTYPE" =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+    if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
         export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
     fi
 else
@@ -38,7 +38,6 @@ sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
 
-
 [[ -d "vendor/aosip" ]] || {
     repo_init
     repo_sync
@@ -55,7 +54,7 @@ if [[ ${SYNC} == "yes" ]]; then
         curl --create-dirs -s -L "${LOCAL_MANIFEST}" -o .repo/local_manifests/aosip_manifest.xml
     fi
     if [[ -f "jenkins/${DEVICE}-presync" ]]; then
-        if [[ -z "$PRE_SYNC_PICKS" ]]; then
+        if [[ -z $PRE_SYNC_PICKS ]]; then
             PRE_SYNC_PICKS="$(cat jenkins/"${DEVICE}-presync")"
         else
             PRE_SYNC_PICKS+=" | $(cat jenkins/"${DEVICE}-presync")"
@@ -72,20 +71,20 @@ fi
 
 set +e
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
-if [[ "$AOSIP_BUILD" != "$DEVICE" ]]; then
+if [[ $AOSIP_BUILD != "$DEVICE" ]]; then
     sendAOSiP "Lunching failed!"
     exit 1
 fi
 set -e
 
-if [[ "${CLEAN}" =~ ^(clean|deviceclean|installclean)$ ]]; then
+if [[ ${CLEAN} =~ ^(clean|deviceclean|installclean)$ ]]; then
     m "${CLEAN}"
 else
     rm -rf "${OUT}"/AOSiP*
 fi
 
 if [[ -f "jenkins/${DEVICE}" ]]; then
-    if [[ -z "$REPOPICK_LIST" ]]; then
+    if [[ -z $REPOPICK_LIST ]]; then
         REPOPICK_LIST="$(cat jenkins/"${DEVICE}")"
     else
         REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
@@ -111,7 +110,7 @@ fi
 sendAOSiP "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 sendAOSiP "${END_MESSAGE}"
 
-if [[ "$TARGET" == "kronic" ]]; then
+if [[ $TARGET == "kronic" ]]; then
     cp -v "$OUT/$ZIP" ~/nginx
     ssh Illusion "cd /tmp; axel -n16 -q http://$(hostname)/$ZIP; rclone copy -P $ZIP kronic-sync:jenkins/$BUILD_NUMBER; rm -fv $ZIP"
     rm -fv ~/nginx/"$ZIP"

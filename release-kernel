@@ -11,7 +11,7 @@
 
 source ~/scripts/functions
 
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ "$*" =~ "beryllium" ]]; } && DEVICE=beryllium
+[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ $* =~ "beryllium" ]]; } && DEVICE=beryllium
 [[ -z ${DEVICE} ]] && DEVICE=beryllium
 
 function tg() {

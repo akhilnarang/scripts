@@ -169,7 +169,7 @@ function sendKernelBeryllium() {
 
 # Sends a message to AOSiP Testers group
 function sendAOSiP() {
-    if [[ "${QUIET:-no}" == "no" ]]; then
+    if [[ ${QUIET:-no} == "no" ]]; then
         sendTG aosip "${@}"
     fi
 }
