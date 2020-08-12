@@ -63,6 +63,7 @@ if [[ ${SYNC} == "yes" ]]; then
     if [[ -n ${PRE_SYNC_PICKS} ]]; then
         REPOPICK_LIST="$PRE_SYNC_PICKS" repopick_stuff || {
             sendAOSiP "Pre-sync picks failed"
+            clean_repo
             exit 1
         }
     fi
@@ -92,6 +93,7 @@ if [[ -f "jenkins/${DEVICE}" ]]; then
 fi
 repopick_stuff || {
     sendAOSiP "Picks failed"
+    clean_repo
     exit 1
 }
 
