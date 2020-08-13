@@ -9,7 +9,7 @@
 # SC2029: Note that, unescaped, this expands on the client side.
 
 curl --silent --fail --location review.aosip.dev || {
-    sendTG "Gerrit is down!"
+    sendAOSiP "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
 }
 
