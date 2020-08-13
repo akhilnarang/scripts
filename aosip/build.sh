@@ -8,6 +8,11 @@
 # SC1091: Not following: (error message here)
 # SC2029: Note that, unescaped, this expands on the client side.
 
+curl --silent --fail --location review.aosip.dev || {
+    sendTG "Gerrit is down!"
+    exit 1
+}
+
 # Set some variables based on the buildtype
 if [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     TARGET="dist"
