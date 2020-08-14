@@ -8,6 +8,9 @@
 # SC1091: Not following: (error message here)
 # SC2029: Note that, unescaped, this expands on the client side.
 
+source ~/scripts/functions
+export TZ=UTC
+
 curl --silent --fail --location review.aosip.dev || {
     sendAOSiP "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
@@ -37,8 +40,6 @@ function clean_repo() {
 }
 
 set -e
-source ~/scripts/functions
-export TZ=UTC
 sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
 PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
