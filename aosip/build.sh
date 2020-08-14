@@ -11,7 +11,7 @@
 source ~/scripts/functions
 export TZ=UTC
 
-curl --silent --fail --location review.aosip.dev || {
+curl --silent --fail --location review.aosip.dev > /dev/null || {
     sendAOSiP "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
 }
