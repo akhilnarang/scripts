@@ -25,7 +25,7 @@ else
         if [[ $URL =~ ^.+(ota\.d\.miui\.com|otafsg|h2os|oxygenos\.oneplus\.net|dl.google|android.googleapis|ozip)(.+)?$ ]]; then
             axel -q -a -n64 "$URL" || {
                 # Try to download with aria, else wget. Clean the directory each time.
-                aria2c -j64 "${URL}" || {
+                aria2c -q -s16 -x16 "${URL}" || {
                     rm -fv ./*
                     wget "${URL}" || {
                         echo "Download failed. Exiting."
@@ -36,7 +36,7 @@ else
             }
         else
             # Try to download with aria, else wget. Clean the directory each time.
-            aria2c -j64 "${URL}" || {
+            aria2c -q -s16 -x16 "${URL}" || {
                 rm -fv ./*
                 wget "${URL}" || {
                     echo "Download failed. Exiting."
