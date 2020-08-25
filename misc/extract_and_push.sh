@@ -117,29 +117,44 @@ ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null 
     exit 1
 }
 
+if [[ ! -f "boot.img" ]]; then
+    x=$(find . -type f -name "boot.img")
+    if [[ -n "$x" ]]; then
+        mv -v "$x" boot.img
+    else
+        echo "boot.img not found!"
+    fi
+fi
+
+if [[ ! -f "dtbo.img" ]]; then
+    x=$(find . -type f -name "dtbo.img")
+    if [[ -n "$x" ]]; then
+        mv -v "$x" dtbo.img
+    else
+        echo "dtbo.img not found!"
+    fi
+fi
+
 # Extract bootimage and dtbo
 if [[ -f "boot.img" ]]; then
     mkdir -v bootdts
     ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
     python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
     find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+    # Extract ikconfig
+    if [[ "$(command -v extract-ikconfig)" ]]; then
+        extract-ikconfig boot.img > ikconfig
+    fi
+    # Kallsyms
+    python3 ~/vmlinux-to-elf/vmlinux_to_elf/kallsyms_finder.py boot.img > kallsyms.txt
+    # ELF
+    python3 ~/vmlinux-to-elf/vmlinux_to_elf/main.py boot.img boot.elf
 fi
 if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts
     python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
     find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
 fi
-
-# Extract ikconfig
-if [[ "$(command -v extract-ikconfig)" ]]; then
-    extract-ikconfig boot.img > ikconfig
-fi
-
-# Kallsyms
-python3 ~/vmlinux-to-elf/vmlinux_to_elf/kallsyms_finder.py boot.img > kallsyms.txt
-
-# ELF
-python3 ~/vmlinux-to-elf/vmlinux_to_elf/main.py boot.img boot.elf
 
 # Oppo/Realme devices have some images in a euclid folder in their vendor, extract those for props
 if [[ -d "vendor/euclid" ]]; then
