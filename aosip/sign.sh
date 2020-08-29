@@ -61,7 +61,7 @@ if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
     sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-    sendAOSiP "<a href=\"https://drive.aosip.dev/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
+    sendAOSiP "<a href=\"https://$BASE_URL/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
     sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
         sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
