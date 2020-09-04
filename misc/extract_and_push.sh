@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+curl --fail --silent --location https://git.rip >/dev/null || exit 1
+
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 
 function sendTG() {
