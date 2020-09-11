@@ -21,9 +21,3 @@ done
 
 echo -e "Installing platform tools & udev rules for adb!"
 sudo pacman -S android-tools android-udev
-
-echo "All Done :'D"
-echo "Don't forget to run these commands before building, or make sure the python in your PATH is python2 and not python3"
-echo "
-virtualenv2 venv
-source venv/bin/activate"
