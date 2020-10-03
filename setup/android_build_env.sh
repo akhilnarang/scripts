@@ -41,23 +41,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
     libxml-simple-perl apt-utils \
     ${PACKAGES} -y
 
-# For all those distro hoppers, lets setup your git credentials
-GIT_USERNAME="$(git config --get user.name)"
-GIT_EMAIL="$(git config --get user.email)"
-echo "Configuring git"
-if [[ -z ${GIT_USERNAME} ]]; then
-    echo -n "Enter your name: "
-    read -r NAME
-    git config --global user.name "${NAME}"
-fi
-if [[ -z ${GIT_EMAIL} ]]; then
-    echo -n "Enter your email: "
-    read -r EMAIL
-    git config --global user.email "${EMAIL}"
-fi
-git config --global credential.helper "cache --timeout=7200"
-echo "git identity setup successfully!"
-
 if [[ "$(command -v adb)" != "" ]]; then
     echo -e "Setting up udev rules for adb!"
     sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
