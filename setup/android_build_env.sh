@@ -39,7 +39,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
     pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
     libxml-simple-perl apt-utils \
-    "${PACKAGES}" -y
+    ${PACKAGES} -y
 
 # For all those distro hoppers, lets setup your git credentials
 GIT_USERNAME="$(git config --get user.name)"
