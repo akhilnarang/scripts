@@ -7,10 +7,20 @@
 # shellcheck disable=SC2086,SC2029
 # SC2086: Double quote to prevent globbing and word splitting
 # SC2029: Note that, unescaped, this expands on the client side.
+
+case "${BRANCH}" in
+    "ten")
+        VERSION=10
+        ;;
+    "eleven")
+        VERSION=11
+        ;;
+esac
+
 source ~/scripts/functions
 export TZ=UTC
 DATE="$(date +%Y%m%d)"
-AOSIP_VERSION="AOSiP-10-${AOSIP_BUILDTYPE}-${DEVICE}-${DATE}"
+AOSIP_VERSION="AOSiP-${VERSION}-${AOSIP_BUILDTYPE}-${DEVICE}-${DATE}"
 SIGNED_OTAPACKAGE="${AOSIP_VERSION}.zip"
 BOOTIMAGE="${AOSIP_VERSION}-boot.img"
 SIGNED_TARGET_FILES="signed-target_files.zip"

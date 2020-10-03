@@ -11,24 +11,33 @@
 source ~/scripts/functions
 export TZ=UTC
 
+case "${BRANCH}" in
+    "ten")
+        VERSION=10
+        ;;
+    "eleven")
+        VERSION=11
+        ;;
+esac
+
 curl --silent --fail --location review.aosip.dev > /dev/null || {
     sendAOSiP "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
 }
 
 # Set some variables based on the buildtype
-if [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+if [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps|Ravioli|Ravioli_Gapps)$ ]]; then
     TARGET="dist"
-    if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+    if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps|Ravioli|Ravioli_Gapps)$ ]]; then
         export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
     fi
 else
     TARGET="kronic"
-    ZIP="AOSiP-10-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d).zip"
+    ZIP="AOSiP-$VERSION-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d).zip"
 fi
 
 function repo_init() {
-    repo init -u https://github.com/AOSiP/platform_manifest.git -b ten --no-tags --no-clone-bundle --current-branch
+    repo init -u https://github.com/AOSiP/platform_manifest.git -b "$BRANCH" --no-tags --no-clone-bundle --current-branch
 }
 
 function repo_sync() {
@@ -36,13 +45,13 @@ function repo_sync() {
 }
 
 function clean_repo() {
-    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/ten && git clean -fdx"
+    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/$BRANCH && git clean -fdx"
 }
 
 set -e
 sendAOSiP "${START_MESSAGE}"
 export PATH=~/bin:$PATH
-PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
+PARSE_MODE="html" sendAOSiP "Starting ${DEVICE} ${AOSIP_BUILDTYPE} $BRANCH build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
 
 [[ -d "vendor/aosip" ]] || {
     repo_init
@@ -110,7 +119,7 @@ CCACHE_EXEC="$(command -v ccache)"
 export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
 if ! m "$TARGET"; then
-    sendAOSiP "[ten build failed for ${DEVICE}](${BUILD_URL})"
+    sendAOSiP "[$BRANCH build failed for ${DEVICE}](${BUILD_URL})"
     sendAOSiP "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
 fi

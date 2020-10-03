@@ -47,7 +47,6 @@ sudo chmod 644 /etc/udev/rules.d/51-android.rules
 sudo chown root /etc/udev/rules.d/51-android.rules
 sudo systemctl restart udev
 
-
 if [[ "$(command -v make)" ]]; then
     makeversion="$(make -v | head -1 | awk '{print $3}')"
     if [[ ${makeversion} != "${LATEST_MAKE_VERSION}" ]]; then

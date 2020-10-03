@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-curl --fail --silent --location https://git.rip >/dev/null || exit 1
+curl --fail --silent --location https://git.rip > /dev/null || exit 1
 
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 
@@ -121,7 +121,7 @@ ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null 
 
 if [[ ! -f "boot.img" ]]; then
     x=$(find . -type f -name "boot.img")
-    if [[ -n "$x" ]]; then
+    if [[ -n $x ]]; then
         mv -v "$x" boot.img
     else
         echo "boot.img not found!"
@@ -130,7 +130,7 @@ fi
 
 if [[ ! -f "dtbo.img" ]]; then
     x=$(find . -type f -name "dtbo.img")
-    if [[ -n "$x" ]]; then
+    if [[ -n $x ]]; then
         mv -v "$x" dtbo.img
     else
         echo "dtbo.img not found!"
