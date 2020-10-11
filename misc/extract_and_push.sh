@@ -16,7 +16,9 @@ if [[ -f $URL ]]; then
 else
     sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
     if [[ $URL =~ drive.google.com ]]; then
+        echo "Google Drive URL detected"
         FILE_ID="$(echo "${URL:?}" | sed -r 's/.*([0-9a-zA-Z_-]{33}).*/\1/')"
+        echo "File ID is ${FILE_ID}"
         CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$FILE_ID" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
         aria2c --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$FILE_ID" || exit 1
         rm /tmp/cookies.txt
