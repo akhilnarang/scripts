@@ -138,7 +138,7 @@ if [[ $TARGET == "kronic" ]]; then
     cp -v "$OUT/$ZIP" ~/nginx
     ssh Illusion "cd /tmp; axel -n16 -q http://$(hostname)/$ZIP; rclone copy -P $ZIP kronic-sync:jenkins/$BUILD_NUMBER; rm -fv $ZIP"
     rm -fv ~/nginx/"$ZIP"
-    FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
+    FOLDER_LINK="$(ssh Illusion rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     sendTG "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
     sendTG "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
