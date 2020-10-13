@@ -18,6 +18,13 @@ case "${BRANCH}" in
 esac
 
 source ~/scripts/functions
+
+function sendTG() {
+    if [[ ! $AOSIP_BUILDTYPE =~ ^(Official|Gapps)$ ]]; then
+        sendAOSiP "$@"
+    fi
+}
+
 export TZ=UTC
 DATE="$(date +%Y%m%d)"
 AOSIP_VERSION="AOSiP-${VERSION}-${AOSIP_BUILDTYPE}-${DEVICE}-${DATE}"
@@ -70,11 +77,11 @@ if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     rclone copy "${DEVICE}"-"${AOSIP_BUILDTYPE}".json kronic-sync:jenkins/
     FOLDER_LINK="$(rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
     export PARSE_MODE="html"
-    sendAOSiP "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
-    sendAOSiP "<a href=\"$BASE_URL/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
-    sendAOSiP "$(./jenkins/message_testers.py "${DEVICE}")"
+    sendTG "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
+    sendTG "<a href=\"$BASE_URL/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"
+    sendTG "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
-        sendAOSiP "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
+        sendTG "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
 elif [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps)$ ]]; then
     ssh Illusion "bash ~/scripts/aosip/release.sh $DEVICE $BUILD_NUMBER $AOSIP_BUILDTYPE"
