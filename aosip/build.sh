@@ -48,7 +48,7 @@ function repo_init() {
 }
 
 function repo_sync() {
-    time repo sync -j"$(nproc)" --current-branch --no-tags --no-clone-bundle --force-sync
+    time repo sync -j"$(nproc)" --current-branch --no-tags --no-clone-bundle --force-sync --quiet
 }
 
 function clean_repo() {
