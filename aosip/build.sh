@@ -10,7 +10,7 @@
 
 source ~/scripts/functions
 
-function sendTG() {
+function notify() {
     if [[ ! $AOSIP_BUILDTYPE =~ ^(Official|Gapps)$ ]]; then
         sendAOSiP "$@"
     fi
@@ -28,7 +28,7 @@ case "${BRANCH}" in
 esac
 
 curl --silent --fail --location review.aosip.dev > /dev/null || {
-    sendTG "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
+    notify "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
 }
 
@@ -56,9 +56,9 @@ function clean_repo() {
 }
 
 set -e
-sendTG "${START_MESSAGE}"
+notify "${START_MESSAGE}"
 export PATH=~/bin:$PATH
-PARSE_MODE="html" sendTG "Starting ${DEVICE} ${AOSIP_BUILDTYPE} $BRANCH build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
+PARSE_MODE="html" notify "Starting ${DEVICE} ${AOSIP_BUILDTYPE} $BRANCH build on $NODE_NAME, check progress <a href='${BUILD_URL}'>here</a>!"
 
 [[ -d "vendor/aosip" ]] || {
     repo_init
@@ -84,7 +84,7 @@ if [[ ${SYNC} == "yes" ]]; then
     fi
     if [[ -n ${PRE_SYNC_PICKS} ]]; then
         REPOPICK_LIST="$PRE_SYNC_PICKS" repopick_stuff || {
-            sendTG "Pre-sync picks failed"
+            notify "Pre-sync picks failed"
             clean_repo
             exit 1
         }
@@ -95,7 +95,7 @@ fi
 set +e
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ $AOSIP_BUILD != "$DEVICE" ]]; then
-    sendTG "Lunching failed!"
+    notify "Lunching failed!"
     exit 1
 fi
 set -e
@@ -114,7 +114,7 @@ if [[ -f "jenkins/${DEVICE}" ]]; then
     fi
 fi
 repopick_stuff || {
-    sendTG "Picks failed"
+    notify "Picks failed"
     clean_repo
     exit 1
 }
@@ -126,24 +126,24 @@ CCACHE_EXEC="$(command -v ccache)"
 export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
 if ! m "$TARGET"; then
-    sendTG "[$BRANCH build failed for ${DEVICE}](${BUILD_URL})"
-    sendTG "$(./jenkins/tag_maintainer.py "$DEVICE")"
+    notify "[$BRANCH build failed for ${DEVICE}](${BUILD_URL})"
+    notify "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
 fi
 
-sendTG "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
-sendTG "${END_MESSAGE}"
+notify "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
+notify "${END_MESSAGE}"
 
 if [[ $TARGET == "kronic" ]]; then
     cp -v "$OUT/$ZIP" ~/nginx
     ssh Illusion "cd /tmp; axel -n16 -q http://$(hostname)/$ZIP; rclone copy -P $ZIP kronic-sync:jenkins/$BUILD_NUMBER; rm -fv $ZIP"
     rm -fv ~/nginx/"$ZIP"
     FOLDER_LINK="$(ssh Illusion rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
-    sendTG "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
-    sendTG "$(./jenkins/message_testers.py "${DEVICE}")"
+    notify "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
+    notify "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
-        sendTG "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
+        notify "$(python3 ~/scripts/gerrit/parsepicks.py "${REPOPICK_LIST}")"
     fi
 else
-    sendTG "Wait a few minutes for a signed zip to be generated!"
+    notify "Wait a few minutes for a signed zip to be generated!"
 fi
