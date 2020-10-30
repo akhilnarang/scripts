@@ -240,6 +240,7 @@ codename=$(grep -oP "(?<=^ro.product.device=).*" -hs {system,system/system,vendo
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.vendor.product.device=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.system.device=).*" -hs {system,system/system}/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.system.device=).*" -hs vendor/euclid/*/build.prop | head -1)
+[[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.product.device=).*" -hs vendor/euclid/*/build.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.device=).*" -hs oppo_product/build*.prop)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.device=).*" -hs my_product/build*.prop)
 [[ -z ${codename} ]] && codename=$(grep -oP "(?<=^ro.product.system.device=).*" -hs my_product/build*.prop)
