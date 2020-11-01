@@ -52,7 +52,7 @@ function repo_sync() {
 }
 
 function clean_repo() {
-    repo forall --ignore-missing -j"$(nproc)" -c "git reset --hard m/$BRANCH && git clean -fdx"
+    repo forall --ignore-missing -j"$(nproc)" -c "git reset --quiet --hard m/$BRANCH && git clean -fdxq"
 }
 
 set -e
@@ -83,6 +83,7 @@ if [[ ${SYNC} == "yes" ]]; then
         fi
     fi
     if [[ -n ${PRE_SYNC_PICKS} ]]; then
+        echo "Trying to pick $PRE_SYNC_PICKS before syncing!"
         REPOPICK_LIST="$PRE_SYNC_PICKS" repopick_stuff || {
             notify "Pre-sync picks failed"
             clean_repo
@@ -93,6 +94,7 @@ if [[ ${SYNC} == "yes" ]]; then
 fi
 
 set +e
+echo "Lunching $BUILDVARIANT for $DEVICE!"
 lunch aosip_"${DEVICE}"-"${BUILDVARIANT}"
 if [[ $AOSIP_BUILD != "$DEVICE" ]]; then
     notify "Lunching failed!"
@@ -113,6 +115,8 @@ if [[ -f "jenkins/${DEVICE}" ]]; then
         REPOPICK_LIST+=" | $(cat jenkins/"${DEVICE}")"
     fi
 fi
+
+echo "Trying to pick $REPOPICK_LIST!"
 repopick_stuff || {
     notify "Picks failed"
     clean_repo
