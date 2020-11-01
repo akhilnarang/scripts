@@ -18,15 +18,6 @@ function notify() {
 
 export TZ=UTC
 
-case "${BRANCH}" in
-    "ten")
-        VERSION=10
-        ;;
-    "eleven")
-        VERSION=11
-        ;;
-esac
-
 curl --silent --fail --location review.aosip.dev > /dev/null || {
     notify "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
@@ -100,7 +91,6 @@ if [[ $AOSIP_BUILD != "$DEVICE" ]]; then
     exit 1
 fi
 set -e
-ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
 
 if [[ ${CLEAN} =~ ^(clean|deviceclean|installclean)$ ]]; then
     m "${CLEAN}"
@@ -134,6 +124,7 @@ if ! m "$TARGET"; then
     notify "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
 fi
+ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
 
 notify "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 notify "${END_MESSAGE}"
