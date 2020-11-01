@@ -40,7 +40,6 @@ if [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps|Ravio
     fi
 else
     TARGET="kronic"
-    ZIP="AOSiP-$VERSION-$AOSIP_BUILDTYPE-$DEVICE-$(date +%Y%m%d).zip"
 fi
 
 function repo_init() {
@@ -101,6 +100,7 @@ if [[ $AOSIP_BUILD != "$DEVICE" ]]; then
     exit 1
 fi
 set -e
+ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
 
 if [[ ${CLEAN} =~ ^(clean|deviceclean|installclean)$ ]]; then
     m "${CLEAN}"
