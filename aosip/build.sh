@@ -124,7 +124,7 @@ if ! m "$TARGET"; then
     notify "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
 fi
-ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
+ZIP="AOSiP-$(grep ro.aosip.version system/etc/prop.default | cut -d= -f2).zip"
 
 notify "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 notify "${END_MESSAGE}"
