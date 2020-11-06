@@ -18,7 +18,7 @@ function notify() {
 
 export TZ=UTC
 
-curl --silent --fail --location review.aosip.dev > /dev/null || {
+curl --silent --fail --location https://review.aosip.dev > /dev/null || {
     notify "$DEVICE $AOSIP_BUILDTYPE is being aborted because gerrit is down!"
     exit 1
 }
@@ -124,12 +124,13 @@ if ! m "$TARGET"; then
     notify "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
 fi
-ZIP="AOSiP-$(grep ro.aosip.version system/etc/prop.default | cut -d= -f2).zip"
 
 notify "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 notify "${END_MESSAGE}"
 
 if [[ $TARGET == "kronic" ]]; then
+    ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
+    [[ -f "$OUT/$ZIP" ]] || ZIP="AOSiP-$(grep ro.aosip.version system/etc/prop.default | cut -d= -f2).zip"
     cp -v "$OUT/$ZIP" ~/nginx
     ssh Illusion "cd /tmp; axel -n16 -q http://$(hostname)/$ZIP; rclone copy -P $ZIP kronic-sync:jenkins/$BUILD_NUMBER; rm -fv $ZIP"
     rm -fv ~/nginx/"$ZIP"
