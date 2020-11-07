@@ -40,3 +40,4 @@ setup/hub.sh
 setup/install_android_sdk.sh
 setup/make.sh
 setup/solus.sh
+zsh/setup.sh
