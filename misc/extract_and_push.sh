@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-curl --fail --silent --location https://git.rip > /dev/null || exit 1
-
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 
 function sendTG() {
     curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
+}
+
+curl --fail --silent --location https://git.rip > /dev/null || {
+    sendTG "Can't access git.rip, cancelling job!"
+    exit 1
 }
 
 [[ -z $ORG ]] && ORG="dumps"
