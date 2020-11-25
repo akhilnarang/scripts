@@ -313,7 +313,7 @@ find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname
 sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
-git push "https://dumper:$DUMPER_TOKEN@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
+git push "ssh://git@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
     sendTG "Pushing failed!"
     echo "Pushing failed!"
     exit 1
