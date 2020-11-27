@@ -126,7 +126,7 @@ fi
 notify "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 notify "${END_MESSAGE}"
 
-if [[ $SIGN_BUILD == "true" ]]; then
+if [[ $SIGN_BUILD != "true" ]]; then
     ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
     [[ -f "$OUT/$ZIP" ]] || ZIP="AOSiP-$(grep ro.aosip.version "$OUT"/system/etc/prop.default | cut -d= -f2).zip"
     cp -v "$OUT/$ZIP" ~/nginx
