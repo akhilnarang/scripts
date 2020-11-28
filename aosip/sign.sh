@@ -30,6 +30,7 @@ DATE="$(date +%Y%m%d)"
 AOSIP_VERSION="AOSiP-${VERSION}-${AOSIP_BUILDTYPE}-${DEVICE}-${DATE}"
 SIGNED_OTAPACKAGE="${AOSIP_VERSION}.zip"
 BOOTIMAGE="${AOSIP_VERSION}-boot.img"
+RECOVERYIMAGE="${AOSIP_VERSION}-recovery.img"
 SIGNED_TARGET_FILES="signed-target_files.zip"
 SIGNED_IMAGE_PACKAGE="${AOSIP_VERSION}-img.zip"
 OUT="./out/target/product/$DEVICE"
@@ -56,8 +57,11 @@ BUILD_TIMESTAMP=$(grep -oP "(?<=ro.build.date.utc=).*" "$OUT"/system/build.prop)
 echo "Generating JSON for updater"
 ~/api/generate_json.py "$UPLOAD/$SIGNED_OTAPACKAGE" "$BUILD_TIMESTAMP" > "$UPDATER_JSON"
 
-echo "Extracting signed bootimage"
+echo "Extracting signed boot image"
 7z e "$UPLOAD/$SIGNED_TARGET_FILES" IMAGES/boot.img -so > "$UPLOAD/$BOOTIMAGE"
+
+echo "Extracting signed recovery image"
+7z e "$UPLOAD/$SIGNED_TARGET_FILES" IMAGES/recovery.img -so > "$UPLOAD/$RECOVERYIMAGE"
 
 echo "Generating MD5 checksums"
 md5sum "$UPLOAD/$SIGNED_OTAPACKAGE" > "$UPLOAD/$SIGNED_OTAPACKAGE".md5sum
