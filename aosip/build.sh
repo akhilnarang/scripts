@@ -25,10 +25,12 @@ curl --silent --fail --location https://review.aosip.dev > /dev/null || {
 
 # Set some variables based on the buildtype
 if [[ $AOSIP_BUILDTYPE =~ ^(Official|Gapps|CI|CI_Gapps|Quiche|Quiche_Gapps|Ravioli|Ravioli_Gapps)$ ]]; then
-    export SIGN_BUILD=true
+    TARGET="otatools target-files-package"
     if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps|Ravioli|Ravioli_Gapps)$ ]]; then
         export OVERRIDE_OTA_CHANNEL="${BASE_URL}/${DEVICE}-${AOSIP_BUILDTYPE}.json"
     fi
+else
+    TARGET="kronic"
 fi
 
 function repo_init() {
@@ -118,7 +120,7 @@ CCACHE_DIR="${HOME}/.ccache"
 CCACHE_EXEC="$(command -v ccache)"
 export USE_CCACHE CCACHE_DIR CCACHE_EXEC
 ccache -M 500G
-if ! m kronic; then
+if ! m "$TARGET"; then
     notify "[$BRANCH build failed for ${DEVICE}](${BUILD_URL})"
     notify "$(./jenkins/tag_maintainer.py "$DEVICE")"
     exit 1
@@ -127,7 +129,7 @@ fi
 notify "${DEVICE} build is done, check [jenkins](${BUILD_URL}) for details!"
 notify "${END_MESSAGE}"
 
-if [[ $SIGN_BUILD != "true" ]]; then
+if [[ $TARGET == "kronic" ]]; then
     ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
     [[ -f "$OUT/$ZIP" ]] || ZIP="AOSiP-$(grep ro.aosip.version "$OUT"/system/etc/prop.default | cut -d= -f2).zip"
     cp -v "$OUT/$ZIP" ~/nginx
