@@ -49,7 +49,7 @@ echo "Generating signed otapackage"
 python2 ./build/make/tools/releasetools/ota_from_target_files -p out/host/linux-x86/ -k ~/.android-certs/releasekey --backup=true "$UPLOAD/$SIGNED_TARGET_FILES" "$UPLOAD/$SIGNED_OTAPACKAGE" || exit 1
 
 echo "Generating signed images package"
-python2 ./build/make/tools/releasetools/img_from_target_files "$UPLOAD/$SIGNED_TARGET_FILES" "$UPLOAD/$SIGNED_IMAGE_PACKAGE" || exit 1
+python2 ./build/make/tools/releasetools/img_from_target_files -p out/host/linux-x86/ "$UPLOAD/$SIGNED_TARGET_FILES" "$UPLOAD/$SIGNED_IMAGE_PACKAGE" || exit 1
 
 echo "Extracting build.prop to get build timestamp"
 BUILD_TIMESTAMP=$(grep -oP "(?<=ro.build.date.utc=).*" "$OUT"/system/build.prop)
