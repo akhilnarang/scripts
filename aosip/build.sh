@@ -105,13 +105,14 @@ if [[ -f "jenkins/${DEVICE}" ]]; then
 fi
 
 echo "Trying to pick $REPOPICK_LIST!"
+start=$(date +%s)
 repopick_stuff || {
     notify "Picks failed"
     clean_repo
     exit 1
 }
+echo "Took $(($(date +%s) - start)) seconds to pick!"
 
-set -e
 USE_CCACHE=1
 CCACHE_DIR="${HOME}/.ccache"
 CCACHE_EXEC="$(command -v ccache)"
