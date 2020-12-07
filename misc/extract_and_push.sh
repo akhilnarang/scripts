@@ -313,7 +313,7 @@ git init
 git config user.name 'dumper'
 git config user.email '457-dumper@users.noreply.git.rip'
 git checkout -b "$branch"
-find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' -o -name '*zookhrs*' -printf '%P\n' > .gitignore
+# find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' -o -name '*zookhrs*' -printf '%P\n' > .gitignore
 sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
