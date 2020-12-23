@@ -23,6 +23,7 @@ sudo dnf install \
     make \
     mesa-libGL-devel \
     ncurses-devel \
+    openssl \
     patch \
     zlib-devel \
     ncurses-devel.i686 \
