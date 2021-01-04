@@ -182,13 +182,6 @@ if [ -f ./vendor/build.prop ]; then
 fi
 sort -u -o ./board-info.txt ./board-info.txt
 
-# Fix permissions
-sudo chown "$(whoami)" ./* -R
-sudo chmod -R u+rwX ./*
-
-# Generate all_files.txt
-find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
-
 # Prop extraction
 flavor=$(grep -m1 -oP "(?<=^ro.build.flavor=).*" -hs {vendor,system,system/system}/build.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -m1 -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
@@ -260,6 +253,8 @@ description=$(grep -m1 -oP "(?<=^ro.build.description=).*" -hs {system,system/sy
 [[ -z ${description} ]] && description=$(grep -m1 -oP "(?<=^ro.product.build.description=).*" -hs product/build*.prop)
 [[ -z ${description} ]] && description=$(grep -m1 -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
+is_ab=$(grep -m1 -oP "(?<=^ro.build.ab_update=).*" -hs {system,system/system,vendor}/build*.prop)
+[[ -z ${is_ab} ]] && is_ab="false"
 branch=$(echo "$description" | tr ' ' '-')
 repo_subgroup=$(echo "$brand" | tr '[:upper:]' '[:lower:]')
 [[ -z $repo_subgroup ]] && repo_subgroup=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]')
@@ -269,7 +264,30 @@ platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | 
 top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 
-printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename"
+printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\nis_ab: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename" "$is_ab"
+
+if [[ $is_ab == true ]]; then
+    twrpimg=boot.img
+else
+    twrpimg=recovery.img
+fi
+
+if [[ -f $twrpimg ]]; then
+    echo "Detected $twrpimg! Generating twrp device tree"
+
+    if twrpdtgen "$twrpimg"; then
+        rm -rf working/*/*/.git
+        mv -v working/* twrp-device-tree
+        [[ -f "working/twrp-device-tree/README.md" ]] || curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > working/twrp-device-tree/README.md
+    fi
+fi
+
+# Fix permissions
+sudo chown "$(whoami)" ./* -R
+sudo chmod -R u+rwX ./*
+
+# Generate all_files.txt
+find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
 # Check whether the subgroup exists or not
 if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
