@@ -274,10 +274,11 @@ fi
 
 if [[ -f $twrpimg ]]; then
     echo "Detected $twrpimg! Generating twrp device tree"
-    if python3 -m twrpdtgen "$twrpimg"; then
-        rm -rf working/*/*/.git
-        mv -v working/* twrp-device-tree
-        [[ -f "working/twrp-device-tree/README.md" ]] || curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > working/twrp-device-tree/README.md
+    if python3 -m twrpdtgen "$twrpimg" --output ./twrp-device-tree -v; then
+        rm -rf twrp-device-tree/*/*/.git
+        if [[ ! -f "working/twrp-device-tree/README.md" ]]; then
+            curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > twrp-device-tree/README.md
+        fi
     else
         echo "Failed to generate twrp tree!"
     fi
