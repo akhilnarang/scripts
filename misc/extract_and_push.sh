@@ -153,9 +153,9 @@ if [[ -f "boot.img" ]]; then
         extract-ikconfig boot.img > ikconfig
     fi
     # Kallsyms
-    python3 ~/vmlinux-to-elf/vmlinux_to_elf/kallsyms_finder.py boot.img > kallsyms.txt
+    python3 ~/vmlinux-to-elf/kallsyms-finder ./bootimg/kernel > kallsyms.txt
     # ELF
-    python3 ~/vmlinux-to-elf/vmlinux_to_elf/main.py boot.img boot.elf
+    python3 ~/vmlinux-to-elf/vmlinux-to-elf ./bootimage/kernel boot.elf
 fi
 if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts
