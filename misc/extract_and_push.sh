@@ -30,7 +30,7 @@ else
     else
         # Try to download certain URLs with axel first
         if [[ $URL =~ ^.+(ota\.d\.miui\.com|otafsg|h2os|oxygenos\.oneplus\.net|dl.google|android.googleapis|ozip)(.+)?$ ]]; then
-            axel -q -a -n64 "$URL" || {
+            axel -q -a -n64 -k "$URL" || {
                 # Try to download with aria, else wget. Clean the directory each time.
                 aria2c -q -s16 -x16 "${URL}" || {
                     rm -fv ./*
