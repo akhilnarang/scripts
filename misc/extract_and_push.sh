@@ -155,7 +155,7 @@ if [[ -f "boot.img" ]]; then
     # Kallsyms
     python3 ~/vmlinux-to-elf/kallsyms-finder ./bootimg/kernel > kallsyms.txt
     # ELF
-    python3 ~/vmlinux-to-elf/vmlinux-to-elf ./bootimage/kernel boot.elf
+    python3 ~/vmlinux-to-elf/vmlinux-to-elf ./bootimg/kernel boot.elf
 fi
 if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts
