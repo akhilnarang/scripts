@@ -43,9 +43,9 @@ else
             }
         else
             # Try to download with aria, else wget. Clean the directory each time.
-            aria2c -q -s16 -x16 "${URL}" || {
+            aria2c -q -s16 -x16 --check-certificate=false "${URL}" || {
                 rm -fv ./*
-                wget "${URL}" --no-check-certificate || {
+                wget --no-check-certificate "${URL}" || {
                     echo "Download failed. Exiting."
                     sendTG "Failed to download the file."
                     exit 1
