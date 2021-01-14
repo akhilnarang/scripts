@@ -164,14 +164,23 @@ if [[ -f "dtbo.img" ]]; then
 fi
 
 # Oppo/Realme devices have some images in a euclid folder in their vendor, extract those for props
-if [[ -d "vendor/euclid" ]]; then
-    pushd vendor/euclid || exit 1
+extract_euclid () {
     for f in *.img; do
         [[ -f $f ]] || continue
         7z x "$f" -o"${f/.img/}"
         rm -fv "$f"
     done
     popd || exit 1
+}
+
+if [[ -d "vendor/euclid" ]]; then
+    pushd vendor/euclid || exit 1
+    extract_euclid
+fi
+
+if [[ -d "system/system/euclid" ]]; then
+    pushd system/system/euclid || exit 1
+    extract_euclid
 fi
 
 # board-info.txt
@@ -206,6 +215,7 @@ tags=$(grep -m1 -oP "(?<=^ro.build.tags=).*" -hs {vendor,system,system/system}/b
 platform=$(grep -m1 -oP "(?<=^ro.board.platform=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${platform} ]] && platform=$(grep -m1 -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
 [[ -z ${platform} ]] && platform=$(grep -m1 -oP rg"(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
+[[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs system/system/euclid/my_product/build*.prop)
 manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.vendor.manufacturer=).*" -hs vendor/build*.prop)
@@ -224,6 +234,7 @@ fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/bui
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.system.build.fingerprint=).*" -hs my_product/build.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs my_product/build.prop)
 brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
+[[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs system/system/euclid/my_product/build*.prop)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.vendor.brand=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.vendor.product.brand=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.system.brand=).*" -hs {system,system/system}/build*.prop | head -1)
@@ -233,6 +244,7 @@ brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/syste
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {oppo_product,my_product}/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(echo "$fingerprint" | cut -d / -f1)
 codename=$(grep -m1 -oP "(?<=^ro.product.device=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
+[[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.vendor.product.device.oem=).*" -hs vendor/euclid/odm/build.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.product.vendor.device=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.vendor.product.device=).*" -hs vendor/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.product.system.device=).*" -hs {system,system/system}/build*.prop | head -1)
