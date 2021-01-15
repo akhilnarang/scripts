@@ -74,14 +74,14 @@ cd - || exit
 rm -rfv $UPLOAD
 
 # Mirror the archive
-ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ kronic-sync:jenkins/$BUILD_NUMBER"
+ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ aosip-jenkins:$BUILD_NUMBER"
 rm -fv ~/nginx/$BUILD_NUMBER.tar
 
 if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
     ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
     scp "$UPDATER_JSON" Illusion:/tmp/
-    ssh Illusion "rclone copy /tmp/$UPDATER_JSON kronic-sync:jenkins/; rm -fv /tmp/$UPDATER_JSON"
-    FOLDER_LINK="$(ssh Illusion rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
+    ssh Illusion "rclone copy /tmp/$UPDATER_JSON aosip-jenkins:; rm -fv /tmp/$UPDATER_JSON"
+    FOLDER_LINK="$(ssh Illusion rclone link aosip-jenkins:"$BUILD_NUMBER")"
     export PARSE_MODE="html"
     notify "Build <a href=\"$FOLDER_LINK\">$BUILD_NUMBER</a> - $DEVICE $AOSIP_BUILDTYPE"
     notify "<a href=\"$BASE_URL/$BUILD_NUMBER/$SIGNED_OTAPACKAGE\">Direct link</a> for $DEVICE $AOSIP_BUILDTYPE"

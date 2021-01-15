@@ -133,9 +133,9 @@ if [[ $TARGET == "kronic" ]]; then
     ZIP="AOSiP-$(get_build_var AOSIP_VERSION).zip"
     [[ -f "$OUT/$ZIP" ]] || ZIP="AOSiP-$(grep ro.aosip.version "$OUT"/system/etc/prop.default | cut -d= -f2).zip"
     cp -v "$OUT/$ZIP" ~/nginx
-    ssh Illusion "cd /tmp; axel -n8 -q http://$(hostname)/$ZIP; rclone copy -P $ZIP kronic-sync:jenkins/$BUILD_NUMBER; rm -fv $ZIP"
+    ssh Illusion "cd /tmp; axel -n8 -q http://$(hostname)/$ZIP; rclone copy -P $ZIP aosip-jenkins:$BUILD_NUMBER; rm -fv $ZIP"
     rm -fv ~/nginx/"$ZIP"
-    FOLDER_LINK="$(ssh Illusion rclone link kronic-sync:jenkins/"$BUILD_NUMBER")"
+    FOLDER_LINK="$(ssh Illusion rclone link aosip-jenkins:"$BUILD_NUMBER")"
     notify "Build artifacts for job $BUILD_NUMBER can be found [here]($FOLDER_LINK)"
     notify "$(./jenkins/message_testers.py "${DEVICE}")"
     if [[ -n $REPOPICK_LIST ]]; then
