@@ -167,7 +167,7 @@ if [[ -f "dtbo.img" ]]; then
 fi
 
 # Oppo/Realme devices have some images in a euclid folder in their vendor, extract those for props
-extract_euclid () {
+extract_euclid() {
     for f in *.img; do
         [[ -f $f ]] || continue
         7z x "$f" -o"${f/.img/}"
@@ -280,7 +280,6 @@ top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]
 manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 
 printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\nis_ab: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename" "$is_ab"
-
 
 if [[ -f "recovery.img" ]]; then
     twrpimg=recovery.img
