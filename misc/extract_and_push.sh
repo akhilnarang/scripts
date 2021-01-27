@@ -270,6 +270,11 @@ description=$(grep -m1 -oP "(?<=^ro.build.description=).*" -hs {system,system/sy
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
 is_ab=$(grep -m1 -oP "(?<=^ro.build.ab_update=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z ${is_ab} ]] && is_ab="false"
+[[ -z $codename ]] && {
+    sendTG "Codename not detected! Aborting!"
+    exit 1
+}
+codename=$(echo "$codename" | tr ' ' '_')
 branch=$(echo "$description" | tr ' ' '-')
 repo_subgroup=$(echo "$brand" | tr '[:upper:]' '[:lower:]')
 [[ -z $repo_subgroup ]] && repo_subgroup=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]')
