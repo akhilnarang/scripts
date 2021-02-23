@@ -60,9 +60,11 @@ else
 fi
 
 # Clean query strings if any from URL
+oldifs=$IFS
 IFS="?"
 read -ra CLEANED <<< "${URL}"
 URL=${CLEANED[0]}
+IFS=$oldifs
 
 FILE=${URL##*/}
 EXTENSION=${URL##*.}
