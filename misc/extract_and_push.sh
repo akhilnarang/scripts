@@ -59,6 +59,11 @@ else
     sendTG "Downloaded the file"
 fi
 
+# Clean query strings if any from URL
+IFS="?"
+read -ra CLEANED <<< "${URL}"
+URL=${CLEANED[0]}
+
 FILE=${URL##*/}
 EXTENSION=${URL##*.}
 UNZIP_DIR=${FILE/.$EXTENSION/}
