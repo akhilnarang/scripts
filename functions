@@ -62,6 +62,7 @@ function gitalias() {
     git config --global alias.cp 'cherry-pick'
     git config --global alias.cpc 'cherry-pick --continue'
     git config --global alias.cpa 'cherry-pick --abort'
+    git config --global alias.cps 'cherry-pick --skip'
     git config --global alias.rh 'reset --hard'
     git config --global alias.rs 'reset --soft'
     git config --global alias.rb 'rebase'
