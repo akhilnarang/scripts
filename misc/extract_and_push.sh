@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
+[[ -z ${GITLAB_SERVER} ]] && GITLAB_SERVER="git.rip"
 
 function sendTG() {
     curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
 }
 
-curl --fail --silent --location https://git.rip > /dev/null || {
-    sendTG "Can't access git.rip, cancelling job!"
+curl --fail --silent --location "https://$GITLAB_SERVER" > /dev/null || {
+    sendTG "Can't access $GITLAB_SERVER, cancelling job!"
     exit 1
 }
 
@@ -323,8 +324,8 @@ sudo chmod -R u+rwX ./*
 find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
 # Check whether the subgroup exists or not
-if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
-    if ! curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://git.rip/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=562 -F path="${repo_subgroup}" --silent --fail > x; then
+if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
+    if ! curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=562 -F path="${repo_subgroup}" --silent --fail > x; then
         sendTG "Creating subgroup for $repo_subgroup failed!"
         exit 1
     fi
@@ -338,12 +339,12 @@ rm -f x
 }
 
 # Create the repo if it doesn't exist
-curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name" > x
+curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name" > x
 message="$(jq -r .message x)"
 project_id="$(jq .id x)"
 rm -f x
 if [[ $message == "404 Project Not Found" ]]; then
-    curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public > x
+    curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public > x
     project_id="$(jq .id x)"
     rm -f x
     if [[ -z $project_id ]]; then
@@ -352,9 +353,9 @@ if [[ $message == "404 Project Not Found" ]]; then
     fi
 fi
 
-curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id/repository/branches/$branch" > x
+curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch" > x
 [[ "$(jq -r '.name' x)" == "$branch" ]] && {
-    sendTG "$branch already exists in <a href=\"https://git.rip/dumps/$repo\">$repo</a>!"
+    sendTG "$branch already exists in <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!"
     rm -f x
     exit 1
 }
@@ -369,21 +370,21 @@ git checkout -b "$branch"
 sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
-git push "ssh://git@git.rip/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
+git push "ssh://git@$GITLAB_SERVER/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
     sendTG "Pushing failed!"
     echo "Pushing failed!"
     exit 1
 }
 
 # Set default branch to the newly pushed branch
-curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://git.rip/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
+curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
-sendTG "Pushed <a href=\"https://git.rip/$ORG/$repo\">$description</a>"
+sendTG "Pushed <a href=\"https://$GITLAB_SERVER/$ORG/$repo\">$description</a>"
 
 # Prepare message to be sent to Telegram channel
 commit_head=$(git rev-parse HEAD)
-commit_link="https://git.rip/$ORG/$repo/commit/$commit_head"
+commit_link="https://$GITLAB_SERVER/$ORG/$repo/commit/$commit_head"
 echo -e "Sending telegram notification"
 (
     printf "<b>Brand: %s</b>" "$brand"
@@ -392,7 +393,7 @@ echo -e "Sending telegram notification"
     printf "\n<b>Fingerprint:</b> %s" "$fingerprint"
     printf "\n<b>Git link:</b>"
     printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
-    printf "\n<a href=\"https://git.rip/%s/%s/tree/%s/\">$codename</a>" "$ORG" "$repo" "$branch"
+    printf "\n<a href=\"https://%s/%s/%s/tree/%s/\">$codename</a>" "$GITLAB_SERVER" "$ORG" "$repo" "$branch"
 ) >> tg.html
 
 TEXT=$(cat tg.html)
