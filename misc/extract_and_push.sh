@@ -84,12 +84,6 @@ fi
 
 PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other oppo_product opproduct reserve india my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap"
 
-if [[ ! -d "${HOME}/extract-dtb" ]]; then
-    git clone -q https://github.com/PabloCastellano/extract-dtb ~/extract-dtb
-else
-    git -C ~/extract-dtb pull
-fi
-
 if [[ ! -d "${HOME}/Firmware_extractor" ]]; then
     git clone -q https://github.com/AndroidDumps/Firmware_extractor ~/Firmware_extractor
 else
@@ -158,7 +152,7 @@ fi
 if [[ -f "boot.img" ]]; then
     mkdir -v bootdts
     ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
-    python3 ~/extract-dtb/extract-dtb.py ./boot.img -o ./bootimg > /dev/null
+    extract-dtb ./boot.img -o ./bootimg > /dev/null
     find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
     # Extract ikconfig
     if [[ "$(command -v extract-ikconfig)" ]]; then
@@ -171,7 +165,7 @@ if [[ -f "boot.img" ]]; then
 fi
 if [[ -f "dtbo.img" ]]; then
     mkdir -v dtbodts
-    python3 ~/extract-dtb/extract-dtb.py ./dtbo.img -o ./dtbo > /dev/null
+    extract-dtb ./dtbo.img -o ./dtbo > /dev/null
     find dtbo/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o dtbodts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
 fi
 
