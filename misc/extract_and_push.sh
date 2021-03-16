@@ -2,6 +2,7 @@
 
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 [[ -z ${GITLAB_SERVER} ]] && GITLAB_SERVER="dumps.tadiphone.dev"
+[[ -z ${PUSH_HOST} ]] && PUSH_HOST="dumps"
 
 function sendTG() {
     curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
@@ -370,7 +371,7 @@ git checkout -b "$branch"
 sendTG "Committing and pushing"
 git add -A
 git commit --quiet --signoff --message="$description"
-git push "ssh://git@$GITLAB_SERVER/$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
+git push "$PUSH_HOST:$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
     sendTG "Pushing failed!"
     echo "Pushing failed!"
     exit 1
