@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
-[[ -z ${GITLAB_SERVER} ]] && GITLAB_SERVER="git.rip"
+[[ -z ${GITLAB_SERVER} ]] && GITLAB_SERVER="dumps.tadiphone.dev"
 
 function sendTG() {
     curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
