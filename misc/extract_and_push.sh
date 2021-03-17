@@ -153,7 +153,7 @@ if [[ -f "boot.img" ]]; then
     mkdir -v bootdts
     ~/mkbootimg_tools/mkboot ./boot.img ./bootimg > /dev/null
     extract-dtb ./boot.img -o ./bootimg > /dev/null
-    find bootimg/ -name '*.dtb' -type f -exec dtc -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \; > /dev/null 2>&1
+    find bootimg/ -name '*.dtb' -type f -exec dtc -q -I dtb -O dts {} -o bootdts/"$(echo {} | sed 's/\.dtb/.dts/')" \;
     # Extract ikconfig
     if [[ "$(command -v extract-ikconfig)" ]]; then
         extract-ikconfig boot.img > ikconfig
