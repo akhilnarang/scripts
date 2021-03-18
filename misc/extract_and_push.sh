@@ -4,12 +4,45 @@
 [[ -z ${GITLAB_SERVER} ]] && GITLAB_SERVER="dumps.tadiphone.dev"
 [[ -z ${PUSH_HOST} ]] && PUSH_HOST="dumps"
 
-function sendTG() {
-    curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${*}&chat_id=-1001412293127&parse_mode=HTML" > /dev/null
+CHAT_ID="-1001412293127"
+
+# usage: normal - sendTg normal "message to send"
+#        reply  - sendTg reply message_id "reply to send"
+#        edit   - sendTg edit message_id "new message" ( new message must be different )
+# Uses global var API_KEY
+sendTG() {
+    local mode="${1:?Error: Missing mode}" && shift
+    local api_url="https://api.telegram.org/bot${API_KEY:?}"
+    if [[ ${mode} =~ normal ]]; then
+        curl -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML"
+    elif [[ ${mode} =~ reply ]]; then
+        local message_id="${1:?Error: Missing message id for reply.}" && shift
+        curl -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&reply_to_message_id=${message_id}"
+    elif [[ ${mode} =~ edit ]]; then
+        local message_id="${1:?Error: Missing message id for edit.}" && shift
+        curl -s "${api_url}/editMessageText" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&message_id=${message_id}"
+    fi
+}
+
+# usage: temporary - To just edit the last message sent but the new content will be overwritten when this function is used again
+#                    sendTG_edit_wrapper temporary "${MESSAGE_ID}" new message
+#        permanent - To edit the last message sent but also store it permanently, new content will be appended when this function is used again
+#                    sendTG_edit_wrapper permanent "${MESSAGE_ID}" new message
+# Uses global var MESSAGE for all message contents
+sendTG_edit_wrapper() {
+    local mode="${1:?Error: Missing mode}" && shift
+    local message_id="${1:?Error: Missing message id variable}" && shift
+    case "${mode}" in
+    temporary) sendTG edit "${message_id}" "${*:?}" > /dev/null ;;
+    permanent)
+        MESSAGE="${*:?}"
+        sendTG edit "${message_id}" "${MESSAGE}" > /dev/null
+        ;;
+    esac
 }
 
 curl --fail --silent --location "https://$GITLAB_SERVER" > /dev/null || {
-    sendTG "Can't access $GITLAB_SERVER, cancelling job!"
+    sendTG normal "Can't access $GITLAB_SERVER, cancelling job!"
     exit 1
 }
 
@@ -17,18 +50,39 @@ curl --fail --silent --location "https://$GITLAB_SERVER" > /dev/null || {
 
 if [[ -f $URL ]]; then
     cp -v "$URL" .
-    sendTG "Found file locally"
+    MESSAGE="<code>Found file locally.</code>"
+    if _json="$(sendTG normal "${MESSAGE}")"; then
+        # grab initial message id
+        MESSAGE_ID="$(jq ".result.message_id" <<< "${_json}")"
+    else
+        # disable sendTG and sendTG_edit_wrapper if wasn't able to send initial message
+        sendTG() { :; } && sendTG_edit_wrapper() { :; }
+    fi
 else
-    sendTG "Starting <a href=\"${URL}\">dump</a> on <a href=\"$BUILD_URL\">jenkins</a>"
+    MESSAGE="<code>Started</code> <a href=\"${URL}\">dump</a> <code>on</code> <a href=\"$BUILD_URL\">jenkins</a>."
+    if _json="$(sendTG normal "${MESSAGE}")"; then
+        # grab initial message id
+        MESSAGE_ID="$(jq ".result.message_id" <<< "${_json}")"
+    else
+        # disable sendTG and sendTG_edit_wrapper if wasn't able to send initial message
+        sendTG() { :; } && sendTG_edit_wrapper() { :; }
+    fi
+
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Downloading the file..</code>" > /dev/null
+    downloadError() {
+        echo "Download failed. Exiting."
+        sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Failed to download the file.</code>" > /dev/null
+        exit 1
+    }
     if [[ $URL =~ drive.google.com ]]; then
         echo "Google Drive URL detected"
         FILE_ID="$(echo "${URL:?}" | sed -r 's/.*([0-9a-zA-Z_-]{33}).*/\1/')"
         echo "File ID is ${FILE_ID}"
         CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$FILE_ID" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
-        aria2c --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$FILE_ID" || exit 1
+        aria2c --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$FILE_ID" || downloadError
         rm /tmp/cookies.txt
     elif [[ $URL =~ mega.nz ]]; then
-        megadl "'$URL'" || exit 1
+        megadl "'$URL'" || downloadError
     else
         if [[ $URL =~ ^https://1drv.ms.+$ ]]; then
             URL=${URL/ms/ws}
@@ -39,26 +93,18 @@ else
                 # Try to download with aria, else wget. Clean the directory each time.
                 aria2c -q -s16 -x16 "${URL}" || {
                     rm -fv ./*
-                    wget "${URL}" || {
-                        echo "Download failed. Exiting."
-                        sendTG "Failed to download the file."
-                        exit 1
-                    }
+                    wget "${URL}" || downloadError
                 }
             }
         else
             # Try to download with aria, else wget. Clean the directory each time.
             aria2c -q -s16 -x16 --check-certificate=false "${URL}" || {
                 rm -fv ./*
-                wget --no-check-certificate "${URL}" || {
-                    echo "Download failed. Exiting."
-                    sendTG "Failed to download the file."
-                    exit 1
-                }
+                wget --no-check-certificate "${URL}" || downloadError
             }
         fi
     fi
-    sendTG "Downloaded the file"
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Downloaded the file.</code>" > /dev/null
 fi
 
 # Clean query strings if any from URL
@@ -75,43 +121,46 @@ export UNZIP_DIR
 
 if [[ ! -f ${FILE} ]]; then
     if [[ "$(find . -type f | wc -l)" != 1 ]]; then
-        sendTG "Can't seem to find downloaded file!"
+        sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Can't seem to find downloaded file!</code>" > /dev/null
         exit 1
     else
         FILE="$(find . -type f)"
     fi
 fi
 
-PARTITIONS="system vendor cust odm oem factory product modem xrom systemex system_ext system_other oppo_product opproduct reserve india my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap"
+EXTERNAL_TOOLS=(
+    https://github.com/AndroidDumps/Firmware_extractor
+    https://github.com/xiaolu/mkbootimg_tools
+    https://github.com/marin-m/vmlinux-to-elf
+)
 
-if [[ ! -d "${HOME}/Firmware_extractor" ]]; then
-    git clone -q https://github.com/AndroidDumps/Firmware_extractor ~/Firmware_extractor
-else
-    git -C ~/Firmware_extractor pull
-fi
-
-if [[ ! -d "${HOME}/mkbootimg_tools" ]]; then
-    git clone -q https://github.com/xiaolu/mkbootimg_tools ~/mkbootimg_tools
-else
-    git -C ~/mkbootimg_tools pull
-fi
-
-if [[ ! -d "${HOME}/vmlinux-to-elf" ]]; then
-    git clone -q https://github.com/marin-m/vmlinux-to-elf ~/vmlinux-to-elf
-else
-    git -C ~/vmlinux-to-elf pull
-fi
+for tool_url in "${EXTERNAL_TOOLS[@]}"; do
+    tool_path="${HOME}/${tool_url##*/}"
+    if ! [[ -d "${tool_path}" ]]; then
+        git clone -q "${tool_url}" "${tool_path}"
+    else
+        git -C "${tool_path}" pull
+    fi
+done
 
 bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
-    sendTG "Extraction failed!"
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "Extraction failed!" > /dev/null
     exit 1
 )
 
 rm -fv "$FILE"
 
+PARTITIONS=(system systemex system_ext system_other
+    vendor cust odm oem factory product modem
+    xrom oppo_product opproduct reserve india
+    my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap
+)
+
 # Extract the images
-for p in $PARTITIONS; do
-    if [ -f "$p.img" ]; then
+sendTG edit "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partitions ..</code>" > /dev/null
+for p in "${PARTITIONS[@]}"; do
+    if [[ -f $p.img ]]; then
+        # sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partition: ${p} ..</code>" > /dev/null
         mkdir "$p" || rm -rf "${p:?}"/*
         7z x "$p".img -y -o"$p"/ || {
             sudo mount -o loop "$p".img "$p"
@@ -126,27 +175,20 @@ done
 
 # Bail out right now if no system build.prop
 ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null || {
-    sendTG "No system build*.prop found, pushing cancelled!"
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>No system build*.prop found, pushing cancelled!</code>" > /dev/null.
     exit 1
 }
 
-if [[ ! -f "boot.img" ]]; then
-    x=$(find . -type f -name "boot.img")
-    if [[ -n $x ]]; then
-        mv -v "$x" boot.img
-    else
-        echo "boot.img not found!"
+for image in boot.img dtbo.img; do
+    if [[ ! -f "${image}" ]]; then
+        x=$(find . -type f -name "${image}")
+        if [[ -n $x ]]; then
+            mv -v "$x" "${image}"
+        else
+            echo "${image} not found!"
+        fi
     fi
-fi
-
-if [[ ! -f "dtbo.img" ]]; then
-    x=$(find . -type f -name "dtbo.img")
-    if [[ -n $x ]]; then
-        mv -v "$x" dtbo.img
-    else
-        echo "dtbo.img not found!"
-    fi
-fi
+done
 
 # Extract bootimage and dtbo
 if [[ -f "boot.img" ]]; then
@@ -173,6 +215,7 @@ fi
 extract_euclid() {
     for f in *.img; do
         [[ -f $f ]] || continue
+        # sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partition: ${f} ..</code>" > /dev/null
         7z x "$f" -o"${f/.img/}"
         rm -fv "$f"
     done
@@ -189,6 +232,8 @@ if [[ -d "system/system/euclid" ]]; then
     extract_euclid
 fi
 
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>All partitions extracted.</code>" > /dev/null
+
 # board-info.txt
 find ./modem -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >> ./board-info.txt
 find ./tz* -type f -exec strings {} \; | grep "QC_IMAGE_VERSION_STRING" | sed "s|QC_IMAGE_VERSION_STRING|require version-trustzone|g" >> ./board-info.txt
@@ -198,6 +243,8 @@ fi
 sort -u -o ./board-info.txt ./board-info.txt
 
 # Prop extraction
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting props..</code>" > /dev/null
+
 flavor=$(grep -m1 -oP "(?<=^ro.build.flavor=).*" -hs {vendor,system,system/system}/build.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -m1 -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -m1 -oP "(?<=^ro.build.flavor=).*" -hs {vendor,system,system/system}/build*.prop)
@@ -285,7 +332,7 @@ is_ab=$(grep -m1 -oP "(?<=^ro.build.ab_update=).*" -hs {system,system/system,ven
 is_ab=$(echo "$is_ab" | head -1)
 [[ -z ${is_ab} ]] && is_ab="false"
 [[ -z $codename ]] && {
-    sendTG "Codename not detected! Aborting!"
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Codename not detected! Aborting!</code>" > /dev/null
     exit 1
 }
 codename=$(echo "$codename" | tr ' ' '_')
@@ -308,12 +355,15 @@ fi
 
 if [[ -f $twrpimg ]]; then
     echo "Detected $twrpimg! Generating twrp device tree"
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Detected $twrpimg! Generating twrp device tree</code>" > /dev/null
     if python3 -m twrpdtgen "$twrpimg" --output ./twrp-device-tree -v --no-git; then
         if [[ ! -f "working/twrp-device-tree/README.md" ]]; then
             curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > twrp-device-tree/README.md
         fi
+        sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>TWRP device tree successfully generated.</code>" > /dev/null
     else
         echo "Failed to generate twrp tree!"
+        sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Failed to generate twrp tree!</code>" > /dev/null
     fi
 else
     echo "Failed to find $twrpimg!"
@@ -327,42 +377,33 @@ sudo chmod -R u+rwX ./*
 find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
 # Check whether the subgroup exists or not
-if ! curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail > x; then
-    if ! curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" --silent --fail > x; then
-        sendTG "Creating subgroup for $repo_subgroup failed!"
+if ! group_id_json="$(curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail)"; then
+    if ! group_id_json="$(curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" --silent --fail)"; then
+        sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Creating subgroup for $repo_subgroup failed!</code>" > /dev/null
         exit 1
     fi
 fi
-group_id="$(jq -r '.id' x)"
-rm -f x
 
-[[ -z $group_id ]] && {
-    sendTG "Unable to get gitlab group id!"
+if ! group_id="$(jq '.id' -e <<< "${group_id_json}")"; then
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Unable to get gitlab group id!</code>" > /dev/null
     exit 1
-}
+fi
 
 # Create the repo if it doesn't exist
-curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name" > x
-message="$(jq -r .message x)"
-project_id="$(jq .id x)"
-rm -f x
-if [[ $message == "404 Project Not Found" ]]; then
-    curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public > x
-    project_id="$(jq .id x)"
-    rm -f x
-    if [[ -z $project_id ]]; then
-        sendTG "Could not get project id"
+project_id_json="$(curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name")"
+if ! project_id="$(jq .id -e <<< "${project_id_json}")"; then
+    project_id_json="$(curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public)"
+    if project_id="$(jq .id -e <<< "${project_id_json}")"; then
+        sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Could not get project id!</code>" > /dev/null
         exit 1
     fi
 fi
 
-curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch" > x
-[[ "$(jq -r '.name' x)" == "$branch" ]] && {
-    sendTG "$branch already exists in <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!"
-    rm -f x
+branch_json="$(curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch")"
+[[ "$(jq '.name' -e <<< "${branch_json}")" == "$branch" ]] && {
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>$branch already exists in</code> <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!" > /dev/null
     exit 1
 }
-rm -f x
 
 # Add, commit, and push after filtering out certain files
 git init
@@ -370,11 +411,13 @@ git config user.name "dumper"
 git config user.email "dumper@$GITLAB_SERVER"
 git checkout -b "$branch"
 # find . -size +97M -printf '%P\n' -o -name '*sensetime*' -printf '%P\n' -o -iname '*Megvii*' -printf '%P\n' -o -name '*.lic' -printf '%P\n' -o -name '*zookhrs*' -printf '%P\n' > .gitignore
-sendTG "Committing and pushing"
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Committing..</code>" > /dev/null
 git add -A
 git commit --quiet --signoff --message="$description"
+
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushing..</code>" > /dev/null
 git push "$PUSH_HOST:$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
-    sendTG "Pushing failed!"
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushing failed!</code>" > /dev/null
     echo "Pushing failed!"
     exit 1
 }
@@ -383,7 +426,10 @@ git push "$PUSH_HOST:$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
 curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
-sendTG "Pushed <a href=\"https://$GITLAB_SERVER/$ORG/$repo\">$description</a>"
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushed</code> <a href=\"https://$GITLAB_SERVER/$ORG/$repo\">$description</a>" > /dev/null
+
+# send a reply to the original message
+sendTG reply "${MESSAGE_ID}" "Job Done"
 
 # Prepare message to be sent to Telegram channel
 commit_head=$(git rev-parse HEAD)
