@@ -153,10 +153,11 @@ for tool_url in "${EXTERNAL_TOOLS[@]}"; do
     fi
 done
 
-bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
-    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "Extraction failed!" > /dev/null
+sendTG_edit_wrapper temporary "${MESSAGE_ID}" "Extracting firmware.." > /dev/null
+bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || {
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extraction failed!</code>" > /dev/null
     terminate 1
-)
+}
 
 rm -fv "$FILE"
 
@@ -166,11 +167,11 @@ PARTITIONS=(system systemex system_ext system_other
     my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap
 )
 
-# Extract the images
 sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partitions ..</code>" > /dev/null
+# Extract the images
 for p in "${PARTITIONS[@]}"; do
     if [[ -f $p.img ]]; then
-        # sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partition: ${p} ..</code>" > /dev/null
+        sendTG_edit_wrapper temporary "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Partition Name: ${p}</code>" > /dev/null
         mkdir "$p" || rm -rf "${p:?}"/*
         7z x "$p".img -y -o"$p"/ || {
             sudo mount -o loop "$p".img "$p"
@@ -227,7 +228,7 @@ for dir in "vendor/euclid" "system/system/euclid"; do
         pushd "${dir}" || terminate 1
         for f in *.img; do
             [[ -f $f ]] || continue
-            # sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partition: ${f} ..</code>" > /dev/null
+            sendTG_edit_wrapper temporary "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Partition Name: ${p}</code>" > /dev/null
             7z x "$f" -o"${f/.img/}"
             rm -fv "$f"
         done
@@ -359,6 +360,8 @@ repo="$repo_subgroup/$repo_name"
 platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
+
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>All props extracted.</code>" > /dev/null
 
 printf "%s\n" "flavor: ${flavor}
 release: ${release}
