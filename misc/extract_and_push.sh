@@ -3,6 +3,7 @@
 [[ -z ${API_KEY} ]] && echo "API_KEY not defined, exiting!" && exit 1
 [[ -z ${GITLAB_SERVER} ]] && GITLAB_SERVER="dumps.tadiphone.dev"
 [[ -z ${PUSH_HOST} ]] && PUSH_HOST="dumps"
+[[ -z $ORG ]] && ORG="dumps"
 
 CHAT_ID="-1001412293127"
 
@@ -14,13 +15,13 @@ sendTG() {
     local mode="${1:?Error: Missing mode}" && shift
     local api_url="https://api.telegram.org/bot${API_KEY:?}"
     if [[ ${mode} =~ normal ]]; then
-        curl -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML"
+        curl --compressed -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML"
     elif [[ ${mode} =~ reply ]]; then
         local message_id="${1:?Error: Missing message id for reply.}" && shift
-        curl -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&reply_to_message_id=${message_id}"
+        curl --compressed -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&reply_to_message_id=${message_id}"
     elif [[ ${mode} =~ edit ]]; then
         local message_id="${1:?Error: Missing message id for edit.}" && shift
-        curl -s "${api_url}/editMessageText" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&message_id=${message_id}"
+        curl --compressed -s "${api_url}/editMessageText" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&message_id=${message_id}"
     fi
 }
 
@@ -41,12 +42,22 @@ sendTG_edit_wrapper() {
     esac
 }
 
-curl --fail --silent --location "https://$GITLAB_SERVER" > /dev/null || {
+# reply to the initial message sent to the group with "Job Done" or "Job Failed!" accordingly
+# 1st arg should be either 1 ( error ) or 0 ( success )
+terminate() {
+    if [[ ${1:?} = "0" ]]; then
+        local string="Done"
+    else
+        local string="Failed!"
+    fi
+    sendTG reply "${MESSAGE_ID}" "Job ${string}"
+    exit "${1:?}"
+}
+
+curl --compressed --fail --silent --location "https://$GITLAB_SERVER" > /dev/null || {
     sendTG normal "Can't access $GITLAB_SERVER, cancelling job!"
     exit 1
 }
-
-[[ -z $ORG ]] && ORG="dumps"
 
 if [[ -f $URL ]]; then
     cp -v "$URL" .
@@ -72,7 +83,7 @@ else
     downloadError() {
         echo "Download failed. Exiting."
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Failed to download the file.</code>" > /dev/null
-        exit 1
+        terminate 1
     }
     if [[ $URL =~ drive.google.com ]]; then
         echo "Google Drive URL detected"
@@ -120,11 +131,10 @@ UNZIP_DIR=${FILE/.$EXTENSION/}
 export UNZIP_DIR
 
 if [[ ! -f ${FILE} ]]; then
-    if [[ "$(find . -type f | wc -l)" != 1 ]]; then
+    FILE="$(find . -type f)"
+    if [[ "$(wc -l <<< "${FILE}")" != 1 ]]; then
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Can't seem to find downloaded file!</code>" > /dev/null
-        exit 1
-    else
-        FILE="$(find . -type f)"
+        terminate 1
     fi
 fi
 
@@ -143,10 +153,11 @@ for tool_url in "${EXTERNAL_TOOLS[@]}"; do
     fi
 done
 
-bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || (
-    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "Extraction failed!" > /dev/null
-    exit 1
-)
+sendTG_edit_wrapper temporary "${MESSAGE_ID}" "Extracting firmware.." > /dev/null
+bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || {
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extraction failed!</code>" > /dev/null
+    terminate 1
+}
 
 rm -fv "$FILE"
 
@@ -156,11 +167,11 @@ PARTITIONS=(system systemex system_ext system_other
     my_preload my_odm my_stock my_operator my_country my_product my_company my_engineering my_heytap
 )
 
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partitions ..</code>" > /dev/null
 # Extract the images
-sendTG edit "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partitions ..</code>" > /dev/null
 for p in "${PARTITIONS[@]}"; do
     if [[ -f $p.img ]]; then
-        # sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partition: ${p} ..</code>" > /dev/null
+        sendTG_edit_wrapper temporary "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Partition Name: ${p}</code>" > /dev/null
         mkdir "$p" || rm -rf "${p:?}"/*
         7z x "$p".img -y -o"$p"/ || {
             sudo mount -o loop "$p".img "$p"
@@ -176,7 +187,7 @@ done
 # Bail out right now if no system build.prop
 ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null || {
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>No system build*.prop found, pushing cancelled!</code>" > /dev/null.
-    exit 1
+    terminate 1
 }
 
 for image in boot.img dtbo.img; do
@@ -212,25 +223,18 @@ if [[ -f "dtbo.img" ]]; then
 fi
 
 # Oppo/Realme devices have some images in a euclid folder in their vendor, extract those for props
-extract_euclid() {
-    for f in *.img; do
-        [[ -f $f ]] || continue
-        # sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extracting partition: ${f} ..</code>" > /dev/null
-        7z x "$f" -o"${f/.img/}"
-        rm -fv "$f"
-    done
-    popd || exit 1
-}
-
-if [[ -d "vendor/euclid" ]]; then
-    pushd vendor/euclid || exit 1
-    extract_euclid
-fi
-
-if [[ -d "system/system/euclid" ]]; then
-    pushd system/system/euclid || exit 1
-    extract_euclid
-fi
+for dir in "vendor/euclid" "system/system/euclid"; do
+    [[ -d ${dir} ]] && {
+        pushd "${dir}" || terminate 1
+        for f in *.img; do
+            [[ -f $f ]] || continue
+            sendTG_edit_wrapper temporary "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Partition Name: ${p}</code>" > /dev/null
+            7z x "$f" -o"${f/.img/}"
+            rm -fv "$f"
+        done
+        popd || terminate 1
+    }
+done
 
 sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>All partitions extracted.</code>" > /dev/null
 
@@ -250,14 +254,17 @@ flavor=$(grep -m1 -oP "(?<=^ro.build.flavor=).*" -hs {vendor,system,system/syste
 [[ -z ${flavor} ]] && flavor=$(grep -m1 -oP "(?<=^ro.build.flavor=).*" -hs {vendor,system,system/system}/build*.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -m1 -oP "(?<=^ro.system.build.flavor=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${flavor} ]] && flavor=$(grep -m1 -oP "(?<=^ro.build.type=).*" -hs {system,system/system}/build*.prop)
+
 release=$(grep -m1 -oP "(?<=^ro.build.version.release=).*" -hs {vendor,system,system/system}/build*.prop)
 [[ -z ${release} ]] && release=$(grep -m1 -oP "(?<=^ro.vendor.build.version.release=).*" -hs vendor/build*.prop)
 [[ -z ${release} ]] && release=$(grep -m1 -oP "(?<=^ro.system.build.version.release=).*" -hs {system,system/system}/build*.prop)
 release=$(echo "$release" | head -1)
+
 id=$(grep -m1 -oP "(?<=^ro.build.id=).*" -hs {vendor,system,system/system}/build*.prop)
 [[ -z ${id} ]] && id=$(grep -m1 -oP "(?<=^ro.vendor.build.id=).*" -hs vendor/build*.prop)
 [[ -z ${id} ]] && id=$(grep -m1 -oP "(?<=^ro.system.build.id=).*" -hs {system,system/system}/build*.prop)
 id=$(echo "$id" | head -1)
+
 incremental=$(grep -m1 -oP "(?<=^ro.build.version.incremental=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${incremental} ]] && incremental=$(grep -m1 -oP "(?<=^ro.vendor.build.version.incremental=).*" -hs vendor/build*.prop)
 [[ -z ${incremental} ]] && incremental=$(grep -m1 -oP "(?<=^ro.system.build.version.incremental=).*" -hs {system,system/system}/build*.prop | head -1)
@@ -265,16 +272,19 @@ incremental=$(grep -m1 -oP "(?<=^ro.build.version.incremental=).*" -hs {vendor,s
 [[ -z ${incremental} ]] && incremental=$(grep -m1 -oP "(?<=^ro.system.build.version.incremental=).*" -hs my_product/build*.prop)
 [[ -z ${incremental} ]] && incremental=$(grep -m1 -oP "(?<=^ro.vendor.build.version.incremental=).*" -hs my_product/build*.prop)
 incremental=$(echo "$incremental" | head -1)
+
 tags=$(grep -m1 -oP "(?<=^ro.build.tags=).*" -hs {vendor,system,system/system}/build*.prop)
 [[ -z ${tags} ]] && tags=$(grep -m1 -oP "(?<=^ro.vendor.build.tags=).*" -hs vendor/build*.prop)
 [[ -z ${tags} ]] && tags=$(grep -m1 -oP "(?<=^ro.system.build.tags=).*" -hs {system,system/system}/build*.prop)
 tags=$(echo "$tags" | head -1)
+
 platform=$(grep -m1 -oP "(?<=^ro.board.platform=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${platform} ]] && platform=$(grep -m1 -oP "(?<=^ro.vendor.board.platform=).*" -hs vendor/build*.prop)
 [[ -z ${platform} ]] && platform=$(grep -m1 -oP rg"(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
+platform=$(echo "$platform" | head -1)
+
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs my_product/build*.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs system/system/euclid/my_product/build*.prop)
-platform=$(echo "$platform" | head -1)
 manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.vendor.manufacturer=).*" -hs vendor/build*.prop)
@@ -286,6 +296,7 @@ manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs {vendor,syste
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.system.product.manufacturer=).*" -hs vendor/euclid/*/build.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.product.manufacturer=).*" -hs vendor/euclid/product/build*.prop)
 manufacturer=$(echo "$manufacturer" | head -1)
+
 fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build*.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.product.build.fingerprint=).*" -hs product/build*.prop)
@@ -294,6 +305,7 @@ fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/bui
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.system.build.fingerprint=).*" -hs my_product/build.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs my_product/build.prop)
 fingerprint=$(echo "$fingerprint" | head -1)
+
 brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs my_product/build*.prop)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs system/system/euclid/my_product/build*.prop)
@@ -305,6 +317,7 @@ brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/syste
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.odm.brand=).*" -hs vendor/odm/etc/build*.prop)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {oppo_product,my_product}/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(echo "$fingerprint" | cut -d / -f1)
+
 codename=$(grep -m1 -oP "(?<=^ro.product.device=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.vendor.product.device.oem=).*" -hs odm/build.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.vendor.product.device.oem=).*" -hs vendor/euclid/odm/build.prop | head -1)
@@ -320,6 +333,11 @@ codename=$(grep -m1 -oP "(?<=^ro.product.device=).*" -hs {vendor,system,system/s
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.product.vendor.device=).*" -hs my_product/build*.prop)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.build.fota.version=).*" -hs {system,system/system}/build*.prop | cut -d - -f1 | head -1)
 [[ -z ${codename} ]] && codename=$(echo "$fingerprint" | cut -d / -f3 | cut -d : -f1)
+[[ -z $codename ]] && {
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Codename not detected! Aborting!</code>" > /dev/null
+    terminate 1
+}
+
 description=$(grep -m1 -oP "(?<=^ro.build.description=).*" -hs {system,system/system}/build.prop)
 [[ -z ${description} ]] && description=$(grep -m1 -oP "(?<=^ro.build.description=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${description} ]] && description=$(grep -m1 -oP "(?<=^ro.vendor.build.description=).*" -hs vendor/build.prop)
@@ -328,13 +346,11 @@ description=$(grep -m1 -oP "(?<=^ro.build.description=).*" -hs {system,system/sy
 [[ -z ${description} ]] && description=$(grep -m1 -oP "(?<=^ro.product.build.description=).*" -hs product/build*.prop)
 [[ -z ${description} ]] && description=$(grep -m1 -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${description} ]] && description="$flavor $release $id $incremental $tags"
+
 is_ab=$(grep -m1 -oP "(?<=^ro.build.ab_update=).*" -hs {system,system/system,vendor}/build*.prop)
 is_ab=$(echo "$is_ab" | head -1)
 [[ -z ${is_ab} ]] && is_ab="false"
-[[ -z $codename ]] && {
-    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Codename not detected! Aborting!</code>" > /dev/null
-    exit 1
-}
+
 codename=$(echo "$codename" | tr ' ' '_')
 branch=$(echo "$description" | head -1 | tr ' ' '-')
 repo_subgroup=$(echo "$brand" | tr '[:upper:]' '[:lower:]')
@@ -345,7 +361,23 @@ platform=$(echo "$platform" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | 
 top_codename=$(echo "$codename" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 manufacturer=$(echo "$manufacturer" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 
-printf "\nflavor: %s\nrelease: %s\nid: %s\nincremental: %s\ntags: %s\nfingerprint: %s\nbrand: %s\ncodename: %s\ndescription: %s\nbranch: %s\nrepo: %s\nmanufacturer: %s\nplatform: %s\ntop_codename: %s\nis_ab: %s\n" "$flavor" "$release" "$id" "$incremental" "$tags" "$fingerprint" "$brand" "$codename" "$description" "$branch" "$repo" "$manufacturer" "$platform" "$top_codename" "$is_ab"
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>All props extracted.</code>" > /dev/null
+
+printf "%s\n" "flavor: ${flavor}
+release: ${release}
+id: ${id}
+incremental: ${incremental}
+tags: ${tags}
+fingerprint: ${fingerprint}
+brand: ${brand}
+codename: ${codename}
+description: ${description}
+branch: ${branch}
+repo: ${repo}
+manufacturer: ${manufacturer}
+platform: ${platform}
+top_codename: ${top_codename}
+is_ab: ${is_ab}"
 
 if [[ -f "recovery.img" ]]; then
     twrpimg=recovery.img
@@ -358,7 +390,7 @@ if [[ -f $twrpimg ]]; then
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Detected $twrpimg! Generating twrp device tree</code>" > /dev/null
     if python3 -m twrpdtgen "$twrpimg" --output ./twrp-device-tree -v --no-git; then
         if [[ ! -f "working/twrp-device-tree/README.md" ]]; then
-            curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > twrp-device-tree/README.md
+            curl --compressed https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > twrp-device-tree/README.md
         fi
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>TWRP device tree successfully generated.</code>" > /dev/null
     else
@@ -377,32 +409,32 @@ sudo chmod -R u+rwX ./*
 find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
 # Check whether the subgroup exists or not
-if ! group_id_json="$(curl -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail)"; then
-    if ! group_id_json="$(curl -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" --silent --fail)"; then
+if ! group_id_json="$(curl --compressed -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail)"; then
+    if ! group_id_json="$(curl --compressed -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" --silent --fail)"; then
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Creating subgroup for $repo_subgroup failed!</code>" > /dev/null
-        exit 1
+        terminate 1
     fi
 fi
 
 if ! group_id="$(jq '.id' -e <<< "${group_id_json}")"; then
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Unable to get gitlab group id!</code>" > /dev/null
-    exit 1
+    terminate 1
 fi
 
 # Create the repo if it doesn't exist
-project_id_json="$(curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name")"
+project_id_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$ORG%2f$repo_subgroup%2f$repo_name")"
 if ! project_id="$(jq .id -e <<< "${project_id_json}")"; then
-    project_id_json="$(curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public)"
+    project_id_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public)"
     if project_id="$(jq .id -e <<< "${project_id_json}")"; then
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Could not get project id!</code>" > /dev/null
-        exit 1
+        terminate 1
     fi
 fi
 
-branch_json="$(curl --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch")"
+branch_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch")"
 [[ "$(jq '.name' -e <<< "${branch_json}")" == "$branch" ]] && {
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>$branch already exists in</code> <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!" > /dev/null
-    exit 1
+    terminate 0
 }
 
 # Add, commit, and push after filtering out certain files
@@ -419,36 +451,28 @@ sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushing..<
 git push "$PUSH_HOST:$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushing failed!</code>" > /dev/null
     echo "Pushing failed!"
-    exit 1
+    terminate 1
 }
 
 # Set default branch to the newly pushed branch
-curl -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
+curl --compressed -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
 sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushed</code> <a href=\"https://$GITLAB_SERVER/$ORG/$repo\">$description</a>" > /dev/null
-
-# send a reply to the original message
-sendTG reply "${MESSAGE_ID}" "Job Done"
 
 # Prepare message to be sent to Telegram channel
 commit_head=$(git rev-parse HEAD)
 commit_link="https://$GITLAB_SERVER/$ORG/$repo/commit/$commit_head"
 echo -e "Sending telegram notification"
-(
-    printf "<b>Brand: %s</b>" "$brand"
-    printf "\n<b>Device: %s</b>" "$codename"
-    printf "\n<b>Version:</b> %s" "$release"
-    printf "\n<b>Fingerprint:</b> %s" "$fingerprint"
-    printf "\n<b>Git link:</b>"
-    printf "\n<a href=\"%s\">Commit</a>" "$commit_link"
-    printf "\n<a href=\"https://%s/%s/%s/tree/%s/\">$codename</a>" "$GITLAB_SERVER" "$ORG" "$repo" "$branch"
-) >> tg.html
-
-TEXT=$(cat tg.html)
+tg_html_text="<b>Brand: $brand</b>
+<b>Device: $codename</b>
+<b>Version: $release</b>
+<b>Fingerprint: $fingerprint</b>
+<b>Git link:</b>
+<a href=\"$commit_link\">Commit</a>
+<a href=\"https://$GITLAB_SERVER/$ORG/$repo/tree/$branch/\">$codename</a>"
 
 # Send message to Telegram channel
-curl -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${TEXT}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" > /dev/null
+curl --compressed -s "https://api.telegram.org/bot${API_KEY}/sendmessage" --data "text=${tg_html_text}&chat_id=@android_dumps&parse_mode=HTML&disable_web_page_preview=True" > /dev/null
 
-# Delete file after sending message
-rm -fv tg.html
+terminate 0
