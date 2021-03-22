@@ -435,6 +435,7 @@ if ! project_id="$(jq .id -e <<< "${project_id_json}")"; then
     project_id_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public)"
     if project_id="$(jq .id -e <<< "${project_id_json}")"; then
         echo "Could get get project id"
+        echo "$project_id_json" | jq -r .
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Could not get project id!</code>" > /dev/null
         terminate 1
     fi
