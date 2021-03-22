@@ -34,18 +34,18 @@ sendTG_edit_wrapper() {
     local mode="${1:?Error: Missing mode}" && shift
     local message_id="${1:?Error: Missing message id variable}" && shift
     case "${mode}" in
-    temporary) sendTG edit "${message_id}" "${*:?}" > /dev/null ;;
-    permanent)
-        MESSAGE="${*:?}"
-        sendTG edit "${message_id}" "${MESSAGE}" > /dev/null
-        ;;
+        temporary) sendTG edit "${message_id}" "${*:?}" > /dev/null ;;
+        permanent)
+            MESSAGE="${*:?}"
+            sendTG edit "${message_id}" "${MESSAGE}" > /dev/null
+            ;;
     esac
 }
 
 # reply to the initial message sent to the group with "Job Done" or "Job Failed!" accordingly
 # 1st arg should be either 1 ( error ) or 0 ( success )
 terminate() {
-    if [[ ${1:?} = "0" ]]; then
+    if [[ ${1:?} == "0" ]]; then
         local string="Done"
     else
         local string="Failed!"
@@ -146,7 +146,7 @@ EXTERNAL_TOOLS=(
 
 for tool_url in "${EXTERNAL_TOOLS[@]}"; do
     tool_path="${HOME}/${tool_url##*/}"
-    if ! [[ -d "${tool_path}" ]]; then
+    if ! [[ -d ${tool_path} ]]; then
         git clone -q "${tool_url}" "${tool_path}"
     else
         git -C "${tool_path}" pull
@@ -191,7 +191,7 @@ ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null 
 }
 
 for image in boot.img dtbo.img; do
-    if [[ ! -f "${image}" ]]; then
+    if [[ ! -f ${image} ]]; then
         x=$(find . -type f -name "${image}")
         if [[ -n $x ]]; then
             mv -v "$x" "${image}"
@@ -283,9 +283,11 @@ platform=$(grep -m1 -oP "(?<=^ro.board.platform=).*" -hs {vendor,system,system/s
 [[ -z ${platform} ]] && platform=$(grep -m1 -oP rg"(?<=^ro.system.board.platform=).*" -hs {system,system/system}/build*.prop)
 platform=$(echo "$platform" | head -1)
 
+manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs odm/etc/fingerprint/build.default.prop)
+[[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs my_product/build*.prop)
+[[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs my_product/build*.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs system/system/euclid/my_product/build*.prop)
-manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.vendor.product.manufacturer=).*" -hs vendor/build*.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.vendor.manufacturer=).*" -hs vendor/build*.prop)
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.system.product.manufacturer=).*" -hs {system,system/system}/build*.prop)
@@ -297,7 +299,8 @@ manufacturer=$(grep -m1 -oP "(?<=^ro.product.manufacturer=).*" -hs {vendor,syste
 [[ -z ${manufacturer} ]] && manufacturer=$(grep -m1 -oP "(?<=^ro.product.product.manufacturer=).*" -hs vendor/euclid/product/build*.prop)
 manufacturer=$(echo "$manufacturer" | head -1)
 
-fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build*.prop)
+fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs odm/etc/fingerprint/build.default.prop)
+[[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/build.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.product.build.fingerprint=).*" -hs product/build*.prop)
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.system.build.fingerprint=).*" -hs {system,system/system}/build*.prop)
@@ -306,7 +309,9 @@ fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs vendor/bui
 [[ -z ${fingerprint} ]] && fingerprint=$(grep -m1 -oP "(?<=^ro.vendor.build.fingerprint=).*" -hs my_product/build.prop)
 fingerprint=$(echo "$fingerprint" | head -1)
 
-brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
+brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs odm/etc/fingerprint/build.default.prop)
+[[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs my_product/build*.prop)
+[[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs my_product/build*.prop)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand.sub=).*" -hs system/system/euclid/my_product/build*.prop)
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.vendor.brand=).*" -hs vendor/build*.prop | head -1)
@@ -318,7 +323,8 @@ brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {vendor,system,system/syste
 [[ -z ${brand} ]] && brand=$(grep -m1 -oP "(?<=^ro.product.brand=).*" -hs {oppo_product,my_product}/build*.prop | head -1)
 [[ -z ${brand} ]] && brand=$(echo "$fingerprint" | cut -d / -f1)
 
-codename=$(grep -m1 -oP "(?<=^ro.product.device=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
+codename=$(grep -m1 -oP "(?<=^ro.product.device=).*" -hs odm/etc/fingerprint/build.default.prop)
+[[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?=^ro.product.device=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.vendor.product.device.oem=).*" -hs odm/build.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.vendor.product.device.oem=).*" -hs vendor/euclid/odm/build.prop | head -1)
 [[ -z ${codename} ]] && codename=$(grep -m1 -oP "(?<=^ro.product.vendor.device=).*" -hs vendor/build*.prop | head -1)
