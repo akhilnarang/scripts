@@ -417,12 +417,14 @@ find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 # Check whether the subgroup exists or not
 if ! group_id_json="$(curl --compressed -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail)"; then
     if ! group_id_json="$(curl --compressed -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" --silent --fail)"; then
+        echo "Creating subgroup for $repo_subgroup failed"
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Creating subgroup for $repo_subgroup failed!</code>" > /dev/null
         terminate 1
     fi
 fi
 
 if ! group_id="$(jq '.id' -e <<< "${group_id_json}")"; then
+    echo "Unable to get gitlab group id"
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Unable to get gitlab group id!</code>" > /dev/null
     terminate 1
 fi
@@ -432,6 +434,7 @@ project_id_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER
 if ! project_id="$(jq .id -e <<< "${project_id_json}")"; then
     project_id_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects" -X POST -F namespace_id="$group_id" -F name="$repo_name" -F visibility=public)"
     if project_id="$(jq .id -e <<< "${project_id_json}")"; then
+        echo "Could get get project id"
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Could not get project id!</code>" > /dev/null
         terminate 1
     fi
@@ -439,6 +442,7 @@ fi
 
 branch_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch")"
 [[ "$(jq '.name' -e <<< "${branch_json}")" == "$branch" ]] && {
+    echo "$branch already exists in $repo"
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>$branch already exists in</code> <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!" > /dev/null
     terminate 0
 }
