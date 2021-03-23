@@ -441,7 +441,7 @@ if ! project_id="$(jq .id -e <<< "${project_id_json}")"; then
 fi
 
 branch_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch")"
-[[ "$(jq '.name' -e <<< "${branch_json}")" == "$branch" ]] && {
+[[ "$(jq -r '.name' -e <<< "${branch_json}")" == "$branch" ]] && {
     echo "$branch already exists in $repo"
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>$branch already exists in</code> <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!" > /dev/null
     terminate 0
