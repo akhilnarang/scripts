@@ -153,7 +153,7 @@ for tool_url in "${EXTERNAL_TOOLS[@]}"; do
     fi
 done
 
-sendTG_edit_wrapper temporary "${MESSAGE_ID}" "Extracting firmware.." > /dev/null
+sendTG_edit_wrapper temporary "${MESSAGE_ID}" "${MESSAGE}"$'\n'"Extracting firmware.." > /dev/null
 bash ~/Firmware_extractor/extractor.sh "${FILE}" "${PWD}" || {
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Extraction failed!</code>" > /dev/null
     terminate 1
@@ -183,6 +183,9 @@ for p in "${PARTITIONS[@]}"; do
         rm -fv "$p".img
     fi
 done
+
+# clear the last partition status
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}" > /dev/null
 
 # Bail out right now if no system build.prop
 ls system/build*.prop 2> /dev/null || ls system/system/build*.prop 2> /dev/null || {
