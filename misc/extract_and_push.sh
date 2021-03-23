@@ -446,7 +446,7 @@ fi
 branch_json="$(curl --compressed --silent -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id/repository/branches/$branch")"
 [[ "$(jq -r '.name' -e <<< "${branch_json}")" == "$branch" ]] && {
     echo "$branch already exists in $repo"
-    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>$branch already exists in</code> <a href=\"https://$GITLAB_SERVER/dumps/$repo\">$repo</a>!" > /dev/null
+    sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>$branch already exists in</code> <a href=\"https://$GITLAB_SERVER/$ORG/$repo/tree/$branch/\">$repo</a>!" > /dev/null
     terminate 0
 }
 
@@ -471,7 +471,7 @@ git push "$PUSH_HOST:$ORG/$repo.git" HEAD:refs/heads/"$branch" || {
 curl --compressed -s -H "Authorization: bearer ${DUMPER_TOKEN}" "https://$GITLAB_SERVER/api/v4/projects/$project_id" -X PUT -F default_branch="$branch" > /dev/null
 
 # Send message to Telegram group
-sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushed</code> <a href=\"https://$GITLAB_SERVER/$ORG/$repo\">$description</a>" > /dev/null
+sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Pushed</code> <a href=\"https://$GITLAB_SERVER/$ORG/$repo/tree/$branch/\">$description</a>" > /dev/null
 
 # Prepare message to be sent to Telegram channel
 commit_head=$(git rev-parse HEAD)
