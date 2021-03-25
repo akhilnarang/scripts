@@ -419,7 +419,7 @@ find . -type f -printf '%P\n' | sort | grep -v ".git/" > ./all_files.txt
 
 # Check whether the subgroup exists or not
 if ! group_id_json="$(curl --compressed -s -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups/$ORG%2f$repo_subgroup" -s --fail)"; then
-    if ! group_id_json="$(curl --compressed -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" --silent --fail)"; then
+    if ! group_id_json="$(curl --compressed -H "Authorization: Bearer $DUMPER_TOKEN" "https://$GITLAB_SERVER/api/v4/groups" -X POST -F name="${repo_subgroup^}" -F parent_id=3 -F path="${repo_subgroup}" -F visibility=public --silent --fail)"; then
         echo "Creating subgroup for $repo_subgroup failed"
         sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Creating subgroup for $repo_subgroup failed!</code>" > /dev/null
         terminate 1
