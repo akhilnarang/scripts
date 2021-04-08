@@ -15,13 +15,13 @@ sendTG() {
     local mode="${1:?Error: Missing mode}" && shift
     local api_url="https://api.telegram.org/bot${API_KEY:?}"
     if [[ ${mode} =~ normal ]]; then
-        curl --compressed -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML"
+        curl --compressed -s "${api_url}/sendmessage" --data "text=$(urlEncode "${*:?Error: Missing message text.}")&chat_id=${CHAT_ID:?}&parse_mode=HTML"
     elif [[ ${mode} =~ reply ]]; then
         local message_id="${1:?Error: Missing message id for reply.}" && shift
-        curl --compressed -s "${api_url}/sendmessage" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&reply_to_message_id=${message_id}"
+        curl --compressed -s "${api_url}/sendmessage" --data "text=$(urlEncode "${*:?Error: Missing message text.}")&chat_id=${CHAT_ID:?}&parse_mode=HTML&reply_to_message_id=${message_id}"
     elif [[ ${mode} =~ edit ]]; then
         local message_id="${1:?Error: Missing message id for edit.}" && shift
-        curl --compressed -s "${api_url}/editMessageText" --data "text=${*:?Error: Missing message text.}&chat_id=${CHAT_ID:?}&parse_mode=HTML&message_id=${message_id}"
+        curl --compressed -s "${api_url}/editMessageText" --data "text=$(urlEncode "${*:?Error: Missing message text.}")&chat_id=${CHAT_ID:?}&parse_mode=HTML&message_id=${message_id}"
     fi
 }
 
@@ -52,6 +52,23 @@ terminate() {
     fi
     sendTG reply "${MESSAGE_ID}" "Job ${string}"
     exit "${1:?}"
+}
+
+# https://github.com/dylanaraps/pure-bash-bible#percent-encode-a-string
+urlEncode() {
+    declare LC_ALL=C
+    for ((i = 0; i < ${#1}; i++)); do
+        : "${1:i:1}"
+        case "${_}" in
+            [a-zA-Z0-9.~_-])
+                printf '%s' "${_}"
+                ;;
+            *)
+                printf '%%%02X' "'${_}"
+                ;;
+        esac
+    done 2>| /dev/null
+    printf '\n'
 }
 
 curl --compressed --fail --silent --location "https://$GITLAB_SERVER" > /dev/null || {
