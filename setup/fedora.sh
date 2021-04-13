@@ -7,6 +7,7 @@
 
 # Packages
 sudo dnf install \
+    android-tools \
     autoconf213 \
     bison \
     bzip2 \
