@@ -13,23 +13,10 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1
 fi
 
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "raphael" ]] || [[ $* =~ "raphael" ]]; } && DEVICE=raphael
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "phoenix" ]] || [[ $* =~ "phoenix" ]]; } && DEVICE=phoenix
-[[ -z ${DEVICE} ]] && { [[ "$(pwd)" =~ "beryllium" ]] || [[ $* =~ "beryllium" ]]; } && DEVICE=beryllium
-[[ -z ${DEVICE} ]] && DEVICE=beryllium
+[[ -z ${DEVICE} ]] && DEVICE=phoenix
 
 function tg() {
-    case "${DEVICE}" in
-        "beryllium")
-            sendKernelBeryllium "${@:?}"
-            ;;
-        "raphael")
-            sendTG "-1001317348741" "${@:?}"
-            ;;
-        "*")
-            sendTG "92027269" "${@:?}"
-            ;;
-    esac
+    sendTG "92027269" "${@:?}"
 }
 
 # These won't change
@@ -38,18 +25,16 @@ export OUTDIR="${KERNELDIR}/${DEVICE}/obj"
 export ANYKERNEL="${KERNELDIR}/anykernel/${DEVICE}"
 export ARCH="arm64"
 CCACHE="$(command -v ccache)"
-if [[ ${USE_GCC} != "true" ]]; then
-    [[ -z ${CLANG_DIR} ]] && export CLANG_DIR="/usr"
-    export CLANG_TRIPLE="aarch64-linux-gnu-"
-    export CC="${CLANG_DIR}/bin/clang"
-    KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-fi
-[[ -z ${GCC_DIR} ]] && export GCC_DIR="/usr"
-CROSS_COMPILE="$(find ${GCC_DIR}/bin -name "aarch64-*-gcc" | tail -1 | sed 's/gcc$//')"
+export CLANG_DIR="$KERNELDIR/aosp-clang/clang-r353983c"
+export CLANG_TRIPLE="aarch64-linux-gnu-"
+export CC="${CLANG_DIR}/bin/clang"
+KBUILD_COMPILER_STRING=$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+export GCC_DIR="$KERNELDIR/aarch64-linux-android-4.9"
+CROSS_COMPILE="$GCC_DIR/bin/aarch64-linux-android-"
 export CROSS_COMPILE_ARM32="${KERNELDIR}/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
 export DEFCONFIG="${DEVICE}_defconfig"
 export ZIP_DIR="${KERNELDIR}/files/${DEVICE}"
-export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb"
+export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz"
 export DOWNLOAD_BASE_URL="https://mirror.akhilnarang.dev/kernel/${DEVICE}/Test"
 if [[ -z ${JOBS} ]]; then
     JOBS="$(grep -c '^processor' /proc/cpuinfo)"
@@ -57,23 +42,14 @@ fi
 export DEVICE CCACHE KBUILD_COMPILER_STRING JOBS CROSS_COMPILE
 
 function make_wrapper() {
-    if [[ ${USE_GCC} == "true" ]]; then
-        time make -j"${JOBS}" \
-            O="${OUTDIR}" \
-            ARCH="${ARCH}" \
-            CROSS_COMPILE="${CCACHE} ${CROSS_COMPILE}" \
-            CROSS_COMPILE_ARM32="${CCACHE} ${CROSS_COMPILE_ARM32}" \
-            "${@}"
-    else
-        time make -j"${JOBS}" \
-            O="${OUTDIR}" \
-            ARCH="${ARCH}" \
-            CC="${CCACHE} ${CC}" \
-            CLANG_TRIPLE="${CLANG_TRIPLE}" \
-            CROSS_COMPILE="${CROSS_COMPILE}" \
-            CROSS_COMPILE_ARM32="${CROSS_COMPILE_ARM32}" \
-            "${@}"
-    fi
+    time make -j"${JOBS}" \
+        O="${OUTDIR}" \
+        ARCH="${ARCH}" \
+        CC="${CCACHE} ${CC}" \
+        CLANG_TRIPLE="${CLANG_TRIPLE}" \
+        CROSS_COMPILE="${CROSS_COMPILE}" \
+        CROSS_COMPILE_ARM32="${CROSS_COMPILE_ARM32}" \
+        "${@}"
 }
 
 if [[ ! -d ${ANYKERNEL} ]]; then
