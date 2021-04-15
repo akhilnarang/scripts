@@ -5,7 +5,7 @@
 
 CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 CUR_DIR="${CUR_DIR/setup/}"
-SDK_TOOLS=commandlinetools-linux-6609375_latest.zip
+SDK_TOOLS=commandlinetools-linux-6858069_latest.zip
 
 function setup_android_sdk() {
     echo "Installing Android SDK"
@@ -16,7 +16,7 @@ function setup_android_sdk() {
     fi
     unzip -qo "${SDK_TOOLS}"
     while read -r package; do
-        yes | ./tools/bin/sdkmanager --sdk_root="$(pwd)" "${package:?}"
+        yes | ./cmdline-tools/bin/sdkmanager --sdk_root="$(pwd)" "${package:?}"
     done < "${CUR_DIR}"/setup/android-sdk-minimal.txt
     rm "${SDK_TOOLS}"
     cd - || exit
