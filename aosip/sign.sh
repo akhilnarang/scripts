@@ -77,7 +77,7 @@ rm -rfv $UPLOAD
 ssh Illusion "mkdir /tmp/$BUILD_NUMBER; curl -Ls https://$(hostname)/$BUILD_NUMBER.tar | tar xv -C /tmp/$BUILD_NUMBER; rclone copy -P --drive-chunk-size 256M /tmp/$BUILD_NUMBER/ aosip-jenkins:$BUILD_NUMBER"
 rm -fv ~/nginx/$BUILD_NUMBER.tar
 
-if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps)$ ]]; then
+if [[ $AOSIP_BUILDTYPE =~ ^(CI|CI_Gapps|Quiche|Quiche_Gapps|Ravioli|Ravioli_Gapps)$ ]]; then
     ssh Illusion "rm -rfv /tmp/$BUILD_NUMBER"
     scp "$UPDATER_JSON" Illusion:/tmp/
     ssh Illusion "rclone copy /tmp/$UPDATER_JSON aosip-jenkins:; rm -fv /tmp/$UPDATER_JSON"
