@@ -16,6 +16,12 @@ function notify() {
     fi
 }
 
+function getAbort() {
+    sendAOSiP "Build $BUILD_NUMBER has been aborted"
+}
+
+trap 'tag_aborted' SIGTERM
+
 export TZ=UTC
 
 curl --silent --fail --location https://review.aosip.dev > /dev/null || {
