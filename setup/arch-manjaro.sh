@@ -7,17 +7,17 @@ clear
 sudo sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 echo Installing Dependencies!
 # Update
-sudo pacman -Syyu
+sudo pacman -Syyu --noconfirm
 # Install pacaur
-sudo pacman -S base-devel git wget multilib-devel cmake svn clang lzip patchelf inetutils python2-distlib
+sudo pacman -S --noconfirm base-devel git wget multilib-devel cmake svn clang lzip patchelf inetutils python2-distlib
 # Install ncurses5-compat-libs, lib32-ncurses5-compat-libs, aosp-devel, xml2, and lineageos-devel
 for package in ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel xml2 lineageos-devel; do
     git clone https://aur.archlinux.org/"${package}"
     cd "${package}" || continue
-    makepkg -si --skippgpcheck
+    makepkg -si --skippgpcheck --noconfirm
     cd - || break
     rm -rf "${package}"
 done
 
 echo -e "Installing platform tools & udev rules for adb!"
-sudo pacman -S android-tools android-udev
+sudo pacman -S --noconfirm android-tools android-udev
