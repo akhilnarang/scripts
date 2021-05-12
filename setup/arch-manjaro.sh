@@ -13,9 +13,9 @@ sudo pacman -Syyu --noconfirm --needed multilib-devel
 # Install android build prerequisites
 echo '[3/4] Installing Android building prerequisites'
 git clone https://aur.archlinux.org/lineageos-devel
-cd lineageos-devel || continue
+cd lineageos-devel
 makepkg -si --skippgpcheck --noconfirm --needed
-cd - || break
+cd -
 rm -rf lineageos-devel
 echo '[4/4] Installing adb convenience tools'
 sudo pacman -S --noconfirm --needed android-tools android-udev
