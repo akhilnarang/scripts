@@ -87,7 +87,7 @@ if [[ -f $URL ]]; then
         sendTG() { :; } && sendTG_edit_wrapper() { :; }
     fi
 else
-    MESSAGE="<code>Started</code> <a href=\"${URL}\">dump</a> <code>on</code> <a href=\"$BUILD_URL\">jenkins</a>."
+    MESSAGE="<code>Started</code> <a href=\"${URL}\">dump</a>"
     if _json="$(sendTG normal "${MESSAGE}")"; then
         # grab initial message id
         MESSAGE_ID="$(jq ".result.message_id" <<< "${_json}")"
