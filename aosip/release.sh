@@ -9,7 +9,11 @@ AOSIP_BUILDTYPE=$3
 
 pushd /tmp/"$BUILD_NUMBER" || exit
 
-rm -fv /home/kronic/builds/"$DEVICE"/*"$AOSIP_BUILDTYPE"*
+if [[ -d "/home/kronic/builds/$DEVICE" ]]; then
+    rm -fv /home/kronic/builds/"$DEVICE"/*"$AOSIP_BUILDTYPE"*
+else
+    mkdir -pv "/home/kronic/builds/$DEVICE"
+fi
 cp -v /tmp/"$BUILD_NUMBER"/AOSiP* /home/kronic/builds/"$DEVICE"/
 rm -rfv /tmp/"$BUILD_NUMBER"
 
