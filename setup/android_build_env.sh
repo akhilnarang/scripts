@@ -10,6 +10,7 @@ LATEST_MAKE_VERSION="4.3"
 UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3"
 DEBIAN_10_PACKAGES="libncurses5"
+DEBIAN_11_PACKAGES="libncurses5"
 PACKAGES=""
 
 echo "Adding GitHub apt key and repository!"
@@ -29,6 +30,8 @@ elif [[ ${LSB_RELEASE} =~ "Ubuntu 20" || ${LSB_RELEASE} =~ "Ubuntu 21" ]]; then
     PACKAGES="${UBUNTU_20_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
+elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 11" ]]; then
+    PACKAGES="${DEBIAN_11_PACKAGES}"
 fi
 
 sudo DEBIAN_FRONTEND=noninteractive \
