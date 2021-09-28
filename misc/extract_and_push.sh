@@ -414,7 +414,7 @@ fi
 if [[ -f $twrpimg ]]; then
     echo "Detected $twrpimg! Generating twrp device tree"
     sendTG_edit_wrapper permanent "${MESSAGE_ID}" "${MESSAGE}"$'\n'"<code>Detected $twrpimg! Generating twrp device tree</code>" > /dev/null
-    if python3 -m twrpdtgen "$twrpimg" --output ./twrp-device-tree -v --no-git; then
+    if python3 -m twrpdtgen "$twrpimg" --output ./twrp-device-tree; then
         if [[ ! -f "working/twrp-device-tree/README.md" ]]; then
             curl --compressed https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > twrp-device-tree/README.md
         fi
