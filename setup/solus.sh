@@ -21,7 +21,7 @@ sudo chown root /etc/udev/rules.d/51-android.rules
 sudo usysconf run -f
 
 echo "Installing repo"
-sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
+sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
 sudo chmod a+x /usr/local/bin/repo
 
 echo "You are now ready to build Android!"
