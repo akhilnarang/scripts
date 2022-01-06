@@ -7,7 +7,7 @@ trap 'rm -rf /tmp/tools.zip 2>/dev/null' INT TERM EXIT
 
 CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 CUR_DIR="${CUR_DIR/setup/}"
-SDK_TOOLS=commandlinetools-linux-6858069_latest.zip
+SDK_TOOLS=commandlinetools-linux-7583922_latest.zip
 
 function setup_android_sdk() {
     echo "Installing Android SDK"
