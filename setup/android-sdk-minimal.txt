@@ -4,5 +4,7 @@ cmake;3.10.2.4988404
 ndk;22.1.7171670
 platform-tools
 tools
+platforms;android-29
 platforms;android-30
+platforms;android-31
 platforms;android-S
