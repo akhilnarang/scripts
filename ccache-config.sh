@@ -1,5 +1,6 @@
 #!/bin/sh
-
+# Clone from this git:
+#       https://github.com/macmade/Console/blob/main/Scripts/ccache-config.sh
 # This setting should be an absolute path to a directory. ccache then
 # rewrites absolute paths into relative paths before computing the hash that
 # identifies the compilation, but only for paths under the specified
