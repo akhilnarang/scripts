@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 
-SDK_DIR="${HOME:?}/Android/Sdk"
+SDK_DIR="$~/Android/Sdk"
+CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+CUR_DIR="${CUR_DIR/setup/}"
 SDK_TOOLS=commandlinetools-linux-7583922_latest.zip
 
 function setup_android_sdk() {
