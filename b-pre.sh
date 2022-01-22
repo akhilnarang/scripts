@@ -54,6 +54,6 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 echo "Update ccache, git, "
-bash "$(dirname "$0")"/setup/ccache.sh
-bash "$(dirname "$0")"/setup/git.sh
+bash setup/ccache.sh
+bash setup/git.sh
 
