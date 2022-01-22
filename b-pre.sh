@@ -1,5 +1,5 @@
 echo "Install pre package"
-sudo apt-get && sudo apt-get upgrade $$ sudo apt-get install aptitude
+sudo apt-get update && sudo apt-get upgrade $$ sudo apt-get install aptitude
 sudo aptitude install ccache unzip zip cmake curl quota git automake bzip2 dpkg-dev make
 sudo aptitude install openjdk-11-jdk python-is-python3 python-kerberos python-networkx ruby-full rubygems sqlite3
 sudo aptitude install mysql-server ruby-mysql2 openssl
