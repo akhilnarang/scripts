@@ -39,7 +39,7 @@ if [[ "$(command -v make)" ]]; then
     makeversion="$(make -v | head -1 | awk '{print $3}')"
     if [[ ${makeversion} != "${LATEST_MAKE_VERSION}" ]]; then
         echo "Installing make ${LATEST_MAKE_VERSION} instead of ${makeversion}"
-        bash "$(dirname "$0")"/make.sh "${LATEST_MAKE_VERSION}"
+        bash "$(dirname "$0")"/setup/make.sh "${LATEST_MAKE_VERSION}"
     fi
 fi
 
@@ -54,6 +54,6 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 echo "Update ccache, git, "
-bash "$(dirname "$0")"/ccache.sh
-bash "$(dirname "$0")"/git.sh
+bash "$(dirname "$0")"/setup/ccache.sh
+bash "$(dirname "$0")"/setup/git.sh
 
