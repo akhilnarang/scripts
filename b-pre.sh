@@ -58,3 +58,5 @@ git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/pro
 echo "###############################################"
 echo "Done."
 echo "###############################################"
+
+bash setup/install_android_sdk.sh
