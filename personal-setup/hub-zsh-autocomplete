@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-mkdir -pv ~/.zsh/completions
-curl -L https://github.com/github/hub/raw/master/etc/hub.zsh_completion -o ~/.zsh/completions/_hub
-echo 'fpath=$(~/.zsh/completions $fpath)
-autoload compinit
-compinit' >> ~/.zshrc
