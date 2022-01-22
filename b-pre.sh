@@ -1,8 +1,8 @@
 echo "Install pre package"
 sudo aptitude install unzip zip cmake curl quota automake bzip2 dpkg-dev make -y
-sudo aptitude install openjdk-11-jdk python-is-python3 python-networkx ruby-full rubygems sqlite3 -y
+sudo aptitude install openjdk-11-jdk python-is-python3 ruby-full rubygems sqlite3 -y
 sudo aptitude install mysql-server ruby-mysql2 openssl -y
-sudo aptitude install autoconf subversion pkg-config nodejsgit-all git-core redis-server ncurses-dev -y
+sudo aptitude install autoconf subversion pkg-config git-core redis-server ncurses-dev -y
 sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
 sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common mcelog dh-autoreconf gettext -y
 sudo aptitude install gcc-multilib g++-multilib g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi bc -y
@@ -45,7 +45,10 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 echo "Installing repo"
-git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git ~/tc/proton/clang-13
+if ! git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git ~/tc/proton/clang-13 then 
+		echo "Cloning failed! Aborting..."
+		exit 1
+fi
 
 echo "###############################################"
 echo "Done."
