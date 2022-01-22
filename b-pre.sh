@@ -1,6 +1,6 @@
 echo "Install pre package"
 sudo aptitude install unzip zip cmake curl quota automake bzip2 dpkg-dev make -y
-sudo aptitude install openjdk-11-jdk python-is-python3 python-kerberos python-networkx ruby-full rubygems sqlite3 -y
+sudo aptitude install openjdk-11-jdk python-is-python3 python-networkx ruby-full rubygems sqlite3 -y
 sudo aptitude install mysql-server ruby-mysql2 openssl -y
 sudo aptitude install autoconf subversion pkg-config nodejsgit-all git-core redis-server ncurses-dev -y
 sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
@@ -58,5 +58,5 @@ git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/pro
 echo "###############################################"
 echo "Done."
 echo "###############################################"
-
+echo "Installing Build environment"
 bash setup/install_android_sdk.sh
