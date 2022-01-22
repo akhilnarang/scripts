@@ -3,13 +3,16 @@
 # Copyright (C) Harsh Shandilya <me@msfjarvis.dev>
 # SPDX-License-Identifier: GPL-3.0-only
 
-trap 'rm -rf /tmp/tools.zip 2>/dev/null' INT TERM EXIT
-
-CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-CUR_DIR="${CUR_DIR/setup/}"
-SDK_TOOLS=commandlinetools-linux-7583922_latest.zip
+# Check if sdk already installed
 
 function setup_android_sdk() {
+	trap 'rm -rf /tmp/tools.zip 2>/dev/null' INT TERM EXIT
+
+	CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+	CUR_DIR="${CUR_DIR/setup/}"
+	SDK_TOOLS=commandlinetools-linux-7583922_latest.zip
+
+
     echo "Installing Android SDK"
     SDK_DIR="${HOME:?}/Android/Sdk"
     mkdir -p "${SDK_DIR}"
