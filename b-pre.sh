@@ -4,7 +4,7 @@ sudo aptitude install openjdk-11-jdk python-is-python3 ruby-full rubygems sqlite
 sudo aptitude install mysql-server ruby-mysql2 openssl -y
 sudo aptitude install autoconf subversion pkg-config git-core redis-server ncurses-dev -y
 sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
-sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common mcelog dh-autoreconf gettext -y
+sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common dh-autoreconf gettext -y
 sudo aptitude install gcc-multilib g++-multilib g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi bc -y
 sudo aptitude install bison build-essential flex ninja-buildlld xsltproc -y
 sudo aptitude install gnupg gperf imagemagick lzop pngcrush rsync schedtool squashfs-tools -y
@@ -44,11 +44,24 @@ sudo chmod a+rx /usr/local/bin/repo
 echo "###############################################"
 echo "Done."
 echo "###############################################"
-echo "Installing repo"
-if ! git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git ~/tc/proton/clang-13; then 
-		echo "Cloning failed! Aborting..."
-		exit 1
+TC_DIR="$HOME/tc/proton/clang-13"
+AK3_DIR="$HOME/tc/AnyKernel3"
+echo "Installing clang tool chain"
+if ! [ -d "$TC_DIR" ]; then
+		echo "Proton clang not found! Cloning to $TC_DIR..."
+		if ! git clone --single-branch --depth 1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git $TC_DIR; then
+				echo "Cloning failed! Aborting..."
+				exit 1
+		fi
 fi
+
+if ! [ -d "$AK3_DIR" ]; then
+				echo "$AK3_DIR not found! Cloning to $AK3_DIR..."
+				if ! git clone -q --single-branch --depth 1 -b 11.0 https://github.com/lecmngend/AnyKernel3 $AK3_DIR; then
+						echo "Cloning failed! Aborting..."
+						exit 1
+				fi
+		fi
 
 echo "###############################################"
 echo "Done."
