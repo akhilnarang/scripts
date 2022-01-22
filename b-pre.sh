@@ -1,6 +1,5 @@
 echo "Install pre package"
-sudo apt-get update && sudo apt-get upgrade && sudo apt-get install aptitude -y
-sudo aptitude install ccache unzip zip cmake curl quota git automake bzip2 dpkg-dev make -y
+sudo aptitude install unzip zip cmake curl quota automake bzip2 dpkg-dev make -y
 sudo aptitude install openjdk-11-jdk python-is-python3 python-kerberos python-networkx ruby-full rubygems sqlite3 -y
 sudo aptitude install mysql-server ruby-mysql2 openssl -y
 sudo aptitude install autoconf subversion pkg-config nodejsgit-all git-core redis-server ncurses-dev -y
@@ -39,7 +38,7 @@ if [[ "$(command -v make)" ]]; then
     makeversion="$(make -v | head -1 | awk '{print $3}')"
     if [[ ${makeversion} != "${LATEST_MAKE_VERSION}" ]]; then
         echo "Installing make ${LATEST_MAKE_VERSION} instead of ${makeversion}"
-        bash "$(dirname "$0")"/setup/make.sh "${LATEST_MAKE_VERSION}"
+        bash setup/make.sh "${LATEST_MAKE_VERSION}"
     fi
 fi
 
@@ -53,7 +52,9 @@ sudo chmod a+rx /usr/local/bin/repo
 echo "###############################################"
 echo "Done."
 echo "###############################################"
-echo "Update ccache, git, "
-bash setup/ccache.sh
-bash setup/git.sh
+echo "Installing repo"
+git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git ~/tc/proton/clang-13
 
+echo "###############################################"
+echo "Done."
+echo "###############################################"
