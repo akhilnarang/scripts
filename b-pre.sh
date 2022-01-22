@@ -45,7 +45,7 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 echo "Installing repo"
-if ! git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git ~/tc/proton/clang-13 then 
+if ! git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git ~/tc/proton/clang-13; then 
 		echo "Cloning failed! Aborting..."
 		exit 1
 fi
