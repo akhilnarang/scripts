@@ -13,14 +13,15 @@ function setup_android_sdk() {
     echo "Installing Android SDK"
     SDK_DIR="${HOME:?}/Android/Sdk"
     mkdir -p "${SDK_DIR}"
-    if [ ! -f "${SDK_TOOLS}" ]; then
+    if [ ! -d "${SDK_TOOLS}" ]; then
         wget https://dl.google.com/android/repository/"${SDK_TOOLS}" -O /tmp/tools.zip
-    fi
-    unzip -qo /tmp/tools.zip -d "${SDK_DIR}"
-    while read -r package; do
-        yes | "${SDK_DIR}"/cmdline-tools/bin/sdkmanager --sdk_root="${SDK_DIR}" "${package:?}"
-    done < "${CUR_DIR}"/setup/android-sdk-minimal.txt
-    rm /tmp/tools.zip
+    
+		unzip -qo /tmp/tools.zip -d "${SDK_DIR}"
+		while read -r package; do
+			yes | "${SDK_DIR}"/cmdline-tools/bin/sdkmanager --sdk_root="${SDK_DIR}" "${package:?}"
+		done < "${CUR_DIR}"/setup/android-sdk-minimal.txt
+		rm /tmp/tools.zip
+	fi
     cd - || exit
 }
 
