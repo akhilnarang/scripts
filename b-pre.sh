@@ -1,11 +1,11 @@
 echo "Install pre package"
 sudo aptitude install unzip zip cmake curl quota automake bzip2 dpkg-dev make -y
 sudo aptitude install openjdk-11-jdk python-is-python3 ruby-full rubygems sqlite3 -y
-sudo aptitude install mysql-server ruby-mysql2 openssl -y
+sudo aptitude install mysql-server ruby-mysql2 openssl bc -y
 sudo aptitude install autoconf subversion pkg-config git-core redis-server ncurses-dev -y
 sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
 sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common dh-autoreconf gettext -y
-sudo aptitude install gcc-multilib g++-multilib g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi bc -y
+#sudo aptitude install gcc-multilib g++-multilib g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi -y
 sudo aptitude install bison build-essential flex ninja-buildlld xsltproc -y
 sudo aptitude install gnupg gperf imagemagick lzop pngcrush rsync schedtool squashfs-tools -y
 sudo aptitude install libc++-dev libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev  -y
