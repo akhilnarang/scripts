@@ -130,3 +130,4 @@ out/
 *.zip
 
 #.bak backup from windows
+*.bak
