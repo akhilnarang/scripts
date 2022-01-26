@@ -32,7 +32,8 @@ function setup_android_sdk() {
 # Check if sdk already installed
 if [ ! -d "${SDK_DIR}" ]; then
 	setup_android_sdk
-else
+fi
+else 
 	echo "###############################################"
 	echo "Already installed."
 	echo "###############################################"
