@@ -1,4 +1,4 @@
-build-tools;31.0.0
+build-tools;32.0.0
 build-tools;32.0.0
 cmake;3.18.1
 ndk;23.1.7779620

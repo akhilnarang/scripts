@@ -26,7 +26,13 @@ function setup_android_sdk() {
 		done < "${CUR_DIR}"/setup/android-sdk-minimal.txt
 		rm /tmp/tools.zip
 	fi
+	
     cd - || exit
+	
+	mv $SDK_DIR/cmdline-tools $SDK_DIR/latest
+	mkdir -p $SDK_DIR/cmdline-tools
+	cp -R $SDK_DIR/latest $SDK_DIR/cmdline-tools
+	rm -rf $SDK_DIR/latest
 }
 
 # Check if sdk already installed

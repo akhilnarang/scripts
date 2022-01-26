@@ -18,7 +18,7 @@ sudo aptitude install libxml-sax-base-perl libxml-simple-perl libc6-dev x11proto
 sudo aptitude install lib32z-dev libgl1-mesa-dev libxslt1.1 libxslt1-dev libmysqlclient-dev -y
 sudo aptitude install libreadline6 libreadline6-dev zlib1g libyaml-dev libxml2-dev libxslt-dev libgdbm-dev  -y
 sudo aptitude install libcurl4-openssl-dev libmagickwand-dev libffi-dev libsqlite3-dev libpq-dev libreadline5 libtool -y
-sudo aptitude install lsb-core -y
+sudo aptitude install lsb-core gnutls-bin -y
 
 echo "###############################################"
 echo "Done."
