@@ -5,8 +5,8 @@ sudo aptitude install mysql-server ruby-mysql2 openssl bc aria2 bison -y
 sudo aptitude install autoconf subversion pkg-config git-core redis-server ncurses-dev -y
 sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
 sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common dh-autoreconf gettext -y
-# sudo aptitude install gcc g++
-# sudo aptitude install gcc-multilib g++-multilib g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi -y
+sudo aptitude install gcc g++ binutils-aarch64-linux-gnu
+sudo aptitude install  g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi -y
 sudo aptitude install build-essential flex ninja-build xsltproc -y
 sudo aptitude install gnupg gperf imagemagick lzop pngcrush rsync schedtool squashfs-tools -y
 sudo aptitude install libc++-dev libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev  -y
@@ -19,7 +19,7 @@ sudo aptitude install lib32z-dev libgl1-mesa-dev libxslt1.1 libxslt1-dev libmysq
 sudo aptitude install libreadline6 libreadline6-dev zlib1g libyaml-dev libxml2-dev libxslt-dev libgdbm-dev  -y
 sudo aptitude install libcurl4-openssl-dev libmagickwand-dev libffi-dev libsqlite3-dev libpq-dev libreadline5 libtool -y
 sudo aptitude install lsb-core gnutls-bin -y
-
+#sudo aptitude install gcc-multilib g++-multilib
 echo "###############################################"
 echo "Done."
 echo "###############################################"
@@ -46,7 +46,7 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 TC_DIR="$HOME/tc/proton/clang-13"
-AK3_DIR="$HOME/tc/AnyKernel3"
+AK3_DIR="$HOME/tc/AK3"
 echo "Installing clang tool chain"
 if ! [ -d "$TC_DIR" ]; then
 		echo "Proton clang not found! Cloning to $TC_DIR..."
@@ -58,7 +58,7 @@ fi
 
 if ! [ -d "$AK3_DIR" ]; then
 				echo "$AK3_DIR not found! Cloning to $AK3_DIR..."
-				if ! git clone -q --single-branch --depth 1 -b 11.0 https://github.com/lecmngend/AnyKernel3 $AK3_DIR; then
+				if ! git clone -q --single-branch --depth 1 -b ginkgo https://github.com/lecmngend/AnyKernel3 $AK3_DIR; then
 						echo "Cloning failed! Aborting..."
 						exit 1
 				fi
@@ -73,10 +73,4 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 
-echo "###############################################"
-echo "Setup $PATH"
-echo "###############################################"
-bash setup/add-bashrc.sh
-echo "###############################################"
-echo "Done."
-echo "###############################################"
+
