@@ -26,20 +26,38 @@ sudo chmod a+rx /usr/local/bin/repo
 echo "###############################################"
 echo "Done."
 echo "###############################################"
+echo "Installing proton clang 13"
 TC_DIR="$HOME/tc/proton/clang-13"
 AK3_DIR="$HOME/tc/AK3"
 echo "Installing clang tool chain"
 if ! [ -d "$TC_DIR" ]; then
 		echo "Proton clang not found! Cloning to $TC_DIR..."
-		if ! git clone --single-branch --depth 1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git $TC_DIR; then
+		if ! git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git $TC_DIR; then
 				echo "Cloning failed! Aborting..."
 				exit 1
 		fi
 fi
 
+echo "###############################################"
+echo "Done."
+echo "###############################################"
+echo "Installing proton clang 14"
+TC_DIR="$HOME/tc/proton/clang-14"
+if ! [ -d "$TC_DIR" ]; then
+		echo "Proton clang not found! Cloning to $TC_DIR..."
+		if ! git clone --single-branch --depth=1 -b master https://github.com/vijaymalav564/vortex-clang $TC_DIR; then
+				echo "Cloning failed! Aborting..."
+				exit 1
+		fi
+fi
+
+echo "###############################################"
+echo "Done."
+echo "###############################################"
+echo "Installing AnyKernel3"
 if ! [ -d "$AK3_DIR" ]; then
 				echo "$AK3_DIR not found! Cloning to $AK3_DIR..."
-				if ! git clone -q --single-branch --depth 1 -b ginkgo https://github.com/lecmngend/AnyKernel3 $AK3_DIR; then
+				if ! git clone -q --single-branch --depth=1 -b ginkgo https://github.com/lecmngend/AnyKernel3 $AK3_DIR; then
 						echo "Cloning failed! Aborting..."
 						exit 1
 				fi
