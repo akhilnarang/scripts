@@ -6,7 +6,7 @@ sudo aptitude install autoconf subversion pkg-config git-core redis-server ncurs
 sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
 sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common dh-autoreconf gettext -y
 sudo aptitude install gcc g++ binutils-aarch64-linux-gnu
-sudo aptitude install  g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi -y
+sudo aptitude install gcc-multilib g++-multilib -y
 sudo aptitude install build-essential flex ninja-build xsltproc -y
 sudo aptitude install gnupg gperf imagemagick lzop pngcrush rsync schedtool squashfs-tools -y
 sudo aptitude install libc++-dev libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev  -y
@@ -19,7 +19,6 @@ sudo aptitude install lib32z-dev libgl1-mesa-dev libxslt1.1 libxslt1-dev libmysq
 sudo aptitude install libreadline6 libreadline6-dev zlib1g libyaml-dev libxml2-dev libxslt-dev libgdbm-dev  -y
 sudo aptitude install libcurl4-openssl-dev libmagickwand-dev libffi-dev libsqlite3-dev libpq-dev libreadline5 libtool -y
 sudo aptitude install lsb-core gnutls-bin -y
-#sudo aptitude install gcc-multilib g++-multilib
 echo "###############################################"
 echo "Done."
 echo "###############################################"
