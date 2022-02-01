@@ -1,27 +1,6 @@
-echo "Install pre package"
-sudo aptitude install unzip zip cmake curl quota automake bzip2 dpkg-dev make -y
-sudo aptitude install openjdk-11-jdk python-is-python3 ruby-full rubygems sqlite3 -y
-sudo aptitude install mysql-server ruby-mysql2 openssl bc aria2 bison -y
-sudo aptitude install autoconf subversion pkg-config git-core redis-server ncurses-dev -y
-sudo aptitude install clang clang-format clang-tidy clang-tools clangd lld lldb llvm  -y
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
-sudo aptitude install clang-12 clang-tools-12 clang-12-doc libclang-common-12-dev libclang-12-dev libclang1-12 clang-format-12 python3-clang-12 clangd-12 clang-tidy-12
-sudo aptitude install libfuzzer-12-dev lldb-12 lld-12  libc++-12-dev libc++abi-12-dev  libomp-12-dev  libclc-12-dev -y
-sudo aptitude install reiserfsprogs pcmciautils nfs-common oprofile grub2-common dh-autoreconf gettext -y
-sudo aptitude install gcc g++ binutils-aarch64-linux-gnu
-sudo aptitude install gcc-multilib g++-multilib -y
-sudo aptitude install build-essential flex ninja-build xsltproc -y
-sudo aptitude install gnupg gperf imagemagick lzop pngcrush rsync schedtool squashfs-tools -y
-sudo aptitude install libc++-dev libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev  -y
-sudo aptitude install libssl-dev libncurses5 libxml2-utils libxml2 libsdl1.2-dev libncurses5-dev libncurses5 libwxgtk3.0-gtk3-dev -y
-sudo aptitude install zlib1g-dev lib32z1-dev liblz4-tool lib32ncurses5-dev lib32readline-dev -y
-sudo aptitude install libcurl4-gnutls-dev libexpat1-dev libz-dev libbz2-dev libbz2-1.0 libghc-bzlib-dev -y
-sudo aptitude install optipng maven pwgen libswitch-perl policycoreutils minicom -y
-sudo aptitude install libxml-sax-base-perl libxml-simple-perl libc6-dev x11proto-core-dev libx11-dev -y
-sudo aptitude install lib32z-dev libgl1-mesa-dev libxslt1.1 libxslt1-dev libmysqlclient-dev -y
-sudo aptitude install libreadline6 libreadline6-dev zlib1g libyaml-dev libxml2-dev libxslt-dev libgdbm-dev  -y
-sudo aptitude install libcurl4-openssl-dev libmagickwand-dev libffi-dev libsqlite3-dev libpq-dev libreadline5 libtool -y
-sudo aptitude install lsb-core gnutls-bin -y
+bash packages/1.sh
+bash packages/2.sh
+bash packages/3.sh
 echo "###############################################"
 echo "Done."
 echo "###############################################"

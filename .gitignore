@@ -131,3 +131,5 @@ out/
 
 #.bak backup from windows
 *.bak
+
+packages/t.sh
