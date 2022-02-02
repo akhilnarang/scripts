@@ -2,9 +2,9 @@
 
 # Copyright (C) Harsh Shandilya <me@msfjarvis.dev>
 # SPDX-License-Identifier: GPL-3.0-only
-
+SDK_DIR="~/Android/Sdk"
 function setup_android_sdk() {
-	SDK_DIR="$~/Android/Sdk
+
 	SDK_TOOLS=commandlinetools-linux-7583922_latest.zip
 
 	trap 'rm -rf /tmp/tools.zip 2>/dev/null' INT TERM EXIT
