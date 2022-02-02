@@ -22,22 +22,6 @@ echo "###############################################"
 echo "Installing repo"
 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
 sudo chmod a+rx /usr/local/bin/repo
-
-echo "###############################################"
-echo "Done."
-echo "###############################################"
-echo "Installing proton clang 13"
-TC_DIR="$HOME/tc/proton/clang-13"
-AK3_DIR="$HOME/tc/AK3"
-echo "Installing clang tool chain"
-if ! [ -d "$TC_DIR" ]; then
-		echo "Proton clang not found! Cloning to $TC_DIR..."
-		if ! git clone --single-branch --depth=1 -b clang-13 https://github.com/LeCmnGend/proton-clang.git $TC_DIR; then
-				echo "Cloning failed! Aborting..."
-				exit 1
-		fi
-fi
-
 echo "###############################################"
 echo "Done."
 echo "###############################################"
@@ -45,7 +29,7 @@ echo "Installing proton clang 14"
 TC_DIR="$HOME/tc/proton/clang-14"
 if ! [ -d "$TC_DIR" ]; then
 		echo "Proton clang not found! Cloning to $TC_DIR..."
-		if ! git clone --single-branch --depth=1 -b master https://github.com/vijaymalav564/vortex-clang $TC_DIR; then
+		if ! git clone --single-branch --depth=1 -b clang-14 https://gitlab.com/LeCmnGend/proton-clang $TC_DIR; then
 				echo "Cloning failed! Aborting..."
 				exit 1
 		fi
