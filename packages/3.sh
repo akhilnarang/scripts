@@ -2,8 +2,8 @@ echo "0.3. Install Optional package"
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 sudo aptitude install bc binutils-dev bison build-essential ca-certificates file flex 
-sudo aptitude install ninja-build python3-dev texinfo u-boot-tools xz-utils
-sudo aptitude install libelf-dev libssl-dev zlib1g-dev libncurses5
+sudo aptitude install ninja-build python3-dev texinfo u-boot-tools xz-utils patchelf
+sudo aptitude install libelf-dev libssl-dev zlib1g-dev libncurses5 
 echo "###############################################"
 echo "Done."
 echo "###############################################"
