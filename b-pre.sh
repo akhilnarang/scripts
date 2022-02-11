@@ -38,18 +38,6 @@ fi
 echo "###############################################"
 echo "Done."
 echo "###############################################"
-echo "Installing AnyKernel3"
-if ! [ -d "$AK3_DIR" ]; then
-				echo "$AK3_DIR not found! Cloning to $AK3_DIR..."
-				if ! git clone -q --single-branch --depth=1 -b ginkgo https://github.com/lecmngend/AnyKernel3 $AK3_DIR; then
-						echo "Cloning failed! Aborting..."
-						exit 1
-				fi
-		fi
-
-echo "###############################################"
-echo "Done."
-echo "###############################################"
 echo "Installing Build environment"
 bash setup/install_android_sdk.sh
 echo "###############################################"
