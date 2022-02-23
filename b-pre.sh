@@ -42,6 +42,11 @@ echo "Installing Build environment"
 bash setup/install_android_sdk.sh
 echo "###############################################"
 echo "Done."
-echo "###############################################"
 
+echo "###############################################"
+echo "Setup some symlink"
+bash packages/symlink.sh
+echo "###############################################"
+echo "Done."
+echo "###############################################"
 
