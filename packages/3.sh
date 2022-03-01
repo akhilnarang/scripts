@@ -6,9 +6,7 @@ sudo aptitude install ninja-build python3-dev texinfo u-boot-tools xz-utils patc
 sudo aptitude install libelf-dev libssl-dev zlib1g-dev libncurses5 
 echo "###############################################"
 echo "Done."
-echo "###############################################"
-echo "Run update to make sure it will not conflict"
-sudo aptitude update && sudo aptitude upgrade
+
 echo "Adding GitHub apt key and repository!"
 sudo apt-get install software-properties-common -y
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C99B11DEB97541F0

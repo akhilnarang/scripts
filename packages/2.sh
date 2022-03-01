@@ -11,6 +11,4 @@ if [ ! -d "/root/tmp/clang13" ]; then
 fi
 echo "###############################################"
 echo "Done."
-echo "###############################################"
-echo "Run update to make sure it will not conflict"
-sudo aptitude update && sudo aptitude upgrade
+

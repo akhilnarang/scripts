@@ -6,5 +6,3 @@ sudo aptitude install libxml-simple-perl libswitch-perl apt-utils gh
 echo "###############################################"
 echo "Done."
 echo "###############################################"
-echo "Run update to make sure it will not conflict"
-sudo aptitude update && sudo aptitude upgrade
