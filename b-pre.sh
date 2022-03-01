@@ -25,11 +25,11 @@ sudo chmod a+rx /usr/local/bin/repo
 echo "###############################################"
 echo "Done."
 echo "###############################################"
-echo "Installing proton clang 14"
-TC_DIR="$HOME/tc/proton/clang-14"
+echo "Installing proton clang 15"
+TC_DIR="$HOME/tc/proton/clang-15"
 if ! [ -d "$TC_DIR" ]; then
 		echo "Proton clang not found! Cloning to $TC_DIR..."
-		if ! git clone --single-branch --depth=1 -b clang-14 https://gitlab.com/LeCmnGend/proton-clang $TC_DIR; then
+		if ! git clone --single-branch --depth=1 -b clang-15 https://gitlab.com/LeCmnGend/proton-clang $TC_DIR; then
 				echo "Cloning failed! Aborting..."
 				exit 1
 		fi

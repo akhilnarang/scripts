@@ -3,6 +3,7 @@
 # Copyright (C) Harsh Shandilya <me@msfjarvis.dev>
 # SPDX-License-Identifier: GPL-3.0-only
 SDK_DIR="/root/Android/Sdk"
+
 function setup_android_sdk() {
 
 	SDK_TOOLS=commandlinetools-linux-7583922_latest.zip
