@@ -33,7 +33,7 @@ echo "###############################################"
 echo "Done."
 echo "###############################################"
 echo "Installing Build environment"
-bash setup/install_android_sdk.sh
+bash packages/install_android_sdk.sh
 echo "###############################################"
 echo "Done."
 
