@@ -11,7 +11,7 @@ function setup_android_sdk() {
 	trap 'rm -rf /tmp/tools.zip 2>/dev/null' INT TERM EXIT
 
 	CUR_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-	CUR_DIR="${CUR_DIR/setup/}"
+	CUR_DIR="${CUR_DIR/packages/}"
 
     echo "Installing Android SDK"
     mkdir -p "${SDK_DIR}"
@@ -35,7 +35,6 @@ function setup_android_sdk() {
 
 # Check if sdk already installed
 if [ ! -d "${SDK_DIR}" ]; then
-
 	setup_android_sdk
 else
 	echo "###############################################"
