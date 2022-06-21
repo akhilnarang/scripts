@@ -13,11 +13,7 @@ DEBIAN_10_PACKAGES="libncurses5"
 DEBIAN_11_PACKAGES="libncurses5"
 PACKAGES=""
 
-echo "Adding GitHub apt key and repository!"
 sudo apt install software-properties-common -y
-sudo apt-key adv --keyserver hkps://keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-sudo apt-add-repository https://cli.github.com/packages
-
 sudo apt update
 
 # Install lsb-core packages
@@ -38,7 +34,7 @@ fi
 sudo DEBIAN_FRONTEND=noninteractive \
     apt install \
     adb autoconf automake axel bc bison build-essential \
-    ccache clang cmake expat fastboot flex g++ \
+    ccache clang cmake curl expat fastboot flex g++ \
     g++-multilib gawk gcc gcc-multilib git gnupg gperf \
     htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 libc6-dev libcap-dev \
     libexpat1-dev libgmp-dev '^liblz4-.*' '^liblzma.*' libmpc-dev libmpfr-dev libncurses5-dev \
@@ -46,8 +42,14 @@ sudo DEBIAN_FRONTEND=noninteractive \
     maven ncftp ncurses-dev patch patchelf pkg-config pngcrush \
     pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
-    libxml-simple-perl libswitch-perl apt-utils gh \
+    libxml-simple-perl libswitch-perl apt-utils \
     ${PACKAGES} -y
+
+echo -e "Install GitHub CLI"
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update
+sudo apt install -y gh
 
 echo -e "Setting up udev rules for adb!"
 sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
