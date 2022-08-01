@@ -30,14 +30,11 @@ rr/crowdin.sh
 rr/copy_ftp.sh
 rr/push_json.sh
 setup/android_build_env.sh
-setup/arch-manjaro.sh
 setup/ccache.sh
 setup/create_user.sh
 setup/crowdin-cli.sh
-setup/fedora.sh
 setup/git.sh
 setup/hub.sh
 setup/install_android_sdk.sh
 setup/make.sh
-setup/solus.sh
 zsh/setup.sh
