@@ -12,7 +12,7 @@ echo '[2/4] Syncing repositories and updating system packages'
 sudo pacman -Syyu --noconfirm --needed multilib-devel
 # Install android build prerequisites
 echo '[3/4] Installing Android building prerequisites'
-packages="ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel xml2 lineageos-devel libxcrypt-compat"
+packages="ncurses5-compat-libs lib32-ncurses5-compat-libs aosp-devel xml2 lineageos-devel"
 for package in $packages; do
     echo "Installing $package"
     git clone https://aur.archlinux.org/"$package"
