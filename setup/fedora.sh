@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
 # Script to setup an Android 10 build
-# environment for Fedora 31 / Rawhide.
+# environment for Fedora 36 / Rawhide.
 
 # Packages
 sudo dnf install \
@@ -12,6 +12,7 @@ sudo dnf install \
     bison \
     bzip2 \
     ccache \
+    clang \
     curl \
     flex \
     gawk \
