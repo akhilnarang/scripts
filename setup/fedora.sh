@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Script to setup an Android 10 build
-# environment for Fedora 36 / Rawhide.
+# Script to setup an Android 10+ build
+# environment for Fedora 37 / Rawhide.
 
 # Packages
 sudo dnf install \
@@ -44,7 +44,6 @@ sudo dnf install \
     openssl-devel \
     java-1.8.0-openjdk-devel \
     ImageMagick \
-    ncurses-compat-libs \
     schedtool \
     lzip \
     vboot-utils \
@@ -53,6 +52,8 @@ sudo dnf install \
 # The package libncurses5 is not available, so we need to hack our way by symlinking the required library.
 sudo ln -s /usr/lib/libncurses.so.6 /usr/lib/libncurses.so.5
 sudo ln -s /usr/lib/libncurses.so.6 /usr/lib/libtinfo.so.5
+sudo ln -s /usr/lib64/libncurses.so.6 /usr/lib64/libncurses.so.5
+sudo ln -s /usr/lib64/libncurses.so.6 /usr/lib64/libtinfo.so.5
 
 # Repo
 echo "Installing Git Repository Tool"
