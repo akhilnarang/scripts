@@ -18,6 +18,7 @@ sudo dnf install \
     gawk \
     gcc-c++ \
     git \
+    git-lfs \
     glibc-devel \
     glibc-static \
     libstdc++-static \
