@@ -11,7 +11,7 @@ UBUNTU_16_PACKAGES="libesd0-dev python2.7 python-all-dev"
 UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3 python2.7 python-all-dev"
 DEBIAN_10_PACKAGES="libncurses5 python2.7 python-all-dev"
 DEBIAN_11_PACKAGES="libncurses5 python2.7 python-all-dev"
-DEBIAN_12_PACKAGES="libncurses5"
+DEBIAN_12_PACKAGES="libncurses5 python-is-python3"
 PACKAGES=""
 
 sudo apt install software-properties-common -y
