@@ -7,18 +7,15 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.3"
-UBUNTU_16_PACKAGES="libesd0-dev python2.7 python-all-dev"
-UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3 python2.7 python-all-dev"
-DEBIAN_10_PACKAGES="libncurses5 python2.7 python-all-dev"
-DEBIAN_11_PACKAGES="libncurses5 python2.7 python-all-dev"
-DEBIAN_12_PACKAGES="libncurses5 python-is-python3"
+UBUNTU_16_PACKAGES="libesd0-dev python2.7 python-all-dev lsb-core"
+UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3 python2.7 python-all-dev lsb-core"
+DEBIAN_10_PACKAGES="libncurses5 python2.7 python-all-dev lsb-core"
+DEBIAN_11_PACKAGES="libncurses5 python2.7 python-all-dev lsb-core"
+DEBIAN_12_PACKAGES="libncurses5 python-is-python3 lsb-base"
 PACKAGES=""
 
 sudo apt install software-properties-common -y
 sudo apt update
-
-# Install lsb-core packages
-sudo apt install lsb-core -y
 
 LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
