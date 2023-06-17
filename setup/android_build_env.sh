@@ -11,6 +11,7 @@ UBUNTU_16_PACKAGES="libesd0-dev"
 UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3"
 DEBIAN_10_PACKAGES="libncurses5"
 DEBIAN_11_PACKAGES="libncurses5"
+DEBIAN_12_PACKAGES="libncurses5"
 PACKAGES=""
 
 sudo apt install software-properties-common -y
@@ -29,6 +30,8 @@ elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 11" ]]; then
     PACKAGES="${DEBIAN_11_PACKAGES}"
+elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 12" ]]; then
+    PACKAGES="${DEBIAN_12_PACKAGES}"
 fi
 
 sudo DEBIAN_FRONTEND=noninteractive \
