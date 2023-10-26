@@ -13,17 +13,19 @@ DEBIAN_10_PACKAGES="libncurses5"
 DEBIAN_11_PACKAGES="libncurses5"
 PACKAGES=""
 
-sudo apt install software-properties-common -y
-sudo apt update
-
-# Install lsb-core packages
-sudo apt install lsb-core -y
+sudo nala install software-properties-common -y
+sudo nala update
 
 LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
+if [[ ${LSB_RELEASE} =~ "Ubuntu 20" || ${LSB_RELEASE} =~ "Ubuntu 21" || ${LSB_RELEASE} =~ "Ubuntu 22" || ${LSB_RELEASE} =~ 'Pop!_OS 2' ]]; then
+# Install lsb-core packages
+sudo nala install lsb-core -y
+fi
+
 if [[ ${LSB_RELEASE} =~ "Mint 18" || ${LSB_RELEASE} =~ "Ubuntu 16" ]]; then
     PACKAGES="${UBUNTU_16_PACKAGES}"
-elif [[ ${LSB_RELEASE} =~ "Ubuntu 20" || ${LSB_RELEASE} =~ "Ubuntu 21" || ${LSB_RELEASE} =~ "Ubuntu 22" || ${LSB_RELEASE} =~ 'Pop!_OS 2' ]]; then
+elif [[ ${LSB_RELEASE} =~ "Ubuntu 20" || ${LSB_RELEASE} =~ "Ubuntu 21" || ${LSB_RELEASE} =~ "Ubuntu 22" || ${LSB_RELEASE} =~ "Ubuntu 23" || ${LSB_RELEASE} =~ 'Pop!_OS 2' ]]; then
     PACKAGES="${UBUNTU_20_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
@@ -31,8 +33,12 @@ elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 11" ]]; then
     PACKAGES="${DEBIAN_11_PACKAGES}"
 fi
 
+if [[ ${LSB_RELEASE} =~ "Ubuntu 20" || ${LSB_RELEASE} =~ "Ubuntu 21" || ${LSB_RELEASE} =~ "Ubuntu 22" || ${LSB_RELEASE} =~ 'Pop!_OS 2' ]]; then
+sudo nala install python2.7 python-all-dev -y
+fi
+
 sudo DEBIAN_FRONTEND=noninteractive \
-    apt install \
+    nala install \
     adb autoconf automake axel bc bison build-essential \
     ccache clang cmake curl expat fastboot flex g++ \
     g++-multilib gawk gcc gcc-multilib git git-lfs gnupg gperf \
@@ -40,7 +46,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
     libexpat1-dev libgmp-dev '^liblz4-.*' '^liblzma.*' libmpc-dev libmpfr-dev libncurses5-dev \
     libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils '^lzma.*' lzop \
     maven ncftp ncurses-dev patch patchelf pkg-config pngcrush \
-    pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion \
+    pngquant re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
     libxml-simple-perl libswitch-perl apt-utils rsync \
     ${PACKAGES} -y
@@ -49,8 +55,8 @@ echo -e "Installing GitHub CLI"
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
 sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-sudo apt update
-sudo apt install -y gh
+sudo nala update
+sudo nala install -y gh
 
 echo -e "Setting up udev rules for adb!"
 sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
