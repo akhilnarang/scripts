@@ -48,7 +48,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
     maven ncftp ncurses-dev patch patchelf pkg-config pngcrush \
     pngquant re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
-    libxml-simple-perl libswitch-perl apt-utils \
+    libxml-simple-perl libswitch-perl apt-utils rsync \
     ${PACKAGES} -y
 
 echo -e "Installing GitHub CLI"
