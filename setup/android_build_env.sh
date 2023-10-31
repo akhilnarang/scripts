@@ -7,11 +7,11 @@
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
 LATEST_MAKE_VERSION="4.3"
-UBUNTU_16_PACKAGES="libesd0-dev python2.7 python-all-dev lsb-core"
-UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3 python2.7 python-all-dev lsb-core"
-DEBIAN_10_PACKAGES="libncurses5 python2.7 python-all-dev lsb-core"
-DEBIAN_11_PACKAGES="libncurses5 python2.7 python-all-dev lsb-core"
-DEBIAN_12_PACKAGES="libncurses5 python-is-python3 lsb-base"
+UBUNTU_16_PACKAGES="adb fastboot libesd0-dev python2.7 python-all-dev lsb-core"
+UBUNTU_20_PACKAGES="adb fastboot libncurses5 curl python-is-python3 python2.7 python-all-dev lsb-core"
+DEBIAN_10_PACKAGES="libncurses5 python2.7 python-all-dev lsb-core google-android-platform-tools-installer"
+DEBIAN_11_PACKAGES="libncurses5 python2.7 python-all-dev lsb-core google-android-platform-tools-installer"
+DEBIAN_12_PACKAGES="libncurses5 python-is-python3 lsb-base google-android-platform-tools-installer"
 PACKAGES=""
 
 sudo apt install software-properties-common -y
@@ -33,8 +33,8 @@ fi
 
 sudo DEBIAN_FRONTEND=noninteractive \
     apt install \
-    adb autoconf automake axel bc bison build-essential \
-    ccache clang cmake curl expat fastboot flex g++ \
+    autoconf automake axel bc bison build-essential \
+    ccache clang cmake curl expat flex g++ \
     g++-multilib gawk gcc gcc-multilib git git-lfs gnupg gperf \
     htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 libc6-dev libcap-dev \
     libexpat1-dev libgmp-dev '^liblz4-.*' '^liblzma.*' libmpc-dev libmpfr-dev libncurses5-dev \
