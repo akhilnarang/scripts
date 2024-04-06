@@ -46,4 +46,4 @@ for child in destination_apn_xml.getroot():
         for tag in tags_to_copy:
             child.attrib[tag] = mapping[key][tag]
 
-destination_apn_xml.write(destination)
+destination_apn_xml.write(destination, encoding="utf-8")
