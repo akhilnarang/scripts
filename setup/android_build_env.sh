@@ -2,22 +2,26 @@
 
 # Copyright (C) 2018 Harsh 'MSF Jarvis' Shandilya
 # Copyright (C) 2018 Akhil Narang
+# Copyright (C) 2024 althafvly
 # SPDX-License-Identifier: GPL-3.0-only
 
 # Script to setup an AOSP Build environment on Ubuntu and Linux Mint
 
-LATEST_MAKE_VERSION="4.3"
-UBUNTU_16_PACKAGES="libesd0-dev"
-UBUNTU_20_PACKAGES="libncurses5 curl python-is-python3"
-DEBIAN_10_PACKAGES="libncurses5"
-DEBIAN_11_PACKAGES="libncurses5"
+LATEST_MAKE_VERSION="4.4"
+UBUNTU_16_PACKAGES="libtinfo5 lib32ncurses5-dev libesd0-dev"
+UBUNTU_20_PACKAGES="libtinfo5 lib32ncurses5-dev libncurses5 curl python-is-python3"
+UBUNTU_24_PACKAGES="lib32ncurses-dev libncurses5-dev curl python-is-python3"
+DEBIAN_10_PACKAGES="libtinfo5 lib32ncurses5-dev libncurses5"
+DEBIAN_11_PACKAGES="libtinfo5 lib32ncurses5-dev libncurses5"
 PACKAGES=""
 
 sudo apt install software-properties-common -y
 sudo apt update
 
 # Install lsb-core packages
-sudo apt install lsb-core -y
+if ! command -v lsb_release &> /dev/null; then
+    sudo apt install lsb-core -y
+fi
 
 LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
@@ -25,6 +29,8 @@ if [[ ${LSB_RELEASE} =~ "Mint 18" || ${LSB_RELEASE} =~ "Ubuntu 16" ]]; then
     PACKAGES="${UBUNTU_16_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Ubuntu 20" || ${LSB_RELEASE} =~ "Ubuntu 21" || ${LSB_RELEASE} =~ "Ubuntu 22" || ${LSB_RELEASE} =~ 'Pop!_OS 2' ]]; then
     PACKAGES="${UBUNTU_20_PACKAGES}"
+elif [[ ${LSB_RELEASE} =~ "Ubuntu 24" ]]; then
+    PACKAGES="${UBUNTU_24_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
 elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 11" ]]; then
@@ -36,14 +42,26 @@ sudo DEBIAN_FRONTEND=noninteractive \
     adb autoconf automake axel bc bison build-essential \
     ccache clang cmake curl expat fastboot flex g++ \
     g++-multilib gawk gcc gcc-multilib git git-lfs gnupg gperf \
-    htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 libc6-dev libcap-dev \
+    htop imagemagick lib32z1-dev libc6-dev libcap-dev \
     libexpat1-dev libgmp-dev '^liblz4-.*' '^liblzma.*' libmpc-dev libmpfr-dev libncurses5-dev \
     libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils '^lzma.*' lzop \
     maven ncftp ncurses-dev patch patchelf pkg-config pngcrush \
-    pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion \
+    pngquant python3-dev python3-all python3-pip python3-setuptools \
+    re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
     libxml-simple-perl libswitch-perl apt-utils rsync \
     ${PACKAGES} -y
+
+if ! command -v python2 &> /dev/null; then
+    echo -e "Installing python 2.7.18"
+    wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
+    tar xzf Python-2.7.18.tgz
+    cd Python-2.7.18
+    sudo ./configure --enable-optimizations
+    sudo make altinstall
+    sudo ln -s "/usr/local/bin/python2.7" "/usr/bin/python2"
+    cd .. && sudo rm -rf Python-2.7.18
+fi
 
 echo -e "Installing GitHub CLI"
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
