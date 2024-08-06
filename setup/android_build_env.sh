@@ -50,13 +50,13 @@ sudo DEBIAN_FRONTEND=noninteractive \
     re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
     libxml-simple-perl libswitch-perl apt-utils rsync \
-    ${PACKAGES} -y
+    "${PACKAGES}" -y
 
 if ! command -v python2 &> /dev/null; then
     echo -e "Installing python 2.7.18"
     wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
     tar xzf Python-2.7.18.tgz
-    cd Python-2.7.18
+    cd Python-2.7.18 || exit
     sudo ./configure --enable-optimizations
     sudo make altinstall
     sudo ln -s "/usr/local/bin/python2.7" "/usr/bin/python2"
