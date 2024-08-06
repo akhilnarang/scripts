@@ -59,8 +59,12 @@ sudo ln -s /usr/lib64/libncurses.so.6 /usr/lib64/libtinfo.so.5
 
 # Repo
 echo "Installing Git Repository Tool"
-sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-sudo chmod a+rx /usr/local/bin/repo
+if [ "${DCDEVSPACE}" == "1" ]; then
+    echo "Modifying Repo on Crave Devspace CLI is not allowed!"
+else
+    sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
+    sudo chmod a+rx /usr/local/bin/repo
+fi
 
 echo -e "Setting up udev rules for ADB!"
 sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules

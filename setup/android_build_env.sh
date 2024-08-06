@@ -67,5 +67,9 @@ if [[ "$(command -v make)" ]]; then
 fi
 
 echo "Installing repo"
-sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-sudo chmod a+rx /usr/local/bin/repo
+if [ "${DCDEVSPACE}" == "1" ]; then
+    echo "Modifying Repo on Crave Devspace CLI is not allowed!"
+else
+    sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
+    sudo chmod a+rx /usr/local/bin/repo
+fi
