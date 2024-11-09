@@ -58,6 +58,7 @@ sudo zypper install \
     perl-Digest-SHA1 \
     python \
     python-rpm-generators \
+    python3-pyelftools \
     readline-devel \
     schedtool \
     screenfetch \

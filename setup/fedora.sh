@@ -40,6 +40,7 @@ sudo dnf install \
     zip \
     perl-Digest-SHA \
     python2 \
+    python3-pyelftools \
     wget \
     lzop \
     openssl-devel \
