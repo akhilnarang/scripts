@@ -18,8 +18,12 @@ sudo udevadm control --reload-rules
 
 # REPO
 echo "Setting up Repo..."
-sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-sudo chmod a+rx /usr/local/bin/repo
+if [ "${DCDEVSPACE}" == "1" ]; then
+    echo "Modifying Repo on Crave Devspace CLI is not allowed!"
+else
+    sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
+    sudo chmod a+rx /usr/local/bin/repo
+fi
 
 echo "You're now ready to start contributing to AOSP!"
 
