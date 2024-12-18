@@ -13,11 +13,11 @@ DEBIAN_10_PACKAGES="libncurses5"
 DEBIAN_11_PACKAGES="libncurses5"
 PACKAGES=""
 
-sudo apt install software-properties-common -y
-sudo apt update
+apt install software-properties-common -y
+apt update
 
 # Install lsb-core packages
-sudo apt install lsb-core -y
+apt install lsb-core -y
 
 LSB_RELEASE="$(lsb_release -d | cut -d ':' -f 2 | sed -e 's/^[[:space:]]*//')"
 
@@ -31,7 +31,7 @@ elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 11" ]]; then
     PACKAGES="${DEBIAN_11_PACKAGES}"
 fi
 
-sudo DEBIAN_FRONTEND=noninteractive \
+DEBIAN_FRONTEND=noninteractive \
     apt install \
     adb autoconf automake axel bc bison build-essential \
     ccache clang cmake curl expat fastboot flex g++ \
@@ -47,16 +47,16 @@ sudo DEBIAN_FRONTEND=noninteractive \
 
 echo -e "Installing GitHub CLI"
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-sudo apt update
-sudo apt install -y gh
+apt update
+apt install -y gh
 
 echo -e "Setting up udev rules for adb!"
-sudo curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
-sudo chmod 644 /etc/udev/rules.d/51-android.rules
-sudo chown root /etc/udev/rules.d/51-android.rules
-sudo systemctl restart udev
+curl --create-dirs -L -o /etc/udev/rules.d/51-android.rules -O -L https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules
+chmod 644 /etc/udev/rules.d/51-android.rules
+chown root /etc/udev/rules.d/51-android.rules
+systemctl restart udev
 
 if [[ "$(command -v make)" ]]; then
     makeversion="$(make -v | head -1 | awk '{print $3}')"
@@ -67,5 +67,5 @@ if [[ "$(command -v make)" ]]; then
 fi
 
 echo "Installing repo"
-sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-sudo chmod a+rx /usr/local/bin/repo
+curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
+chmod a+rx /usr/local/bin/repo
