@@ -19,3 +19,6 @@ export EDITOR="nano"
 
 # Set timezone
 export TZ="Asia/Kolkata"
+
+alias camera_off="echo '\_SB.ATKD.WMNB 0x00 0x53564544 0x0000000000060078' | sudo tee /proc/acpi/call"
+alias camera_on="echo '\_SB.ATKD.WMNB 0x00 0x53564544 0x0000000100060078' | sudo tee /proc/acpi/call"
