@@ -3,9 +3,9 @@ name: ShellCheck scripts
 jobs:
   shellCheck:
     name: ShellCheck
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - name: Run shellcheck.
       run: |
         while read -r script; do shellcheck --exclude=SC1090,SC1091 $script; done < files

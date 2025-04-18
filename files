@@ -29,6 +29,7 @@ rr/channel.sh
 rr/crowdin.sh
 rr/copy_ftp.sh
 rr/push_json.sh
+setup/acpi_call.sh
 setup/android_build_env.sh
 setup/arch-manjaro.sh
 setup/ccache.sh
