@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
 # Script to setup an Android 10+ build
-# environment for Fedora 37 / Rawhide.
+# environment for Fedora 42.
 
 # Packages
 sudo dnf install \
@@ -44,6 +44,7 @@ sudo dnf install \
     wget \
     lzop \
     openssl-devel \
+    openssl-devel-engine \
     java-1.8.0-openjdk-devel \
     ImageMagick \
     schedtool \
