@@ -44,6 +44,7 @@ sudo dnf install \
     wget \
     lzop \
     openssl-devel \
+    openssl-devel-engine \
     java-1.8.0-openjdk-devel \
     ImageMagick \
     schedtool \
