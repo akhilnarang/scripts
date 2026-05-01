@@ -128,11 +128,17 @@ function onLogin() {
 
 # Sends messages to Telegram to a specified chat via the desired bot
 function sendTG() {
-    local bot chat parse_mode msg
+    local bot chat parse_mode msg file file_size response
     bot="${BOT:-kronic}"
-    chat="${1:-me}"
     parse_mode="${PARSE_MODE:-md}"
-    shift
+
+    if [[ $# -eq 1 ]]; then
+        chat="me"
+    else
+        chat="${1:-me}"
+        shift
+    fi
+
     msg=${*:?}
     case "${bot}" in
         "ts") BOT_API_KEY="$(cat ~/.tskey)" ;;
@@ -159,7 +165,33 @@ function sendTG() {
             return
             ;;
     esac
-    curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}" 1> /dev/null
+
+    # Telegram Bot API allows multipart document uploads up to 50 MiB.
+    if [[ $# -eq 1 && -f "${1}" && -r "${1}" ]]; then
+        file="${1}"
+        file_size="$(wc -c < "${file}")"
+        if [[ "${file_size}" -gt 52428800 ]]; then
+            echo "File is too large for Telegram Bot API upload: ${file} (${file_size} bytes > 52428800 bytes)"
+            return 1
+        fi
+        if [[ "${file_size}" -le 52428800 ]]; then
+            response="$(curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendDocument" \
+                --form "chat_id=${CHAT_ID}" \
+                --form "document=@${file}")"
+            if [[ "${response}" != *'"ok":true'* ]]; then
+                echo "${response}"
+                return 1
+            fi
+            echo
+            return
+        fi
+    fi
+
+    response="$(curl -s "https://api.telegram.org/bot${BOT_API_KEY}/sendMessage" --data "text=${msg}&chat_id=${CHAT_ID}&parse_mode=${parse_mode}")"
+    if [[ "${response}" != *'"ok":true'* ]]; then
+        echo "${response}"
+        return 1
+    fi
     echo
 }
 
